@@ -1,3 +1,0 @@
-# MedOffline frontend
-
-MedOffline Frontend.

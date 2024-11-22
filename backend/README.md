@@ -1,3 +1,0 @@
-# MedOffline backend
-
-MedOffline backend.

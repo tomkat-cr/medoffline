@@ -36,7 +36,7 @@ MedOffLine es un asistente de inteligencia artificial ligero, basado en los mode
 
 Relevancia social:
 
-Venezuela y muchas regiones de América Latina enfrentan graves problemas de acceso a la salud, especialmente en zonas rurales. Este proyecto resuelve una necesidad básica y urgente.
+Colombia, Venezuela y muchas regiones de América Latina enfrentan graves problemas de acceso a la salud, especialmente en zonas rurales. Este proyecto resuelve una necesidad básica y urgente.
 
 ## Impacto directo y medible
 
