@@ -79,6 +79,17 @@ Podría traducirse a lenguas indígenas o adaptarse a contextos específicos.
 No requiere hardware sofisticado ni infraestructura costosa.
 Puede financiarse mediante asociaciones con ONGs, gobiernos locales o iniciativas de salud pública.
 
+## Technologia utilizada
+
+* Modelos de Meta Llama: 3.2 1B/3B, Llama 3.1 70B
+* MongoDB Atlas
+* Executorch
+* Java
+* Python
+* Streamlit
+* GenericSuite
+* AI/ML API o Sambanova
+
 <hr>
 
 # MedOffLine ✨
@@ -172,6 +183,8 @@ It can be funded through partnerships with NGOs, local governments, or public he
 * Streamlit
 * GenericSuite
 * AI/ML API or Sambanova
+
+<hr>
 
 ## Getting Started
 
