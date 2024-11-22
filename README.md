@@ -65,19 +65,30 @@ Su implementación podría reducir las complicaciones de salud prevenibles.
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-* Uso eficiente de tecnología:
+Uso eficiente de tecnología:
 
 Llama 3.2 es ideal porque incluye modelos ligeros que pueden funcionar en dispositivos móviles con recursos limitados, incluso sin conexión a internet.
 
-* Escalabilidad:
+Escalabilidad:
 
 Puede ampliarse a otros países o regiones con desafíos similares.
 Podría traducirse a lenguas indígenas o adaptarse a contextos específicos.
 
-* Viabilidad técnica y económica:
+Viabilidad técnica y económica:
 
 No requiere hardware sofisticado ni infraestructura costosa.
 Puede financiarse mediante asociaciones con ONGs, gobiernos locales o iniciativas de salud pública.
+
+## Technologia utilizada
+
+* Modelos de Meta Llama: 3.2 1B/3B, Llama 3.1 70B
+* MongoDB Atlas
+* Executorch
+* Java
+* Python
+* Streamlit
+* GenericSuite
+* AI/ML API o Sambanova
 
 <hr>
 
@@ -172,6 +183,8 @@ It can be funded through partnerships with NGOs, local governments, or public he
 * Streamlit
 * GenericSuite
 * AI/ML API or Sambanova
+
+<hr>
 
 ## Getting Started
 
