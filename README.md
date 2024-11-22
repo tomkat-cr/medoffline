@@ -4,7 +4,7 @@ Asistente Médico Offline para Comunidades Remotas
 
 ![Hackathon Cover image](./assets/MedOffLine-cover-image.webp)
 
-## Introduccion
+## Descripción
 
 <img 
     align="right"
@@ -14,15 +14,15 @@ Asistente Médico Offline para Comunidades Remotas
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-MedOffLine es un asistente de inteligencia artificial ligero, basado en los modelos Llama, que brinde orientación médica básica en comunidades sin acceso a internet. El sistema podría funcionar en dispositivos móviles de bajo costo y ofrecer:
+MedOffLine es una aplicación médica offline que utiliza IA para ofrecer orientación médica básica en comunidades sin acceso a internet, proporcionando:
 
-## Funcionalidades clave
-
-* Diagnósticos preliminares basados en síntomas.
 * Guías de primeros auxilios.
+* Diagnósticos preliminares basados en síntomas.
 * Información sobre medicamentos básicos (dosis, efectos secundarios).
 * Orientación sobre cuándo y dónde buscar ayuda médica.
 * Material educativo sobre prevención de enfermedades comunes.
+
+El sistema funciona en dispositivos móviles de mediano costo.
 
 ## El Problema
 
@@ -34,9 +34,15 @@ MedOffLine es un asistente de inteligencia artificial ligero, basado en los mode
     title="Social relevance: regions across Latin America face significant healthcare access challenges, especially in rural areas"
 />
 
-Relevancia social:
+El acceso a la salud es un desafío en comunidades rurales debido a:
 
-Colombia, Venezuela y muchas regiones de América Latina enfrentan graves problemas de acceso a la salud, especialmente en zonas rurales. Este proyecto resuelve una necesidad básica y urgente.
+- Conectividad limitada.
+- Barreras geográficas.
+- Escasez de servicios médicos.
+
+## Solución
+
+MedOffLine ofrece una solución 100% offline, ligera y culturalmente inclusiva.
 
 ## Impacto directo y medible
 
@@ -108,15 +114,15 @@ Offline Medical Assistant for Remote Communities
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-MedOffLine is a cutting-edge application designed to revolutionize the real estate market by simplifying the process for both buyers and sellers. Utilizing an advanced AI  Assistant technology, the app offers a conversational interface where users can enter their real estate preferences and requirements.
+MedOffLine is an offline medical app that uses AI to provide basic medical guidance in communities without internet access. It offers:
 
-## Key Features
-
-* Preliminary diagnostics based on symptoms.
 * First aid guides.
+* Preliminary diagnostics based on symptoms.
 * Information on basic medications (dosages, side effects).
 * Guidance on when and where to seek medical assistance.
 * Educational materials on preventing common illnesses.
+
+The system runs on mid-range mobile devices.
 
 ## The Problem
 
@@ -128,9 +134,15 @@ MedOffLine is a cutting-edge application designed to revolutionize the real esta
     title="Social relevance: regions across Latin America face significant healthcare access challenges, especially in rural areas"
 />
 
-Social Relevance:
+Access to healthcare is a challenge in rural communities due to:
 
-Colombia, Venezuela and many regions across Latin America face significant healthcare access challenges, especially in rural areas. This project addresses a critical and urgent need.
+- Limited connectivity.
+- Geographical barriers.
+- Scarcity of medical services.
+
+## Solution
+
+MedOffLine offers a 100% offline, lightweight and culturally inclusive solution.
 
 ## Direct and Measurable Impact
 
