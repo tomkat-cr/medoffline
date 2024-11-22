@@ -2,7 +2,7 @@
 
 Asistente Médico Offline para Comunidades Remotas
 
-![Hackathon Cover image](./assets/DALL·E%202024-11-22%2009.13.31%20-%20A%20vibrant%20and%20colorful%20illustration%20of%20a%20mobile%20app%20concept%20named%20MedOffLine.%20The%20image%20showcases%20an%20offline%20medical%20assistant%20designed%20for%20remote%20com.webp)
+![Hackathon Cover image](./assets/MedOffLine-cover-image.webp)
 
 ## Introduccion
 
