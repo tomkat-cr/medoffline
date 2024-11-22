@@ -65,16 +65,16 @@ Su implementación podría reducir las complicaciones de salud prevenibles.
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-* Uso eficiente de tecnología:
+Uso eficiente de tecnología:
 
 Llama 3.2 es ideal porque incluye modelos ligeros que pueden funcionar en dispositivos móviles con recursos limitados, incluso sin conexión a internet.
 
-* Escalabilidad:
+Escalabilidad:
 
 Puede ampliarse a otros países o regiones con desafíos similares.
 Podría traducirse a lenguas indígenas o adaptarse a contextos específicos.
 
-* Viabilidad técnica y económica:
+Viabilidad técnica y económica:
 
 No requiere hardware sofisticado ni infraestructura costosa.
 Puede financiarse mediante asociaciones con ONGs, gobiernos locales o iniciativas de salud pública.
