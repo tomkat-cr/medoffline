@@ -1,0 +1,69 @@
+{
+    "baseUrl": "users_preferences",
+    "title": "User Preferences",
+    "name": "User's Preferences",
+    "dbApiUrl": "users_preferences",
+    "component": "UsersPreferences",
+    "type": "child_listing",
+    "subType": "array",
+    "array_name": "users_preferences",
+    "parentKeyNames": [
+        {
+            "parameterName": "user_id",
+            "parentUrl": "users",
+            "parentElementName": "id"
+        }
+    ],
+    "primaryKeyName": "id",
+    "defaultOrder": "preference_name",
+    "fieldElements": [
+        {
+            "name": "id",
+            "required": false,
+            "label": "ID",
+            "type": "text",
+            "readonly": true,
+            "hidden": true,
+            "listing": false,
+            "uuid_generator": true
+        },
+        {
+            "name": "property_type",
+            "label": "Property Type",
+            "type": "select",
+            "select_elements": "PROPERTY_TYPES",
+            "required": false,
+            "listing": true
+        },
+        {
+            "name": "property_for",
+            "label": "Available for",
+            "type": "select",
+            "required": true,
+            "select_elements": "PROPERTY_FOR",
+            "listing": true
+        },
+        {
+            "name": "min_price",
+            "label": "Minimum Price",
+            "type": "number",
+            "required": false,
+            "listing": true
+        },
+        {
+            "name": "max_price",
+            "label": "Maximum Price",
+            "type": "number",
+            "required": false,
+            "listing": true
+        },
+        {
+            "name": "preferred_location",
+            "label": "Preferred Location",
+            "required": false,
+            "type": "text",
+            "readonly": false,
+            "listing": true
+       }
+    ]
+}

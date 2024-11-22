@@ -1,0 +1,48 @@
+{
+    "BILLING_PLANS": {
+        "free": "Free",
+        "basic": "Basic",
+        "premium": "Premium"
+    },
+    "USER_TYPES": {
+        "buyer": "Buyer",
+        "seller": "Seller",
+        "both": "Both",
+        "other": "Other"
+    },
+    "PROPERTY_STATUS": {
+        "available": "Available",
+        "sold": "Sold",
+        "pending": "Pending"
+    },
+    "PROPERTY_TYPES": {
+        "house": "House",
+        "apartment": "Apartment",
+        "condo": "Condo",
+        "townhouse": "Townhouse"
+    },
+    "PROPERTY_FOR": {
+        "sell": "Sell",
+        "rent": "Rent"
+    },
+    "TRANSACTION_STATUS": {
+        "pending": "Pending",
+        "cleared": "Cleared",
+        "rejected": "Rejected"
+    },
+    "ERROR_MESSAGES": {
+        "ACCOUNT_INACTIVE": "User account inactive [L5]. To activate your account, please contact support@MedOffline.app"
+    },
+    "APP_EMAILS": {
+        "SUPPORT_EMAIL": "support@MedOffline.app",
+        "INFO_EMAIL": "info@MedOffline.app"
+    },
+    "APP_VALID_URLS": {
+        "APP_DOMAIN": "MedOffline.app",
+        "APP_WEBSITE": "https://www.MedOffline.app"
+    },
+    "AI_PROMPT_TEMPLATES": {
+        "ASSISTANT_YOU_ARE": "{assistant_name}. You are part of MedOffline, an App that allows Humans to buy, sell or rent properties (houses, apartments, etc.) You provide AI-powered experiences to Humans using large language models, speech-to-text, text-to-image, and image-to-text technologies, enabling them to interact via voice, text, or image uploads.",
+        "BOTTOM_LINE": ""
+    }
+}

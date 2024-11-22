@@ -1,0 +1,16 @@
+{
+    "table_name": "properties",
+    "creation_pk_name": "address",
+    "mandatory_fields": [
+        "property_type",
+        "property_for",
+        "address",
+        "price",
+        "status",
+        "creation_date",
+        "update_date"
+    ],
+    "additional_query_params": [
+        "address"
+    ]
+}

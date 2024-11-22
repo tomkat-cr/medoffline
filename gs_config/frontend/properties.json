@@ -1,0 +1,103 @@
+{
+    "baseUrl": "properties",
+    "title": "Properties",
+    "name": "Property",
+    "component": "Properties",
+    "dbApiUrl": "properties",
+    "mandatoryFilters": {
+        "user_id": "{CurrentUserId}"
+    },
+    "defaultOrder": "update_date|desc",
+    "fieldElements": [
+        {
+            "name": "id",
+            "label": "ID",
+            "type": "_id",
+            "required": true,
+            "readonly": true,
+            "hidden": true
+        },
+        {
+            "name": "user_id",
+            "label": "User ID",
+            "type": "text",
+            "required": true,
+            "readonly": true,
+            "hidden": true
+        },
+        {
+            "name": "property_type",
+            "label": "Type",
+            "type": "select",
+            "required": true,
+            "select_elements": "PROPERTY_TYPES",
+            "listing": true
+        },
+        {
+            "name": "property_for",
+            "label": "Available for",
+            "type": "select",
+            "required": true,
+            "select_elements": "PROPERTY_FOR",
+            "listing": true
+        },
+        {
+            "name": "address",
+            "label": "Address",
+            "type": "text",
+            "required": true,
+            "listing": true
+        },
+        {
+            "name": "description",
+            "label": "Description",
+            "type": "textarea",
+            "required": false,
+            "readonly": false,
+            "listing": true
+        },
+        {
+            "name": "price",
+            "label": "Price",
+            "type": "number",
+            "required": true,
+            "listing": true
+        },
+        {
+            "name": "status",
+            "label": "Status",
+            "type": "select",
+            "required": true,
+            "select_elements": "PROPERTY_STATUS",
+            "listing": true
+        },
+        {
+            "name": "observations",
+            "label": "Observations",
+            "type": "textarea",
+            "required": false,
+            "readonly": false,
+            "listing": false
+        },
+        {
+            "name": "creation_date",
+            "required": true,
+            "label": "Created",
+            "type": "datetime-local",
+            "readonly": true,
+            "hidden": false,
+            "default_value": "current_timestamp",
+            "listing": true
+        },
+        {
+            "name": "update_date",
+            "required": true,
+            "label": "Last update",
+            "type": "datetime-local",
+            "readonly": true,
+            "hidden": false,
+            "default_value": "current_timestamp",
+            "listing": false
+        }
+    ]
+}
