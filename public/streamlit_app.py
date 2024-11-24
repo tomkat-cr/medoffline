@@ -42,6 +42,7 @@ def add_title():
     # https://streamlit-emoji-shortcodes-streamlit-app-gwckff.streamlit.app/
     pass
 
+
 def get_app_description():
     """
     Add the sidebar to the page
@@ -77,7 +78,7 @@ def add_main_content():
         with cols[1]:
             app_desc = get_app_description()
             app_features = cgsl.get_par_value("APP_FEATURES")
-            st.title(cgsl.get_title())
+            st.header(cgsl.get_title())
             st.write(app_desc)
             st.write(app_features)
             # App instructions
@@ -87,7 +88,8 @@ def add_main_content():
             with button_cols[0]:
                 # Button to download a file from "./apk/app.apk"
                 st.link_button(
-                    "Descargar APK",
+                    "Descargar APK" if st.session_state.lang == "es"
+                    else "Download APK",
                     APK_DONWLOAD_URL)
                 # Languaje change
             with button_cols[1]:
@@ -104,11 +106,8 @@ def add_check_buttons_pushed():
     """
     Check buttons pushed
     """
-    global cgsl
-    print("Check buttons pushed")
     if st.session_state.change_lang:
         st.session_state.lang = "en" if st.session_state.lang == "es" else "es"
-        print(f"Change lang to: {st.session_state.lang}")
         st.rerun()
 
 
