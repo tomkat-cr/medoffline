@@ -1,0 +1,48 @@
+{
+    "baseUrl": "users_api_keys",
+    "title": "User API Keys",
+    "name": "User's API Key",
+    "dbApiUrl": "users_api_keys",
+    "component": "UsersApiKey",
+    "type": "child_listing",
+    "subType": "array",
+    "array_name": "users_api_keys",
+    "parentKeyNames": [
+        {
+            "parameterName": "user_id",
+            "parentUrl": "users",
+            "parentElementName": "id"
+        }
+    ],
+    "primaryKeyName": "id",
+    "defaultOrder": "access_token",
+    "fieldElements": [
+        {
+            "name": "id",
+            "required": false,
+            "label": "ID",
+            "type": "text",
+            "readonly": true,
+            "hidden": true,
+            "listing": false,
+            "uuid_generator": true
+        },
+        {
+            "name": "access_token",
+            "required": true,
+            "label": "Access Token",
+            "type": "text",
+            "readonly": false,
+            "listing": true
+        },
+        {
+            "name": "active",
+            "required": true,
+            "label": "Actuve",
+            "type": "select",
+            "select_elements": "TRUE_FALSE",
+            "readonly": false,
+            "listing": true
+        }
+    ]
+}

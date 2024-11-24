@@ -14,7 +14,7 @@ Asistente Médico Offline para Comunidades Remotas
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-MedOffLine es una aplicación médica offline que utiliza IA para ofrecer orientación médica básica en comunidades sin acceso a internet, proporcionando:
+MedOffLine es un Asistente de IA (Inteligencia Artifical) enfocado a ofrecer orientación de primeros auxilios básicos en comunidades con acceso limitado o sin acceso a Internet, proporcionando:
 
 * Guías de primeros auxilios.
 * Diagnósticos preliminares basados en síntomas.
@@ -114,7 +114,7 @@ Offline Medical Assistant for Remote Communities
     title="MedOffLine logo by Carlos J. Ramirez"
 />
 
-MedOffLine is an offline medical app that uses AI to provide basic medical guidance in communities without internet access. It offers:
+MedOffLine is an offline AI Assistant that provides basic first aid guidance in communities with limited (or no) Internet access. It offers:
 
 * First aid guides.
 * Preliminary diagnostics based on symptoms.

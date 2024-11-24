@@ -1,0 +1,15 @@
+{
+    "table_name": "transactions",
+    "creation_pk_name": "property_id",
+    "mandatory_fields": [
+        "buyer_id",
+        "property_id",
+        "transaction_amount",
+        "status",
+        "creation_date",
+        "update_date"
+    ],
+    "additional_query_params": [
+        "property_id"
+    ]
+}

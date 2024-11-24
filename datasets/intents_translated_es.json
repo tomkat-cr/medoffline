@@ -1,0 +1,583 @@
+{
+    "intents": [
+        {
+            "tag": "Recortes",
+            "patterns": [
+                "¿Qué hacer si hay cortes?",
+                "¿Cómo curar cortes?",
+                "¿Qué medicamento aplicar para los cortes?",
+                "¿Qué aplicar en los cortes?",
+                "Recortes"
+            ],
+            "responses": [
+                "Lave bien la herida para evitar infecciones y detenga el sangrado aplicando presión durante 1 o 2 minutos hasta que se detenga. Aplique vaselina para asegurarse de que la herida esté húmeda para que cicatrice rápidamente. Por último, cubra la herida con un vendaje estéril. Se pueden aplicar analgésicos como paracetamol."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "saludo",
+            "patterns": [
+                "Hola",
+                "Cómo estás",
+                "¿Hay alguien ahí?",
+                "Hola",
+                "Qué pasa"
+            ],
+            "responses": [
+                "Hola, soy su asistente paramédico."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "adiós",
+            "patterns": [
+                "adiós",
+                "Hasta luego",
+                "Adiós",
+                "Me voy",
+                "Que tenga un buen día",
+                "adiós"
+            ],
+            "responses": [
+                "Es triste verte partir :(",
+                "Hablaré contigo más tarde",
+                "¡Adiós!"
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Abrasiones",
+            "patterns": [
+                "¿Cómo se tratan las abrasiones?",
+                "¿Las abrasiones causan cicatrices?",
+                "Abrasiones",
+                "¿Qué hacer en caso de abrasiones?",
+                "¿Qué medicamento aplicar para las abrasiones?",
+                "¿Cómo curar las abrasiones?"
+            ],
+            "responses": [
+                "Comience con las manos lavadas. Limpie suavemente la zona con agua fría o tibia y un jabón suave. Retire la suciedad u otras partículas de la herida con pinzas esterilizadas. En caso de un raspón leve que no sangre, deje la herida descubierta. Si la herida sangra, use un paño o vendaje limpio y aplique una presión suave en la zona para detener el sangrado. Cubra la herida que sangró con una capa fina de ungüento antibiótico tópico, como Bacitracin, o un ungüento estéril que proteja contra la humedad, como Aquaphor. Cúbrala con un vendaje o una gasa limpios. Limpie suavemente la herida y cambie el ungüento y el vendaje una vez al día. Observe la zona para detectar signos de infección, como dolor o enrojecimiento e hinchazón. Consulte a su médico si sospecha que tiene una infección."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "picaduras",
+            "patterns": [
+                "¿Cómo se trata Sting?",
+                "Picaduras",
+                "¿Qué hacer si te pica una serpiente?",
+                "¿Qué medicamento aplicar en caso de picadura?"
+            ],
+            "responses": [
+                "Quítate inmediatamente cualquier aguijón. Algunos expertos recomiendan raspar el aguijón con una tarjeta de crédito. Aplicar hielo en la zona puede proporcionar un alivio leve. Aplica hielo durante 20 minutos una vez cada hora según sea necesario. Envuelve el hielo en una toalla o coloca un paño entre el hielo y la piel para evitar que se congele. Tomar un antihistamínico como difenhidramina (Benadryl) o uno no sedante como loratadina (Claritin) ayudará con la picazón y la hinchazón. Toma paracetamol (Tylenol) o ibuprofeno (Motrin) para aliviar el dolor según sea necesario. Lava la zona de la picadura con agua y jabón. Colocar crema de hidrocortisona en la picadura puede ayudar a aliviar el enrojecimiento, la picazón y la hinchazón."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Astilla",
+            "patterns": [
+                "Cómo quitar astillas",
+                "¿Cómo curar astillas?",
+                "¿Qué hacer si tengo astillas?",
+                "¿Cómo sacar una astilla a la superficie?"
+            ],
+            "responses": [
+                "1. REMOJE LA astilla en sales de Epsom. Disuelva una taza de sales en un baño de agua tibia y remoje la parte del cuerpo donde esté la astilla. Si no es posible, también puede poner un poco de sales en una gasa y dejarla cubierta durante un día; esto ayudará a que la astilla salga a la superficie. 2. VINAGRE O ACEITE. Otra forma sencilla de sacar esa astilla rebelde es remojar la zona afectada en aceite (de oliva o de maíz) o vinagre blanco. Simplemente vierta un poco en un recipiente y remoje la zona durante unos 20 a 30 minutos."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Esguinces",
+            "patterns": [
+                "¿Cómo se trata un esguince?",
+                "¿Qué hacer si tengo un esguince?",
+                "¿Qué crema aplicar si tengo un esguince?",
+                "¿Qué medicamento aplicar si tengo un esguince?"
+            ],
+            "responses": [
+                "Utilice una compresa de hielo o un baño de aguanieve inmediatamente durante 15 a 20 minutos y repita cada dos o tres horas mientras esté despierto. Para ayudar a detener la hinchazón, comprima el tobillo con una venda elástica hasta que la hinchazón se detenga. En la mayoría de los casos, los analgésicos, como el ibuprofeno (Advil, Motrin IB, otros) o el naproxeno sódico (Aleve, otros) o el paracetamol (Tylenol, otros) son suficientes para controlar el dolor de un esguince de tobillo."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Presiones",
+            "patterns": [
+                "¿Cómo se trata una distensión?",
+                "¿Qué hacer si me da una distensión?",
+                "¿Qué crema aplicar si me sale una distensión?",
+                "¿Qué medicamento aplicar si me sale una distensión?",
+                "¿Cómo se diagnostica una distensión?",
+                "¿Es mejor el calor o el hielo para un tirón muscular?"
+            ],
+            "responses": [
+                "El reposo, el hielo, la compresión y la elevación pueden utilizarse para curar las distensiones. Evite usar el músculo durante unos días, especialmente si el movimiento provoca un aumento del dolor y también aplique hielo inmediatamente después de lesionarse el músculo. Esto minimizará la hinchazón. No coloque hielo directamente sobre la piel. Use una bolsa de hielo o envuelva el hielo en una toalla. Para reducir la hinchazón, envuelva el área afectada con una venda elástica hasta que baje la hinchazón."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Fiebre",
+            "patterns": [
+                "¿Cómo se trata una fiebre leve?",
+                "¿Qué hacer si tengo fiebre leve?",
+                "¿Qué medicamento debo tomar si tengo fiebre leve?",
+                "fiebre"
+            ],
+            "responses": [
+                "Para tratar la fiebre en casa: 1) Beba abundante líquido para mantenerse hidratado. 2) Vístase con ropa ligera. 3) Use una manta ligera si siente frío, hasta que el escalofrío desaparezca. 4) Tome acetaminofeno (Tylenol u otros) o ibuprofeno (Advil, Motrin IB u otros). 5) Obtenga ayuda médica si la fiebre dura más de cinco días seguidos."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Congestión nasal",
+            "patterns": [
+                "¿Cómo se trata la congestión nasal?",
+                "¿Qué hacer si tengo congestión nasal?",
+                "¿Qué medicamento tomar si tengo congestión nasal?",
+                "¿Qué hacer si tengo la nariz tapada?",
+                "¿Cómo se trata una nariz congestionada?",
+                "¿Cuánto tiempo dura la congestión nasal?"
+            ],
+            "responses": [
+                "Cuando estés congestionado, concéntrate en mantener húmedos los conductos nasales y los senos nasales. Para mantener húmedos los conductos nasales, puedes: 1) Utilizar un humidificador o vaporizador. 2) Beber mucho líquido. Esto diluirá la mucosidad, lo que podría ayudar a prevenir la obstrucción de los senos nasales. 3) Colocar una toalla húmeda y tibia sobre la cara. Puede aliviar la incomodidad y abrir los conductos nasales."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Tos",
+            "patterns": [
+                "¿Cómo curar la tos?",
+                "¿Cómo se trata la tos?",
+                "¿Qué hacer si tengo tos?",
+                "¿Qué medicamento tomar si tengo tos?",
+                "¿Cómo deshacerse de la tos?"
+            ],
+            "responses": [
+                "1) Miel: - Use miel para tratar la tos, mezcle 2 cucharaditas (tsp) con agua tibia o una infusión de hierbas. Beba esta mezcla una o dos veces al día. No le dé miel a niños menores de 1 año. 2) Jengibre: - Prepare un té de jengibre calmante agregando 20-40 gramos (g) de rodajas de jengibre fresco a una taza de agua caliente. Deje reposar durante unos minutos antes de beber. Agregue miel o jugo de limón para mejorar el sabor y aliviar aún más la tos. 3) Líquidos: - Mantenerse hidratado es vital para quienes tienen tos o resfriado. Las investigaciones indican que beber líquidos a temperatura ambiente puede aliviar la tos, la secreción nasal y los estornudos."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Dolor de garganta",
+            "patterns": [
+                "¿Cómo se trata el dolor de garganta?",
+                "¿Qué hacer si me duele la garganta?",
+                "¿Qué medicamento tomar si me duele la garganta?",
+                "¿Cómo curar el dolor de garganta?"
+            ],
+            "responses": [
+                "1) Asegúrese de descansar bien y beber mucho líquido. 2) Inhale vapor. Deje correr agua caliente en un lavabo. Coloque una toalla sobre usted para atrapar el vapor y haga que la persona se incline sobre el lavabo con el agua corriendo. Dígale que respire profundamente por la boca y la nariz durante 5 a 10 minutos. Repita esto varias veces al día. 3) Haga que beba caldo de pollo o té tibio con miel. No le dé miel a un niño menor de 12 meses."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Problemas gastrointestinales",
+            "patterns": [
+                "¿Cómo se tratan los problemas de gases?",
+                "¿Qué hacer si tengo problemas gastrointestinales?",
+                "¿Qué medicamento tomar si tengo problemas de gases?",
+                "¿Cómo curar los problemas de gases?"
+            ],
+            "responses": [
+                "1) Reponga los líquidos corporales. 2) No tome medicamentos antidiarreicos, laxantes o analgésicos, a menos que lo indique un profesional médico. 3) Puede resultar útil tomar antiácidos, según lo recomiende un profesional de la salud. 4) Si es propenso a sufrir acidez estomacal con frecuencia, busque ayuda médica. 5) Consumir comidas que no sean picantes con regularidad puede aliviar los dolores de las úlceras. 6) Busque ayuda médica si las afecciones persisten o continúan empeorando."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Problemas de la piel",
+            "patterns": [
+                "¿Cómo se tratan los problemas de la piel?",
+                "¿Qué hacer si tengo una alergia en la piel?",
+                "¿Qué medicamento debo tomar si tengo alergia en la piel?",
+                "¿Cómo curar la alergia en la piel?"
+            ],
+            "responses": [
+                "1) Crema de hidrocortisona. 2) Ungüentos como la loción de calamina. 3) Antihistamínicos. 4) Compresas frías. 5) Baños de avena. 6) Hable con su médico sobre lo que es mejor para su sarpullido específico."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Dolor abdominal",
+            "patterns": [
+                "¿Cómo se trata el dolor abdominal?",
+                "¿Qué hacer si tengo dolor abdominal?",
+                "¿Qué medicamento tomar si tengo dolor abdominal?",
+                "¿Cómo curar el dolor abdominal?"
+            ],
+            "responses": [
+                "1) Ofrezca líquidos claros para beber, como agua, caldo o jugo de frutas diluido con agua. 2) Sirva alimentos suaves, como galletas saladas, pan simple, tostadas secas, arroz, gelatina o puré de manzana. 3) Evite los alimentos picantes o grasosos y las bebidas carbonatadas o con cafeína hasta 48 horas después de que hayan desaparecido todos los síntomas."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Moretones",
+            "patterns": [
+                "¿Cómo se tratan los moretones?",
+                "¿Qué hacer si me sale un moretón?",
+                "¿Qué medicamento tomar si me sale un moretón?",
+                "¿Cómo curar los moretones?"
+            ],
+            "responses": [
+                "1) Aplique hielo sobre el hematoma con una bolsa de hielo envuelta en una toalla. 2) Déjelo ahí durante 10 a 20 minutos. 3) Repita esto varias veces al día durante un día o dos, según sea necesario. 4) Comprima el área del hematoma si está hinchada, usando una venda elástica."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Dedo del pie roto",
+            "patterns": [
+                "¿Cómo se trata un dedo del pie roto?",
+                "¿Qué hacer si me rompo un dedo del pie?",
+                "¿Qué medicamento debo tomar si me rompo un dedo del pie?",
+                "¿Cómo curar un dedo del pie roto?"
+            ],
+            "responses": [
+                "1) Para ayudar a disminuir el dolor y la hinchazón de un dedo roto, eleve el pie, aplique hielo en la lesión y no apoye el pie. 2) Dependiendo de la gravedad de la fractura, es posible que sea necesario volver a colocar el dedo en su lugar (reducirlo) y algunas fracturas compuestas del dedo pueden requerir cirugía. 3) La mayoría de los dedos rotos se curan sin complicaciones en seis semanas."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Asfixia",
+            "patterns": [
+                "¿Cómo se trata la asfixia?",
+                "¿Qué hacer si me ocurre un atragantamiento?",
+                "¿Qué medicamento tomar si me atraganto?",
+                "¿Cómo curar la asfixia?"
+            ],
+            "responses": [
+                "1) Anímelos a seguir tosiendo para intentar despejar la obstrucción. 2) Pídales que intenten escupir el objeto si lo tienen en la boca. 3) Si toser no funciona, comience con golpes en la espalda y compresiones abdominales."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Herida",
+            "patterns": [
+                "¿Cómo se trata una herida?",
+                "¿Qué hacer si me hago una herida?",
+                "¿Qué medicamento tomar si me lastimo?",
+                "¿Cómo curar una herida?"
+            ],
+            "responses": [
+                "1) Enjuague el corte o la herida con agua y aplique presión con una gasa esterilizada, una venda o un paño limpio. 2) Si la sangre empapa la venda, coloque otra venda sobre la primera y siga aplicando presión. 3) Eleve la parte del cuerpo lesionada para disminuir el sangrado. 4) Cuando el sangrado se detenga, cubra la herida con una venda nueva y limpia."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Diarrea",
+            "patterns": [
+                "¿Cómo se trata la diarrea?",
+                "¿Qué hacer si tengo diarrea?",
+                "¿Qué medicamento tomar si tengo diarrea?",
+                "¿Cómo curar la diarrea?"
+            ],
+            "responses": [
+                "1) Hidratar el cuerpo es esencial para recuperarse de la diarrea. Esta hace que el cuerpo pierda electrolitos como el sodio y el cloruro. 2) Es muy recomendable evitar los productos lácteos, ya que pueden empeorar la diarrea en algunas personas. 3) Sin embargo, si la diarrea dura más de 2 días, busque atención médica para evitar complicaciones."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Congelación",
+            "patterns": [
+                "¿Cómo se trata una picadura de congelación?",
+                "¿Qué hacer si me pica una helada?",
+                "¿Qué medicamento tomar si me pica una congelación?",
+                "¿Cómo curar la congelación?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Agotamiento por calor",
+            "patterns": [
+                "¿Cómo se trata el agotamiento por calor?",
+                "¿Qué hacer si me siento agotado por el calor?",
+                "¿Qué medicamento tomar si me siento agotado?",
+                "¿Cómo curar el agotamiento por calor?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Golpe de calor",
+            "patterns": [
+                "¿Cómo se trata un golpe de calor?",
+                "¿Qué hacer si sufro un golpe de calor?",
+                "¿Qué medicamento debo tomar si sufro un accidente cerebrovascular?",
+                "¿Cómo curar un golpe de calor?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Picaduras de insectos",
+            "patterns": [
+                "¿Cómo se trata una picadura de insecto?",
+                "¿Qué hacer si me pica un insecto?",
+                "¿Qué medicamento tomar si me pica un insecto?",
+                "¿Cómo curar una picadura de insecto?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "sangrado de nariz",
+            "patterns": [
+                "¿Cómo se trata un sangrado nasal?",
+                "¿Qué hacer si me sangra la nariz?",
+                "¿Qué medicamento tomar si tengo sangrado nasal?",
+                "¿Cómo curar el sangrado nasal?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Músculo distendido",
+            "patterns": [
+                "¿Cómo se trata un tirón muscular?",
+                "¿Qué hacer si tengo un desgarro muscular?",
+                "¿Qué medicamento tomar si tengo un desgarro muscular?",
+                "¿Cómo curar un tirón muscular?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Sangrado rectal",
+            "patterns": [
+                "¿Cómo se trata el sangrado rectal?",
+                "¿Qué hacer si tengo sangrado rectal?",
+                "¿Qué medicamento tomar si tengo sangrado rectal?",
+                "¿Cómo curar el sangrado rectal?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Quemadura solar",
+            "patterns": [
+                "¿Cómo se tratan las quemaduras solares?",
+                "¿Qué hacer si me quemo con el sol?",
+                "¿Qué medicamento tomar si me quemo con el sol?",
+                "¿Cómo curar una quemadura solar?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Dolor de testículo",
+            "patterns": [
+                "¿Cómo se trata el dolor testicular?",
+                "¿Qué hacer si me duele el testículo?",
+                "¿Qué medicamento tomar si tengo dolor de testículo?",
+                "¿Cómo curar el dolor de testículo?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Vértigo",
+            "patterns": [
+                "¿Cómo se trata el vértigo?",
+                "¿Qué hacer si me da vértigo?",
+                "¿Qué medicamento tomar si tengo vértigo?",
+                "¿Cómo curar un vértigo?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Sangrado normal",
+            "patterns": [
+                "¿Cómo se trata el sangrado?",
+                "¿Qué hacer si tengo un sangrado?",
+                "¿Qué medicamento tomar si tengo sangrado?",
+                "¿Cómo curar el sangrado?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Lesión ocular",
+            "patterns": [
+                "¿Cómo se trata una lesión ocular?",
+                "¿Qué hacer si sufro una lesión en el ojo?",
+                "¿Qué medicamento tomar si me lesiono el ojo?",
+                "¿Cómo curar un ojo lesionado?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Quemadura química",
+            "patterns": [
+                "¿Cómo se trata una quemadura química?",
+                "¿Qué hacer si sufro una quemadura química?",
+                "¿Qué medicamento tomar si me quemo por productos químicos?",
+                "¿Cómo curar una quemadura química?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Veneno",
+            "patterns": [
+                "¿Cómo se trata un veneno?",
+                "¿Qué hacer si me da veneno?",
+                "¿Qué medicamento tomar si me enveneno?",
+                "¿Cómo curar el envenenamiento?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Dientes",
+            "patterns": [
+                "¿Cómo se tratan los dientes rotos?",
+                "¿Qué hacer si se me rompen los dientes?",
+                "¿Qué medicamento tomar si se me rompen los dientes?",
+                "¿Curar los dientes rotos?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "convulsión",
+            "patterns": [
+                "¿Cómo se trata una convulsión?",
+                "¿Qué hacer si tengo una convulsión?",
+                "¿Qué medicamento debo tomar si tengo una convulsión?",
+                "¿Cómo curar las convulsiones?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Lesión en la cabeza",
+            "patterns": [
+                "¿Cómo se trata una lesión en la cabeza?",
+                "¿Qué hacer si sufro una lesión en la cabeza?",
+                "¿Qué medicamento tomar si me lesiono en la cabeza?",
+                "¿Cómo curar una lesión en la cabeza?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Desmayo",
+            "patterns": [
+                "¿Cómo se trata el desmayo?",
+                "¿Qué hacer si siento que me voy a desmayar?",
+                "¿Qué medicamento tomar si me desmayo?",
+                "¿Cómo curar el desmayo?"
+            ],
+            "responses": [" "],
+            "context_set": ""
+        },
+        {
+            "tag": "Dolor de cabeza",
+            "patterns": [
+                "¿Cómo se trata un dolor de cabeza leve?",
+                "¿Qué hacer si tengo un dolor de cabeza leve?",
+                "¿Qué medicamento tomar si tengo un dolor de cabeza leve?",
+                "¿Cómo curar un dolor de cabeza leve?"
+            ],
+            "responses": [
+                "Administre ibuprofeno (Advil, Motrin), aspirina o paracetamol (Tylenol) para aliviar el dolor. Evite el ibuprofeno y otros AINE si la persona tiene insuficiencia cardíaca o renal. No le dé aspirina a un niño menor de 18 años."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Frío",
+            "patterns": [
+                "¿Cómo se trata un resfriado?",
+                "¿Qué hacer si tengo un resfriado leve?",
+                "¿Qué medicamento tomar si tengo un resfriado?",
+                "¿Cómo curar el resfriado?"
+            ],
+            "responses": [
+                "1) Mantenerse hidratado es absolutamente vital para ayudar a \"eliminar\" el resfriado, así como para deshacer la congestión y mantener la garganta lubricada. 2) La vitamina C es extremadamente útil para combatir las infecciones, así que ante la primera señal de un resfriado, asegúrese de aumentar su consumo comiendo muchas bayas, frutas cítricas, papayas, brócoli y pimientos rojos que lo ayudarán a mantenerse protegido. 3) Cuando se trata de combatir un resfriado, la vitamina D es esencial para ayudar a regular la respuesta inmunológica."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Erupción",
+            "patterns": [
+                "¿Cómo se tratan las erupciones?",
+                "¿Qué hacer si me sale un sarpullido?",
+                "¿Qué medicamento tomar si tengo un sarpullido?",
+                "¿Cómo curar la erupción?"
+            ],
+            "responses": [
+                "1) El aceite de oliva ayuda a la curación y promueve la renovación de la piel, ya que está repleto de vitamina E y antioxidantes. También suaviza la piel y reduce la picazón. 2) El bicarbonato de sodio es útil para secar las erupciones cutáneas y también para aliviar la picazón y la inflamación. 3) Aloe vera: gracias a sus propiedades antibacterianas, antifúngicas, antiinflamatorias y emolientes, el aloe vera es excelente para tratar una serie de afecciones de la piel, incluidas las erupciones, y también para calmar la piel."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "mordedura de serpiente",
+            "patterns": [
+                "¿Cómo se trata una mordedura de serpiente?",
+                "¿Qué hacer si me muerde una serpiente?",
+                "¿Qué medicamento tomar si me muerde una serpiente?",
+                "¿Cómo curar la mordedura de serpiente?",
+                "Me mordió una serpiente"
+            ],
+            "responses": [
+                "Mientras espera la ayuda médica: 1) Mueva a la persona fuera del alcance de la serpiente. 2) Haga que la persona se recueste con la herida debajo del corazón. 3) Mantenga a la persona tranquila y en reposo, permaneciendo lo más quieta posible para evitar que el veneno se propague. 4) Cubra la herida con un vendaje suelto y estéril. 5) Retire cualquier joya del área que fue mordida. 6) Quítese los zapatos si la pierna o el pie fueron mordidos."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "mordedura de animal",
+            "patterns": [
+                "¿Cómo se trata una mordedura de animal?",
+                "¿Cómo se trata una mordedura de mono?",
+                "¿Cómo se trata una mordedura de perro?",
+                "¿Qué hacer si me muerde un animal?",
+                "¿Qué medicamento tomar si me muerde un mono?",
+                "¿Cómo curar la mordedura de perro?",
+                "Me mordió un perro"
+            ],
+            "responses": [
+                "1) Lave la herida con agua tibia y jabón. 2) Presione suavemente un paño limpio sobre la herida para detener el flujo de sangre. 3) Aplique un ungüento antibacteriano sobre la herida. 4) Cúbrala con un vendaje estéril. 5) Esté atento a los signos de infección. 6) Busque ayuda si sospecha que hay una infección o una posible exposición a la rabia, o si la herida es grave."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Ahogo",
+            "patterns": [
+                "¿Qué hacer si alguien se está ahogando?",
+                "¿Qué hacer si alguien se ahoga?",
+                "¿Qué pasos debo seguir si veo a una persona ahogándose?",
+                "¿Cómo ayudar a una persona que se está ahogando?"
+            ],
+            "responses": [
+                "1) Coloque su oído cerca de la boca y la nariz de la persona. ¿Siente aire en su mejilla? 2) Observe si el pecho de la persona se mueve. Si la persona no respira, controle el pulso. 3) Controle el pulso de la persona durante 10 segundos. Si no hay pulso, comience la RCP."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "RCP",
+            "patterns": [
+                "¿Cómo realizar RCP?",
+                "¿Qué hacer en una RCP?",
+                "¿Qué pasos seguir en una RCP?",
+                "¿Cómo ayudar a una persona que se está ahogando mediante RCP?"
+            ],
+            "responses": [
+                "1) En el caso de un adulto o un niño, coloque la base de una mano en el centro del pecho, en la línea de los pezones. También puede empujar con una mano sobre la otra. En el caso de un bebé, coloque dos dedos sobre el esternón. 2) En el caso de un adulto o un niño, presione hacia abajo al menos 5 cm (2 pulgadas). Asegúrese de no presionar las costillas. En el caso de un bebé, presione hacia abajo aproximadamente 3,8 cm (1 1/2 pulgadas). Asegúrese de no presionar el extremo del esternón. 3) Realice solo compresiones torácicas, a un ritmo de 100 a 120 por minuto o más. Deje que el pecho se eleve por completo entre compresiones. 4) Verifique si la persona ha comenzado a respirar."
+            ],
+            "context_set": ""
+        },
+        {
+            "tag": "Fractura",
+            "patterns": [
+                "¿Cómo se trata una fractura?",
+                "¿Qué hacer si tengo una fractura?",
+                "¿Qué medicamento tomar si tengo una fractura?",
+                "¿Cómo curar una fractura?"
+            ],
+            "responses": [
+                "1) Detenga el sangrado. Aplique presión sobre la herida con un vendaje estéril, un paño limpio o una prenda de vestir limpia. 2) Inmovilice la zona lesionada. No intente realinear el hueso ni empujar hacia adentro un hueso que sobresale. Si ha recibido formación sobre cómo colocar una férula y no dispone de ayuda profesional, coloque una férula en la zona por encima y por debajo de los sitios de fractura. Colocar almohadillas en las férulas puede ayudar a reducir las molestias. 3) Aplique compresas de hielo para limitar la hinchazón y ayudar a aliviar el dolor. No aplique hielo directamente sobre la piel. Envuelva el hielo en una toalla, un trozo de tela o algún otro material. 4) Trate el shock. Si la persona se siente débil o respira con dificultad y rapidez, acuéstela con la cabeza ligeramente más baja que el tronco y, si es posible, eleve las piernas."
+            ],
+            "context_set": ""
+        }
+    ]
+}
