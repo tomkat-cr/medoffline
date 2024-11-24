@@ -1,6 +1,6 @@
 # MedOffLine ✨
 
-Asistente Médico Offline para Comunidades Remotas
+Asistente de IA Offline para Comunidades Remotas
 
 ![Hackathon Cover image](./assets/MedOffLine-cover-image.webp)
 
@@ -100,7 +100,7 @@ Puede financiarse mediante asociaciones con ONGs, gobiernos locales o iniciativa
 
 # MedOffLine ✨
 
-Offline Medical Assistant for Remote Communities
+Offline AI Assistant for Remote Communities
 
 ![Hackathon Cover image](./assets/1eb5de0b-c739-4547-920f-14d35f875db0.jpeg)
 
