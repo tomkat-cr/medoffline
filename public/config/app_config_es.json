@@ -5,7 +5,7 @@
     "APP_ICON": ":sparkles:",
     "APP_DESCRIPTION": "MedOffline es un asistente de IA sin conexión que proporciona orientación básica de primeros auxilios en comunidades con acceso limitado (o nulo) a Internet, ofreciendo:",
     "APP_FEATURES": "* Guías de primeros auxilios.\n* Diagnósticos preliminares basados en síntomas.\n* Información sobre medicamentos básicos (dosis, efectos secundarios).\n* Orientación sobre cuándo y dónde buscar asistencia médica.\n* Materiales educativos sobre la prevención de enfermedades comunes.",
-    "APP_INSTRUCTIONS": "Haga clic en el botón **Descargar** para instalar la aplicación en su smartphone Android.",
+    "APP_INSTRUCTIONS": "Haga clic en el botón **Descargar APK** para instalar la aplicación en su smartphone Android.",
     "CONVERSATION_DB_PATH": "./db/conversations.json",
     "DEFAULT_PAGE": "home"
 }

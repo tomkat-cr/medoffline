@@ -90,11 +90,11 @@ mongo_docker_down:
 	sh node_modules/genericsuite-be-scripts/scripts/mongo/run_mongo_docker.sh down
 
 mongo_backup:
-	# E.g. STAGE=qa BACKUP_DIR=/tmp/MedOffline make mongo_backup
+	# E.g. STAGE=qa BACKUP_DIR=/tmp/medoffline make mongo_backup
 	sh node_modules/genericsuite-be-scripts/scripts/mongo/db_mongo_backup.sh ${STAGE} ${BACKUP_DIR}
 
 mongo_restore:
-	# E.g. STAGE=qa RESTORE_DIR=/tmp/MedOffline make mongo_restore
+	# E.g. STAGE=qa RESTORE_DIR=/tmp/medoffline make mongo_restore
 	sh node_modules/genericsuite-be-scripts/scripts/mongo/db_mongo_restore.sh ${STAGE} ${RESTORE_DIR}
 
 ## Chalice Specific Commands
