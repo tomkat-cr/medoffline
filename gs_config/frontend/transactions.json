@@ -1,0 +1,92 @@
+{
+    "baseUrl": "transactions",
+    "title": "Transactions",
+    "name": "Transaction",
+    "component": "Transactions",
+    "dbApiUrl": "transactions",
+    "mandatoryFilters": {
+        "user_id": "{CurrentUserId}"
+    },
+    "defaultOrder": "update_date|desc",
+    "fieldElements": [
+        {
+            "name": "id",
+            "label": "ID",
+            "type": "_id",
+            "required": true,
+            "readonly": true,
+            "hidden": true
+        },
+        {
+            "name": "user_id",
+            "label": "User ID",
+            "type": "text",
+            "required": true,
+            "readonly": true,
+            "hidden": true
+        },
+        {
+            "name": "buyer_id",
+            "label": "Buyer",
+            "type": "select_component",
+            "dataPopulator": "UsersDataPopulator",
+            "component": "UsersSelect",
+            "required": true,
+            "hidden": false,
+            "listing": true
+        },
+        {
+            "name": "property_id",
+            "label": "Property",
+            "type": "select_component",
+            "dataPopulator": "PropertiesDataPopulator",
+            "component": "PropertiesSelect",
+            "required": true,
+            "hidden": false,
+            "listing": true
+        },
+        {
+            "name": "transaction_amount",
+            "label": "Transaction Amount",
+            "type": "number",
+            "required": true,
+            "listing": true
+        },
+        {
+            "name": "status",
+            "label": "Status",
+            "type": "select",
+            "required": true,
+            "select_elements": "TRANSACTION_STATUS",
+            "listing": true
+        },
+        {
+            "name": "observations",
+            "label": "Observations",
+            "type": "textarea",
+            "required": false,
+            "readonly": false,
+            "listing": false
+        },
+        {
+            "name": "creation_date",
+            "required": true,
+            "label": "Created",
+            "type": "datetime-local",
+            "readonly": true,
+            "hidden": false,
+            "default_value": "current_timestamp",
+            "listing": true
+        },
+        {
+            "name": "update_date",
+            "required": true,
+            "label": "Last update",
+            "type": "datetime-local",
+            "readonly": true,
+            "hidden": false,
+            "default_value": "current_timestamp",
+            "listing": false
+        }
+    ]
+}

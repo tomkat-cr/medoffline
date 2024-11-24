@@ -17,8 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
-## 0.0.1 (2024-11-22)
+## 0.0.1 (2024-11-15)
 ---
 
 ### New
-Project started for the [Hackathon Llama Impact Pan-LATAM](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es) organized by [Lablab.ai](https://lablab.ai) [GS-155].
+Project started for the [Llama Impact Pan-LATAM Hackathon](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es) organized by [Lablab.ai](https://lablab.ai) [GS-155].

@@ -1,0 +1,11 @@
+{
+    "APP_NAME": "MedOffline",
+    "APP_VERSION": "0.0.1",
+    "MAKER_MAME": "The FynBots",
+    "APP_ICON": ":sparkles:",
+    "APP_DESCRIPTION": "MedOffline is an offline AI Assistant that provides basic first aid guidance in communities with limited (or no) Internet access, offering:",
+    "APP_FEATURES": "* First aid guides.\n* Preliminary diagnostics based on symptoms.\n* Information on basic medications (dosages, side effects).\n* Guidance on when and where to seek medical assistance.\n* Educational materials on preventing common illnesses.",
+    "APP_INSTRUCTIONS": "Click on the **Download** button to install the App in your Android smartphone.",
+    "CONVERSATION_DB_PATH": "./db/conversations.json",
+    "DEFAULT_PAGE": "home"
+}
