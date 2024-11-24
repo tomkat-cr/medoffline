@@ -7,12 +7,27 @@ import streamlit as st
 
 from lib.codegen_streamlit_lib import StreamlitLib
 from lib.codegen_utilities import get_app_config
-from lib.codegen_utilities import log_debug
+# from lib.codegen_utilities import log_debug
 
 DEBUG = True
 
-app_config = get_app_config()
-cgsl = StreamlitLib(app_config)
+APK_DONWLOAD_URL = "https://www.carlosjramirez.com/downloads/medoffline.apk"
+
+
+def load_config(lang: str = None):
+    """
+    Load the configuration
+    """
+    if not lang:
+        lang = "es"
+    config_file = f"./public/config/app_config_{lang}.json"
+    app_config = get_app_config(config_file)
+    return StreamlitLib(app_config)
+
+
+if "lang" not in st.session_state:
+    st.session_state.lang = "es"
+cgsl = load_config(st.session_state.lang)
 
 
 # UI elements
@@ -25,28 +40,7 @@ def add_title():
 
     # Emoji shortcodes
     # https://streamlit-emoji-shortcodes-streamlit-app-gwckff.streamlit.app/
-
-    with st.container():
-        cols = st.columns(2)
-        with cols[0]:
-            st.image("./public/assets/MedOffLine_cover_image_2.png")
-        with cols[1]:
-            app_desc = get_app_description()
-            app_features = cgsl.get_par_value("APP_FEATURES")
-            st.title(cgsl.get_title())
-            st.write(app_desc)
-            st.write(app_features)
-            # App instructions
-            app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
-            st.write(app_instructions)
-            # Button to download a file from "./apk/app.apk"
-            st.download_button(
-                "Descargar APK",
-                "./apk/app-debug.apk",
-                "medoffline.apk")
-            # Logo
-            st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
-
+    pass
 
 def get_app_description():
     """
@@ -56,7 +50,7 @@ def get_app_description():
     app_desc = app_desc.replace(
         "{app_name}",
         f"**{st.session_state.app_name}**")
-    log_debug(f"App description: {app_desc}", debug=DEBUG)
+    # log_debug(f"App description: {app_desc}", debug=DEBUG)
     return app_desc
 
 
@@ -76,29 +70,46 @@ def add_sidebar():
 
 
 def add_main_content():
-    # cols = st.columns(1)
-    # with st.container():
-    #     app_desc = get_app_description()
-    #     with cols[0]:
-    #         st.write(app_desc)
-    # with st.container():
-    #     with cols[0]:
-    #         app_features = cgsl.get_par_value("APP_FEATURES")
-    #         st.write(app_features)
-    # with st.container():
-    #     with cols[0]:
-    #         app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
-    #         st.write(app_instructions)
-    pass
+    with st.container():
+        cols = st.columns(2)
+        with cols[0]:
+            st.image("./public/assets/MedOffLine_cover_image_2.png")
+        with cols[1]:
+            app_desc = get_app_description()
+            app_features = cgsl.get_par_value("APP_FEATURES")
+            st.title(cgsl.get_title())
+            st.write(app_desc)
+            st.write(app_features)
+            # App instructions
+            app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
+            st.write(app_instructions)
+            button_cols = st.columns(2)
+            with button_cols[0]:
+                # Button to download a file from "./apk/app.apk"
+                st.link_button(
+                    "Descargar APK",
+                    APK_DONWLOAD_URL)
+                # Languaje change
+            with button_cols[1]:
+                st.button(
+                    "English" if st.session_state.lang == "es" else "Español",
+                    key="change_lang"
+                )
+
+            # Logo
+            st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
 
 
-def add_check_buttons_pushed(
-        containers: dict,
-        question: str):
+def add_check_buttons_pushed():
     """
     Check buttons pushed
     """
-    pass
+    global cgsl
+    print("Check buttons pushed")
+    if st.session_state.change_lang:
+        st.session_state.lang = "en" if st.session_state.lang == "es" else "es"
+        print(f"Change lang to: {st.session_state.lang}")
+        st.rerun()
 
 
 def add_footer():
@@ -125,15 +136,7 @@ def page_1():
     add_main_content()
 
     # Check buttons pushed
-    # add_check_buttons_pushed(
-    #     {
-    #         "result_container": result_container,
-    #         "additional_result_container": additional_result_container,
-    #         "data_management_container": data_management_container,
-    #         "parameters_container": parameters_container,
-    #     },
-    #     question,
-    # )
+    add_check_buttons_pushed()
 
     # Footer
     with st.container():
