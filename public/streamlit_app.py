@@ -29,13 +29,23 @@ def add_title():
     with st.container():
         cols = st.columns(2)
         with cols[0]:
-            st.image("./assets/MedOffLine.circled.logo.500.png", width=300)
+            st.image("./public/assets/MedOffLine_cover_image_2.png")
         with cols[1]:
             app_desc = get_app_description()
             app_features = cgsl.get_par_value("APP_FEATURES")
             st.title(cgsl.get_title())
             st.write(app_desc)
             st.write(app_features)
+            # App instructions
+            app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
+            st.write(app_instructions)
+            # Button to download a file from "./apk/app.apk"
+            st.download_button(
+                "Descargar APK",
+                "./apk/app-debug.apk",
+                "medoffline.apk")
+            # Logo
+            st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
 
 
 def get_app_description():
@@ -66,7 +76,7 @@ def add_sidebar():
 
 
 def add_main_content():
-    cols = st.columns(1)
+    # cols = st.columns(1)
     # with st.container():
     #     app_desc = get_app_description()
     #     with cols[0]:
@@ -75,10 +85,11 @@ def add_main_content():
     #     with cols[0]:
     #         app_features = cgsl.get_par_value("APP_FEATURES")
     #         st.write(app_features)
-    with st.container():
-        with cols[0]:
-            app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
-            st.write(app_instructions)
+    # with st.container():
+    #     with cols[0]:
+    #         app_instructions = cgsl.get_par_value("APP_INSTRUCTIONS")
+    #         st.write(app_instructions)
+    pass
 
 
 def add_check_buttons_pushed(
@@ -112,12 +123,6 @@ def page_1():
 
     # Main content
     add_main_content()
-
-    # Button to download a file from "./apk/app.apk"
-    st.download_button(
-        "Download APK",
-        "./apk/app-debug.apk",
-        "medoffline.apk")
 
     # Check buttons pushed
     # add_check_buttons_pushed(
