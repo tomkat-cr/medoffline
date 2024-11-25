@@ -1,5 +1,5 @@
 """
-VitexBrain App
+MedOffLine App
 """
 from dotenv import load_dotenv
 

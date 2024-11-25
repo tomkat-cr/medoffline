@@ -8,6 +8,9 @@
 
 package com.example.medoffline;
 
+import static com.example.medoffline.LocalModelManagement.downloadZipFile;
+import static com.example.medoffline.LocalModelManagement.unzipGz;
+
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -46,30 +49,92 @@ import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.pytorch.executorch.LlamaCallback;
 import org.pytorch.executorch.LlamaModule;
 
 public class MainActivity extends AppCompatActivity implements Runnable, LlamaCallback {
-  private static final String RESOURCE_PATH = "/data/local/tmp/llama/";
-  private static final String DEFAULT_MODEL_PATH = getFirstModelFilePath();
-  private static final String DEFAULT_TOKENIZER_PATH = "/data/local/tmp/llama/tokenizer.bin";
-  private static final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
-  private static final Float DEFAULT_TEMPERATURE = 0.1f;
+  private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
+  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/2/download";
+  private final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
+  private final Float DEFAULT_TEMPERATURE = 0.1f;
 
-  private static String getFirstModelFilePath() {
-    File modelDir = new File(RESOURCE_PATH);
+  private String getBaseModelsPath() {
+    if (MODEL_DEFAULT_PATH != null) {
+      return MODEL_DEFAULT_PATH;
+    }
+    return getFilesDir().getAbsolutePath() + "/llama";
+  }
+
+  private String getFirstModelFilePath(String resourcePath) throws InterruptedException, ExecutionException {
+    // Verify the RESOURCE_PATH directory existentce, if not, creates it (including sub-dirs)
+    File modelDir = new File(resourcePath);
+    System.out.println("Directory: " + modelDir);
+    if (!modelDir.exists()) {
+      System.out.println("Not exist, creating it...");
+        boolean isCreated = modelDir.mkdirs();
+      if (!isCreated) {
+          throw new RuntimeException("Failed to create directory: " + modelDir);
+      } else {
+        System.out.println("Directory created successfully: " + modelDir);
+      }
+    }
     File model =
         Arrays.stream(modelDir.listFiles())
             .filter(file -> file.getName().endsWith(".pte"))
             .findFirst()
-            .get();
-    return model.getAbsolutePath();
+            .orElse(null);
+    String modelPath = null;
+    if (model != null) {
+        modelPath = model.getAbsolutePath();
+        System.out.println("modelPath: " + modelPath);
+    } else {
+        System.out.println("Downloading: " + MODEL_URL + " to " + resourcePath + "/model.tar.gz...");
+        // If the resourcePath + "/model.tar.gz" file exists, skip downloading
+        File modelTarGz = new File(resourcePath + "/model.tar.gz");
+        if (modelTarGz.exists()) {
+          System.out.println("File exists: " + modelTarGz);
+        } else {
+          downloadZipFile(MODEL_URL, resourcePath + "/model.tar.gz");
+        }
+        System.out.println("Unzipping: " + resourcePath + "/model.tar.gz to " + resourcePath + "...");
+        try {
+            unzipGz(resourcePath + "/model.tar.gz", resourcePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("File unzipped...");
+
+        // print the modelDir files
+        System.out.println("Files in " + resourcePath);
+        File[] files = modelDir.listFiles();
+        for (File file : files) {
+            System.out.println("File: " + file.getName());
+        }
+
+        model = Arrays.stream(modelDir.listFiles())
+            .filter(file -> file.getName().endsWith(".pte"))
+            .findFirst()
+            .orElse(null);
+        if (model != null) {
+            modelPath = model.getAbsolutePath();
+        } else {
+            // throw new RuntimeException("[2] No model file found in " + resourcePath);
+            System.out.println("[2] No model file found in " + resourcePath);
+        }
+    }
+    if (modelPath == null) {
+        // throw new RuntimeException("[1] No model file found in " + resourcePath);
+        System.out.println("[1] No model file found in " + resourcePath);
+    }
+    return modelPath;
   }
 
   private static ModelRunner mModelRunner;
@@ -103,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   private View progressBar;
   private View progressBarText;
   private ProgressBar progressBarWheel;
+  private View downloadingModelText;
+  // private View unzipingModelText;
 
   @Override
   public void onResult(String result) {
@@ -255,11 +322,16 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     progressBar = findViewById(R.id.progressBar);
     progressBarText = findViewById(R.id.progressBarText);
     progressBarWheel = findViewById(R.id.progressBarWheel);
+    downloadingModelText = findViewById(R.id.downloadingModelText);
+    // unzipingModelText = findViewById(R.id.unzipingModelText);
+
     View mainContent = findViewById(R.id.main_content);
 
     progressBar.setVisibility(View.VISIBLE);
     progressBarText.setVisibility(View.VISIBLE);
     progressBarWheel.setVisibility(View.VISIBLE);
+    // downloadingModelText.setVisibility(View.GONE);
+    // unzipingModelText.setVisibility(View.GONE);
     mainContent.setVisibility(View.GONE);
 
     if (Build.VERSION.SDK_INT >= 21) {
@@ -307,14 +379,51 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     new Handler(Looper.getMainLooper()).post(() -> {
       // Se initial values for model path, tokenizer path, model type and temperature
       // mSettingsFields = new SettingsFields();
+
+      String RESOURCE_PATH = getBaseModelsPath();
+      String DEFAULT_MODEL_PATH = null;
+      // Increase the timeout by running getFirstModelFilePath in a separate thread
+      final String[] modelPathHolder = new String[1];
+      final Exception[] exceptionHolder = new Exception[1];
+      Thread modelPathThread = new Thread(() -> {
+        try {
+          modelPathHolder[0] = getFirstModelFilePath(RESOURCE_PATH);
+        } catch (Exception e) {
+          exceptionHolder[0] = e;
+        }
+      });
+      modelPathThread.start();
+      try {
+        int timeoutMs = 2*60*1000; // Wait for up to 2 minutes
+        modelPathThread.join(timeoutMs);
+        if (modelPathThread.isAlive()) {
+          modelPathThread.interrupt();
+          throw new RuntimeException("Timeout waiting for model file path");
+        }
+        if (exceptionHolder[0] != null) {
+          throw exceptionHolder[0];
+        }
+        DEFAULT_MODEL_PATH = modelPathHolder[0];
+      } catch (InterruptedException e) {
+        throw new RuntimeException("Thread was interrupted", e);
+      } catch (ExecutionException e) {
+        throw new RuntimeException("Execution exception", e);
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
+      downloadingModelText.setVisibility(View.GONE);
+
+      String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.bin";
+
       mCurrentSettingsFields.saveModelPath(DEFAULT_MODEL_PATH);
       mCurrentSettingsFields.saveTokenizerPath(DEFAULT_TOKENIZER_PATH);
       mCurrentSettingsFields.saveModelType(DEFAULT_MODEL_TYPE);
       mCurrentSettingsFields.saveParameters((double) DEFAULT_TEMPERATURE);
       mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
-      new Thread(() -> {
+        String finalDEFAULT_MODEL_PATH = DEFAULT_MODEL_PATH;
+        new Thread(() -> {
         // Load the model with default values
-        setLocalModel(DEFAULT_MODEL_PATH, DEFAULT_TOKENIZER_PATH, DEFAULT_TEMPERATURE);
+        setLocalModel(finalDEFAULT_MODEL_PATH, DEFAULT_TOKENIZER_PATH, DEFAULT_TEMPERATURE);
         runOnUiThread(() -> {
           // Hide the progress bar and show the main content
           mainContent.setVisibility(View.VISIBLE);

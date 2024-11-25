@@ -88,13 +88,11 @@ Puede financiarse mediante asociaciones con ONGs, gobiernos locales o iniciativa
 ## Technologia utilizada
 
 * Modelos de Meta Llama: 3.2 1B/3B, Llama 3.1 70B
-* MongoDB Atlas
-* Executorch
+* Pytorch Executorch
 * Java
 * Python
 * Streamlit
-* GenericSuite
-* AI/ML API o Sambanova
+* Kaggle
 
 <hr>
 
@@ -188,13 +186,11 @@ It can be funded through partnerships with NGOs, local governments, or public he
 ## Technology Used
 
 * Meta Llama models: 3.2 1B/3B, Llama 3.1 70B
-* MongoDB Atlas
-* Executorch
+* Pytorch Executorch
 * Java
 * Python
 * Streamlit
-* GenericSuite
-* AI/ML API or Sambanova
+* Kaggle
 
 <hr>
 
@@ -217,6 +213,56 @@ Navigate to the project directory:
 
 ```bash
 cd medoffline
+```
+
+- The website sources can be found in the [public](./public/) directory.
+
+- The Android applicacion can be opened in Android Studio from the directory [android/MedOffLine](./android/MedOffLine)
+
+- The AI Model used in the Android app can be found in [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte).
+
+- The Model was generated following these instructions:
+
+1. Follow the instructions to install Executorch on your computer:
+    * [https://github.com/pytorch/executorch/tree/main/examples/models/llama#step-1-setup](https://github.com/pytorch/executorch/tree/main/examples/models/llama#step-1-setup)
+    * [https://github.com/pytorch/executorch/tree/main/examples/models/llama#step-3-run-on-your-computer-to-validate](https://github.com/pytorch/executorch/tree/main/examples/models/llama#step-3-run-on-your-computer-to-validate)
+
+2. Download the Llama 3.2 lightweight model and tokenizer from [the Meta Llama website](https://www.llama.com/llama-downloads) and copy it to a local directory, e.g. `/home/username/.llama/checkpoints`.
+
+3. Create the output directory, e.g. `/home/username/llama_models`.
+
+4. Convert the model to `.pte` format:
+
+```bash
+LLAMA_CHECKPOINT="/home/username/.llama/checkpoints/Llama3.2-3B-Instruct/consolidated.00.pth"
+LLAMA_PARAMS="/home/username/.llama/checkpoints/Llama3.2-3B-Instruct/params.json"
+OUTPUT_FILE="/home/username/llama_models/llama32_3b_4096_kv_sdpa_xnn_qe_4_32.pte"
+MAX_SEQ_LENGTH="4096"
+
+python -m examples.models.llama.export_llama \
+    --checkpoint $LLAMA_CHECKPOINT \
+	-p $LLAMA_PARAMS \
+	-kv \
+	--use_sdpa_with_kv_cache \
+	-X \
+	-qmode 8da4w \
+	--group_size 128 \
+	--max_seq_length $MAX_SEQ_LENGTH \
+	-d fp32 \
+	--metadata '{"get_bos_id":128000, "get_eos_ids":[128009, 128001]}' \
+	--embedding-quantize 4,32 \
+	--output_name $OUTPUT_FILE
+```
+
+5. Test the `.pte` model:
+
+```bash
+PTE_MODELS_PATH="/home/username/llama_models"
+TOKENIZER_MODEL="$PTE_MODELS_PATH/tokenizer.model"
+PTE_SOURCE_FILE="$PTE_MODELS_PATH/llama32_3b_4096_kv_sdpa_xnn_qe_4_32.pte"
+PROMPT="What the the capital of France?"
+
+cmake-out/examples/models/llama/llama_main --model_path="$PTE_SOURCE_FILE" --tokenizer_path="$TOKENIZER_MODEL" --prompt="$PROMPT"
 ```
 
 <!--
@@ -256,7 +302,7 @@ Replace `TOGETHER_AI_API_KEY` and other access tokens with your actual Together.
 To use a MongoDB database, comment out `DB_TYPE=json`, uncomment `# DB_TYPE=mongodb`, and replace `YOUR_MONGODB_URI`, `YOUR_MONGODB_DB_NAME`, and `YOUR_MONGODB_COLLECTION_NAME` with your actual MongoDB URI, database name, and collection name, respectively.
 -->
 
-### Run the Application
+### Run the Streamlit application
 
 ```bash
 # With Make
@@ -281,10 +327,10 @@ Go to your favorite Browser and open the URL provided by the application.
 ## Screenshots
 
 Main Page
-![App Screenshot](./assets/screenshots/Screenshot%202024-11-17%20at%2010.11.29 AM.png)
+![App Screenshot](./assets/screenshots/Screenshot%202024-11-25%20at%201.25.27 PM.png)
 
-Main Page with IBM watsonx assistan opened
-![App Screenshot](./assets/screenshots/Screenshot%202024-11-17%20at%2010.13.26 AM.png)
+App UI
+![App UI Screenshot](./assets/screenshots/IMG_0732.jpeg)
 
 ## Context
 
@@ -294,11 +340,9 @@ This project was developed as part of the [Llama Impact Pan-LATAM Hackathon](htt
 
 - Project submission page: [MedOffLine](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots/medoffline)
 
-- Presentation video: [Llama Impact Pan-LATAM Hackathon - MedOffLine App Video Presentation](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots/medoffline)
+- Presentation video: [Llama Impact Pan-LATAM Hackathon - MedOffLine App Video](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots/medoffline)
 
-<!--
-- Presentation document: [Llama Impact Pan-LATAM Hackathon - MedOffLine App Maker Presentation](https://storage.googleapis.com/lablab-static-eu/presentations/submissions/xxx.pdf)
--->
+- Presentation document: [Llama Impact Pan-LATAM Hackathon - MedOffLine Presentation](https://storage.googleapis.com/lablab-static-eu/presentations/submissions/cm3xdpe8l00113b713e90gmb5/cm3xdpe8l00113b713e90gmb5-1732561102890_zq1alr0cwl.pdf)
 
 - Team: [The FynBots](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots)
 
