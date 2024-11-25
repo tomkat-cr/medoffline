@@ -21,4 +21,6 @@ public interface ModelRunnerCallback {
   void onStats(String token);
 
   void onGenerationStopped();
+  
+  void onError(String error);
 }

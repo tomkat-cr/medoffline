@@ -22,6 +22,7 @@ public class ModelRunner implements LlamaCallback {
 
   String mModelFilePath = "";
   String mTokenizerFilePath = "";
+  Float mTemperature = 0.8f;
 
   ModelRunnerCallback mCallback = null;
 
@@ -44,8 +45,9 @@ public class ModelRunner implements LlamaCallback {
     mModelFilePath = modelFilePath;
     mTokenizerFilePath = tokenizerFilePath;
     mCallback = callback;
+    mTemperature = temperature;
 
-    mModule = new LlamaModule(mModelFilePath, mTokenizerFilePath, 0.8f);
+    mModule = new LlamaModule(mModelFilePath, mTokenizerFilePath, mTemperature);
     mHandlerThread = new HandlerThread("ModelRunner");
     mHandlerThread.start();
     mHandler = new ModelRunnerHandler(mHandlerThread.getLooper(), this);
@@ -91,8 +93,20 @@ class ModelRunnerHandler extends Handler {
       int status = mModelRunner.mModule.load();
       mModelRunner.mCallback.onModelLoaded(status);
     } else if (msg.what == MESSAGE_GENERATE) {
-      mModelRunner.mModule.generate((String) msg.obj, mModelRunner);
-      mModelRunner.mCallback.onGenerationStopped();
+      try {
+        mModelRunner.mModule.generate((String) msg.obj, mModelRunner);
+      } catch (Exception e) {
+        // Handle the exception, e.g., log it and notify the callback
+        e.printStackTrace();
+        mModelRunner.mCallback.onError(e.getMessage() + " " + e.getCause() + " | MOL-HMSG-E-100");
+      }
+      try {
+        mModelRunner.mCallback.onGenerationStopped();
+      } catch (Exception e) {
+        // Handle the exception, e.g., log it and notify the callback
+        e.printStackTrace();
+        mModelRunner.mCallback.onError(e.getMessage() + " " + e.getCause() + " | MOL-HMSG-E-200");
+      }
     }
   }
 }

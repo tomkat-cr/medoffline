@@ -127,6 +127,8 @@ public class LlmBenchmarkRunner extends Activity implements ModelRunnerCallback 
     }
   }
 
+  public void onError(String msg) {}
+
   private double extractTPS(final String tokens) {
     final Matcher m = Pattern.compile("\\d+\\.?\\d*").matcher(tokens);
     if (m.find()) {

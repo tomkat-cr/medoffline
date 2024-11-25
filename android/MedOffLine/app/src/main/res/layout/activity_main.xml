@@ -34,8 +34,8 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
                     android:paddingTop="20dp"
-                    android:text="MedOffLine ✨"
                     android:textColor="@android:color/white"
+                    android:text="MedOffLine✨"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -276,6 +276,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading MedOffLine✨"
+            android:textColor="@android:color/black"
+            android:paddingEnd="10dp" />
+
+        <TextView
+            android:id="@+id/downloadingModelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Downloading model, please be patient..."
             android:textColor="@android:color/black"
             android:paddingEnd="10dp" />
 
