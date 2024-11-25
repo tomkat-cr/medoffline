@@ -27,7 +27,8 @@ import org.pytorch.executorch.LlamaModule;
 public class PerfTest implements LlamaCallback {
 
   private static final String RESOURCE_PATH = "/data/local/tmp/llama/";
-  private static final String TOKENIZER_BIN = "tokenizer.bin";
+  // private static final String TOKENIZER_BIN = "tokenizer.bin";
+  private static final String TOKENIZER_BIN = "tokenizer.model";
 
   private final List<String> results = new ArrayList<>();
   private final List<Float> tokensPerSecond = new ArrayList<>();
