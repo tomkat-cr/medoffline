@@ -62,21 +62,23 @@ import org.pytorch.executorch.LlamaModule;
 
 public class MainActivity extends AppCompatActivity implements Runnable, LlamaCallback {
   private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
-  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/2/download";
+  // private static final String MODEL_DEFAULT_PATH = null;
+  private static final String MODEL_URL_VERSION = "2";
+  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/" + MODEL_URL_VERSION + "/download";
   private final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
   private final Float DEFAULT_TEMPERATURE = 0.1f;
 
   private String getBaseModelsPath() {
-    if (MODEL_DEFAULT_PATH != null) {
-      return MODEL_DEFAULT_PATH;
-    }
+    // if (MODEL_DEFAULT_PATH != null) {
+    //   return MODEL_DEFAULT_PATH;
+    // }
     return getFilesDir().getAbsolutePath() + "/llama";
   }
 
-  private String getFirstModelFilePath(String resourcePath) throws InterruptedException, ExecutionException {
-    // Verify the RESOURCE_PATH directory existentce, if not, creates it (including sub-dirs)
+  private String getFirstModelFilePath(String resourcePath, String fileExtension) {
     File modelDir = new File(resourcePath);
-    System.out.println("Directory: " + modelDir);
+
+    System.out.println("Checking directory: " + modelDir);
     if (!modelDir.exists()) {
       System.out.println("Not exist, creating it...");
         boolean isCreated = modelDir.mkdirs();
@@ -86,54 +88,85 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         System.out.println("Directory created successfully: " + modelDir);
       }
     }
+
+    // Print the modelDir files
+    System.out.println("Files in " + resourcePath);
+    File[] files = modelDir.listFiles();
+    for (File file : files) {
+        System.out.println("File: " + file.getName());
+    }
+
     File model =
         Arrays.stream(modelDir.listFiles())
-            .filter(file -> file.getName().endsWith(".pte"))
+            // .filter(file -> file.getName().endsWith(".pte"))
+            .filter(file -> file.getName().endsWith(fileExtension))
             .findFirst()
             .orElse(null);
     String modelPath = null;
     if (model != null) {
         modelPath = model.getAbsolutePath();
-        System.out.println("modelPath: " + modelPath);
+        System.out.println("getFirstModelFilePath | modelPath: " + modelPath);
+    }
+    return modelPath;
+  }
+
+  private String getWorkingModelFilePath(String resourcePath) throws InterruptedException, ExecutionException {
+    // Verify the RESOURCE_PATH directory existentce, if not, creates it (including sub-dirs)
+    File modelDir = new File(resourcePath);
+
+    // File model =
+    //     Arrays.stream(modelDir.listFiles())
+    //         .filter(file -> file.getName().endsWith(".pte"))
+    //         .findFirst()
+    //         .orElse(null);
+    // String modelPath = null;
+    // if (model != null) {
+    //     modelPath = model.getAbsolutePath();
+    //     System.out.println("modelPath: " + modelPath);
+
+    String modelPath = getFirstModelFilePath(resourcePath, ".pte");
+    if (modelPath != null) {
+      return modelPath;
+    }
+    
+    System.out.println("Downloading: " + MODEL_URL + " to " + resourcePath + "/model.tar.gz...");
+    // If the resourcePath + "/model.tar.gz" file exists, skip downloading
+    File modelTarGz = new File(resourcePath + "/model.tar.gz");
+    if (modelTarGz.exists()) {
+      System.out.println("File exists: " + modelTarGz);
     } else {
-        System.out.println("Downloading: " + MODEL_URL + " to " + resourcePath + "/model.tar.gz...");
-        // If the resourcePath + "/model.tar.gz" file exists, skip downloading
-        File modelTarGz = new File(resourcePath + "/model.tar.gz");
-        if (modelTarGz.exists()) {
-          System.out.println("File exists: " + modelTarGz);
-        } else {
-          downloadZipFile(MODEL_URL, resourcePath + "/model.tar.gz");
-        }
-        System.out.println("Unzipping: " + resourcePath + "/model.tar.gz to " + resourcePath + "...");
-        try {
-            unzipGz(resourcePath + "/model.tar.gz", resourcePath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("File unzipped...");
-
-        // print the modelDir files
-        System.out.println("Files in " + resourcePath);
-        File[] files = modelDir.listFiles();
-        for (File file : files) {
-            System.out.println("File: " + file.getName());
-        }
-
-        model = Arrays.stream(modelDir.listFiles())
-            .filter(file -> file.getName().endsWith(".pte"))
-            .findFirst()
-            .orElse(null);
-        if (model != null) {
-            modelPath = model.getAbsolutePath();
-        } else {
-            // throw new RuntimeException("[2] No model file found in " + resourcePath);
-            System.out.println("[2] No model file found in " + resourcePath);
-        }
+      downloadZipFile(MODEL_URL, resourcePath + "/model.tar.gz");
     }
-    if (modelPath == null) {
-        // throw new RuntimeException("[1] No model file found in " + resourcePath);
-        System.out.println("[1] No model file found in " + resourcePath);
+
+    System.out.println("Unzipping: " + resourcePath + "/model.tar.gz to " + resourcePath + "...");
+    try {
+        unzipGz(resourcePath + "/model.tar.gz", resourcePath);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
+    System.out.println("File unzipped...");
+
+    // model = Arrays.stream(modelDir.listFiles())
+    //     .filter(file -> file.getName().endsWith(".pte"))
+    //     .findFirst()
+    //     .orElse(null);
+    // if (model != null) {
+    //     modelPath = model.getAbsolutePath();
+
+    // Try gain after download and unzip...
+    modelPath = getFirstModelFilePath(resourcePath, ".pte");
+    if (modelPath != null) {
+        return modelPath;
+    }
+
+    // Try the /tmp directory
+    modelPath = getFirstModelFilePath(MODEL_DEFAULT_PATH, ".pte");
+    if (modelPath != null) {
+      return modelPath;
+    }
+
+    // throw new RuntimeException("[1] No model file found in " + resourcePath);
+    System.out.println("[1] No model file found in " + resourcePath);
     return modelPath;
   }
 
@@ -217,7 +250,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     mModule =
         new LlamaModule(
             ModelUtils.getModelCategory(
-                mCurrentSettingsFields.getModelType(), mCurrentSettingsFields.getBackendType()),
+              mCurrentSettingsFields.getModelType(),
+              mCurrentSettingsFields.getBackendType()
+            ),
             modelPath,
             tokenizerPath,
             temperature);
@@ -377,24 +412,22 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
     // Call setLocalModel with default values at startup
     new Handler(Looper.getMainLooper()).post(() -> {
-      // Se initial values for model path, tokenizer path, model type and temperature
-      // mSettingsFields = new SettingsFields();
-
+      // Set initial values for model path, tokenizer path, model type and temperature
       String RESOURCE_PATH = getBaseModelsPath();
       String DEFAULT_MODEL_PATH = null;
-      // Increase the timeout by running getFirstModelFilePath in a separate thread
+      // Increase the timeout by running getWorkingModelFilePath in a separate thread
       final String[] modelPathHolder = new String[1];
       final Exception[] exceptionHolder = new Exception[1];
       Thread modelPathThread = new Thread(() -> {
         try {
-          modelPathHolder[0] = getFirstModelFilePath(RESOURCE_PATH);
+          modelPathHolder[0] = getWorkingModelFilePath(RESOURCE_PATH);
         } catch (Exception e) {
           exceptionHolder[0] = e;
         }
       });
       modelPathThread.start();
       try {
-        int timeoutMs = 2*60*1000; // Wait for up to 2 minutes
+        int timeoutMs = 10*60*1000; // Wait for up to 2 minutes
         modelPathThread.join(timeoutMs);
         if (modelPathThread.isAlive()) {
           modelPathThread.interrupt();
@@ -413,15 +446,16 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       }
       downloadingModelText.setVisibility(View.GONE);
 
-      String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.bin";
+      // String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.bin";
+      String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.model";
 
       mCurrentSettingsFields.saveModelPath(DEFAULT_MODEL_PATH);
       mCurrentSettingsFields.saveTokenizerPath(DEFAULT_TOKENIZER_PATH);
       mCurrentSettingsFields.saveModelType(DEFAULT_MODEL_TYPE);
       mCurrentSettingsFields.saveParameters((double) DEFAULT_TEMPERATURE);
       mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
-        String finalDEFAULT_MODEL_PATH = DEFAULT_MODEL_PATH;
-        new Thread(() -> {
+      String finalDEFAULT_MODEL_PATH = DEFAULT_MODEL_PATH;
+      new Thread(() -> {
         // Load the model with default values
         setLocalModel(finalDEFAULT_MODEL_PATH, DEFAULT_TOKENIZER_PATH, DEFAULT_TEMPERATURE);
         runOnUiThread(() -> {
