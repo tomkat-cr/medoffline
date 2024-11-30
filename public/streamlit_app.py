@@ -267,19 +267,29 @@ def team_page():
         cgsl.get_par_value("TEAM_PAGE_BUTTON_URL"))
 
     # Meet the team
-    st.subheader(cgsl.get_par_value("MEET_THE_TEAM_TEXT"))
+    st.header(cgsl.get_par_value("MEET_THE_TEAM_TEXT"))
 
     # Team members
     team_members = cgsl.get_par_value("TEAM_MEMBERS")
     cols = st.columns(2)
     curr_col = 0
+    member_in_single_line = True
     for member in team_members:
+        if member_in_single_line:
+            cols = st.columns(2)
+            with cols[0]:
+                st.subheader(f"**{member['NAME']}**")
+            with cols[1]:
+                st.link_button("Linkedin", member['LINKEDIN'])
+            st.write(member['ROLE_NAME'])
+            st.write(member['ROLE_DESCRIPTION'])
+            continue
         if curr_col == 2:
             curr_col = 0
             cols = st.columns(2)
         with cols[curr_col]:
             curr_col += 1
-            st.write(f"**{member['NAME']}**")
+            st.subheader(f"**{member['NAME']}**")
             st.write(member['ROLE_NAME'])
             st.write(member['ROLE_DESCRIPTION'])
             st.link_button("Linkedin", member['LINKEDIN'])

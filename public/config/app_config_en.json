@@ -24,10 +24,10 @@
     "HACKATHON_DESCRIPTION": "This project was created to participate in the Llama Impact Pan-Latam Hackathon by lablab.ai",
     "HACKATHON_SUBMISSION_PAGE_BUTTON_TEXT": "Pubmission page",
     "HACKATHON_SUBMISSION_PAGE_BUTTON_URL": "https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots/medoffline",
-    "TEAM_DESCRIPTION": "The Fynbots: We are a team of developers, designers, and data scientists who are passionate about using technology to improve healthcare access in underserved communities. Our goal is to empower individuals with limited access to medical resources by providing them with a reliable source of medical information and guidance.",
+    "TEAM_DESCRIPTION": "**The Fynbots** is a team of developers, designers, and data scientists who are passionate about using technology to improve healthcare access in underserved communities. Our goal is to empower individuals with limited access to medical resources by providing them with a reliable source of medical information and guidance.",
     "TEAM_PAGE_BUTTON_TEXT": "Team Page",
     "TEAM_PAGE_BUTTON_URL": "https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots",
-    "MEET_THE_TEAM_TEXT": "Meet the Team",
+    "MEET_THE_TEAM_TEXT": "Meet the team founders",
     "TEAM_MEMBERS": [
         {
             "NAME": "Carlos J. Ramírez",
