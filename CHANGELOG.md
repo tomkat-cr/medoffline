@@ -17,6 +17,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.0.2 (2024-11-30)
+---
+
+### New
+Landing page: add source code, presentations, team and invalid URL pages.
+
+### Changes
+All README.md sections translated to spanish and english.
+
+
 ## 0.0.1 (2024-11-22)
 ---
 

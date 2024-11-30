@@ -7,5 +7,41 @@
     "APP_FEATURES": "* Guías de primeros auxilios.\n* Diagnósticos preliminares basados en síntomas.\n* Información sobre medicamentos básicos (dosis, efectos secundarios).\n* Orientación sobre cuándo y dónde buscar asistencia médica.\n* Materiales educativos sobre la prevención de enfermedades comunes.",
     "APP_INSTRUCTIONS": "Haga clic en el botón **Descargar APK** para instalar la aplicación en su smartphone Android.",
     "CONVERSATION_DB_PATH": "./db/conversations.json",
-    "DEFAULT_PAGE": "home"
+    "DEFAULT_PAGE": "home",
+    "DOWNLOAD_BUTTON_TEXT": "Descargar APK",
+    "HOME_BUTTON_TEXT": "Página de Inicio",
+    "SOURCE_CODE_BUTTON_TEXT": "Código Fuente",
+    "PRESENTATIONS_BUTTON_TEXT": "Presentaciones",
+    "TEAM_BUTTON_TEXT": "El Equipo",
+    "SOURCE_CODE_URL_TEXT": "Código Fuente en Github",
+    "KAGGLE_MODELS_URL_TEXT": "Modelos en Kaggle",
+    "PRESENTATION_VIDEO_URL_TEXT": "Vídeo Presentación (Youtube)",
+    "PRESENTATION_VIDEO_YOUTUBE_URL": "https://youtu.be/R-rAKMbKVus",
+    "PRESENTATION_DOCUMENT_URL_TEXT": "Documento (PDF)",
+    "PRESENTATION_DOCUMENT_STORAGE_URL_TEXT": "https://storage.googleapis.com/lablab-static-eu/presentations/submissions/cm3xdpe8l00113b713e90gmb5/cm3xdpe8l00113b713e90gmb5-1732561102890_zq1alr0cwl.pdf",
+    "PROJECT_DESCRIPTION_URL_TEXT": "Descripcion del proyecto (LinkedIn)",
+    "PROJECT_DESCRIPTION_STORAGE_URL_TEXT": "https://www.linkedin.com/pulse/medoffline-empoderando-comunidades-con-orientaci%C3%B3n-m%C3%A9dica-ramirez-spd4e",
+    "HACKATHON_DESCRIPTION": "Este projecto se creo para participar en el Hackathon Llama Impact Pan-Latam de lablab.ai",
+    "HACKATHON_SUBMISSION_PAGE_BUTTON_TEXT": "Página de la entrega",
+    "HACKATHON_SUBMISSION_PAGE_BUTTON_URL": "https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots/medoffline",
+    "TEAM_DESCRIPTION": "The Fynbots: Somos un equipo de desarrolladores, diseñadores y científicos de datos apasionados por utilizar la tecnología para mejorar el acceso a la atención médica en comunidades desatendidas. Nuestro objetivo es empoderar a las personas con acceso limitado a recursos médicos proporcionándoles una fuente confiable de información y orientación médica.",
+    "TEAM_PAGE_BUTTON_TEXT": "Página del Equipo",
+    "TEAM_PAGE_BUTTON_URL": "https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots",
+    "MEET_THE_TEAM_TEXT": "Conoce al Equipo",
+    "TEAM_MEMBERS": [
+        {
+            "NAME": "Carlos J. Ramírez",
+            "ROLE_NAME": "🇻🇪 | Arquitecto de software, líder técnico.",
+            "ROLE_DESCRIPTION": "Codificación del prototipo para Android, conversion de los modelos Llama 3.2 al formato de Pytorch Executor (`.pte`), publicación de los modelos en Kaggle, diseño del sitio web, despliegue de la aplicación y el sitio web, manejo del equipo en la plataforma de lablab.ai, producción de la video-presentación.",
+            "LINKEDIN": "https://www.linkedin.com/in/carlosjramirez"
+        },
+        {
+            "NAME": "Omar Tobón",
+            "ROLE_NAME": "🇨🇴 | Creativo, coach.",
+            "ROLE_DESCRIPTION": "Generación de la idea, generación IA de imágenes, desarrollo del namimg, curaduría de datasets para fine-tuning de modelos, diseño y producción de la presentación, manejo de la inteligencia emocional y coaching del equipo.",
+            "LINKEDIN": "https://www.linkedin.com/in/omar-tobon"
+        }
+    ],
+    "INVALID_PAGE_TITLE": "Página Inválida",
+    "INVALID_PAGE_TEXT": "Página no encontrada"
 }
