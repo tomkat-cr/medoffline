@@ -26,7 +26,8 @@ def load_config(lang: str = None):
 
 
 if "lang" not in st.session_state:
-    st.session_state.lang = "es"
+    # st.session_state.lang = "es"
+    st.session_state.lang = "en"
 cgsl = load_config(st.session_state.lang)
 
 
@@ -106,7 +107,11 @@ def add_main_content():
         with cols[1]:
             app_desc = get_app_description()
             app_features = cgsl.get_par_value("APP_FEATURES")
-            st.header(cgsl.get_title())
+            title_cols = st.columns(2, vertical_alignment="bottom")
+            with title_cols[0]:
+                st.header(cgsl.get_title())
+            with title_cols[1]:
+                add_language_button()
             st.write(app_desc)
             st.write(app_features)
             # App instructions
@@ -118,25 +123,26 @@ def add_main_content():
                 st.link_button(
                     cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
                     APK_DONWLOAD_URL)
+            st.write(cgsl.get_par_value("APP_RESOURCES_SECTION_TITLE"))
             button_cols = st.columns(3)
             with button_cols[0]:
-                # Source Code page
-                st.button(
-                    cgsl.get_par_value("SOURCE_CODE_BUTTON_TEXT"),
-                    on_click=cgsl.set_query_param,
-                    args=("page", "source_code"))
-            with button_cols[1]:
                 # Presentations page
                 st.button(
                     cgsl.get_par_value("PRESENTATIONS_BUTTON_TEXT"),
                     on_click=cgsl.set_query_param,
                     args=("page", "presentations"))
-            with button_cols[2]:
+            with button_cols[1]:
                 # Team page
                 st.button(
                     cgsl.get_par_value("TEAM_BUTTON_TEXT"),
                     on_click=cgsl.set_query_param,
                     args=("page", "team"))
+            with button_cols[2]:
+                # Source Code page
+                st.button(
+                    cgsl.get_par_value("SOURCE_CODE_BUTTON_TEXT"),
+                    on_click=cgsl.set_query_param,
+                    args=("page", "source_code"))
 
             # Logo
             st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
