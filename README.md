@@ -115,6 +115,7 @@ Viabilidad técnica y económica:
 * [Python](https://www.python.org)
 * [Streamlit](https://streamlit.io)
 * [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+* [HuggingFace](https://huggingface.co/)
 * [Github](https://github.com)
 
 ### Para el diseño gráfico y la programación
@@ -148,7 +149,7 @@ Recursos:
 * Video-presentación:<BR/>
   [https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX](https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX)
 
-* Documento de la presentación: [PDF](https://storage.googleapis.com/lablab-static-eu/presentations/submissions/cm3xdpe8l00113b713e90gmb5/cm3xdpe8l00113b713e90gmb5-1732561102890_zq1alr0cwl.pdf)
+* Documento de la presentación: [PDF](./assets/medoffline_presentacion_es.pdf)
 
 * Página del equipo: [The FynBots](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots)
 
@@ -283,6 +284,7 @@ Its implementation could reduce preventable health complications.
 * [Python](https://www.python.org)
 * [Streamlit](https://streamlit.io)
 * [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+* [HuggingFace](https://huggingface.co/)
 * [Github](https://github.com)
 
 ### For graphic design and coding
@@ -315,7 +317,7 @@ Resources:
 * Video Presentation:<BR/>
   [https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX](https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX)
 
-* Presentation document: [PDF](https://storage.googleapis.com/lablab-static-eu/presentations/submissions/cm3xdpe8l00113b713e90gmb5/cm3xdpe8l00113b713e90gmb5-1732561102890_zq1alr0cwl.pdf)
+* Presentation document: [PDF](./assets/medoffline_presentation_en.pdf)
 
 * Team page: [The FynBots](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es/the-fynbots)
 
