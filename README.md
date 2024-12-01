@@ -2,7 +2,7 @@
 
 Asistente de IA Offline para Comunidades Remotas | 🇻🇪 🇨🇴
 
-![Portada para la version en español](./assets/MedOffLine-cover-image-final.png)
+![Portada para la version en español](./assets/MedOffLine-cover-image-final-esp.png)
 
 ## Descripción
 
@@ -174,7 +174,7 @@ Recursos:
 
 **Offline AI Assistant for Remote Communities | 🇻🇪 🇨🇴**
 
-![Cover image for english version](./assets/1eb5de0b-c739-4547-920f-14d35f875db0.jpeg)
+![Cover image for english version](./assets/MedOffLine-cover-image-final-eng.png)
 
 ## Description
 
