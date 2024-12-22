@@ -1,6 +1,6 @@
 {
     "APP_NAME": "MedOffline",
-    "APP_VERSION": "0.0.1",
+    "APP_VERSION": "0.0.3",
     "MAKER_MAME": "The FynBots",
     "APP_ICON": ":sparkles:",
     "APP_DESCRIPTION": "MedOffline is an offline AI Assistant that provides basic first aid guidance in communities with limited (or no) Internet access, offering:",

@@ -8,9 +8,6 @@
 
 package com.example.medoffline;
 
-import static com.example.medoffline.LocalModelManagement.downloadZipFile;
-import static com.example.medoffline.LocalModelManagement.unzipGz;
-
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -25,8 +22,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.provider.MediaStore;
-import android.system.ErrnoException;
-import android.system.Os;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -48,129 +43,71 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.pytorch.executorch.LlamaCallback;
 import org.pytorch.executorch.LlamaModule;
 
 public class MainActivity extends AppCompatActivity implements Runnable, LlamaCallback {
-  private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
-  // private static final String MODEL_DEFAULT_PATH = null;
-  private static final String MODEL_URL_VERSION = "2";
-  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/" + MODEL_URL_VERSION + "/download";
-  private final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
-  private final Float DEFAULT_TEMPERATURE = 0.1f;
+//  private static final Boolean USE_MODEL_DEFAULT_PATH = false;
+//  private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
 
-  private String getBaseModelsPath() {
-    // if (MODEL_DEFAULT_PATH != null) {
-    //   return MODEL_DEFAULT_PATH;
-    // }
-    return getFilesDir().getAbsolutePath() + "/llama";
-  }
+//  private static final String MODEL_URL_VERSION = "2";
+//  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/" + MODEL_URL_VERSION + "/download";
 
-  private String getFirstModelFilePath(String resourcePath, String fileExtension) {
-    File modelDir = new File(resourcePath);
+//  private final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
+//  private final Float DEFAULT_TEMPERATURE = 0.1f;
 
-    System.out.println("Checking directory: " + modelDir);
-    if (!modelDir.exists()) {
-      System.out.println("Not exist, creating it...");
-        boolean isCreated = modelDir.mkdirs();
-      if (!isCreated) {
-          throw new RuntimeException("Failed to create directory: " + modelDir);
-      } else {
-        System.out.println("Directory created successfully: " + modelDir);
-      }
-    }
+//  private String getBaseModelsPath() {
+//    if (USE_MODEL_DEFAULT_PATH) {
+//      return MODEL_DEFAULT_PATH;
+//    }
+//    return getFilesDir().getAbsolutePath() + "/llama";
+//  }
 
-    // Print the modelDir files
-    System.out.println("Files in " + resourcePath);
-    File[] files = modelDir.listFiles();
-    for (File file : files) {
-        System.out.println("File: " + file.getName());
-    }
+//  private String getFirstModelFilePath(String resourcePath, String fileExtension) {
+//    File modelDir = new File(resourcePath);
+//
+//    ETLogging.getInstance().log("Checking directory: " + modelDir);
+//    if (!modelDir.exists()) {
+//      ETLogging.getInstance().log("Not exist, creating it...");
+//        boolean isCreated = modelDir.mkdirs();
+//      if (!isCreated) {
+//          throw new RuntimeException("Failed to create directory: " + modelDir);
+//      } else {
+//        ETLogging.getInstance().log("Directory created successfully: " + modelDir);
+//      }
+//    }
+//
+//    // Print the modelDir files
+//    ETLogging.getInstance().log("Files in " + resourcePath);
+//    File[] files = modelDir.listFiles();
+//    for (File file : files) {
+//        ETLogging.getInstance().log("File: " + file.getName() + ", Size: " + file.length() + " bytes");
+//    }
+//
+//    File model =
+//        Arrays.stream(modelDir.listFiles())
+//            // .filter(file -> file.getName().endsWith(".pte"))
+//            .filter(file -> file.getName().endsWith(fileExtension))
+//            .findFirst()
+//            .orElse(null);
+//    String modelPath = null;
+//    if (model != null) {
+//        modelPath = model.getAbsolutePath();
+//        ETLogging.getInstance().log("getFirstModelFilePath | modelPath: " + modelPath);
+//    }
+//    return modelPath;
+//  }
 
-    File model =
-        Arrays.stream(modelDir.listFiles())
-            // .filter(file -> file.getName().endsWith(".pte"))
-            .filter(file -> file.getName().endsWith(fileExtension))
-            .findFirst()
-            .orElse(null);
-    String modelPath = null;
-    if (model != null) {
-        modelPath = model.getAbsolutePath();
-        System.out.println("getFirstModelFilePath | modelPath: " + modelPath);
-    }
-    return modelPath;
-  }
+//  private static ModelRunner mModelRunner;
 
-  private String getWorkingModelFilePath(String resourcePath) throws InterruptedException, ExecutionException {
-    // Verify the RESOURCE_PATH directory existentce, if not, creates it (including sub-dirs)
-    File modelDir = new File(resourcePath);
-
-    // File model =
-    //     Arrays.stream(modelDir.listFiles())
-    //         .filter(file -> file.getName().endsWith(".pte"))
-    //         .findFirst()
-    //         .orElse(null);
-    // String modelPath = null;
-    // if (model != null) {
-    //     modelPath = model.getAbsolutePath();
-    //     System.out.println("modelPath: " + modelPath);
-
-    String modelPath = getFirstModelFilePath(resourcePath, ".pte");
-    if (modelPath != null) {
-      return modelPath;
-    }
-    
-    System.out.println("Downloading: " + MODEL_URL + " to " + resourcePath + "/model.tar.gz...");
-    // If the resourcePath + "/model.tar.gz" file exists, skip downloading
-    File modelTarGz = new File(resourcePath + "/model.tar.gz");
-    if (modelTarGz.exists()) {
-      System.out.println("File exists: " + modelTarGz);
-    } else {
-      downloadZipFile(MODEL_URL, resourcePath + "/model.tar.gz");
-    }
-
-    System.out.println("Unzipping: " + resourcePath + "/model.tar.gz to " + resourcePath + "...");
-    try {
-        unzipGz(resourcePath + "/model.tar.gz", resourcePath);
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
-    System.out.println("File unzipped...");
-
-    // model = Arrays.stream(modelDir.listFiles())
-    //     .filter(file -> file.getName().endsWith(".pte"))
-    //     .findFirst()
-    //     .orElse(null);
-    // if (model != null) {
-    //     modelPath = model.getAbsolutePath();
-
-    // Try gain after download and unzip...
-    modelPath = getFirstModelFilePath(resourcePath, ".pte");
-    if (modelPath != null) {
-        return modelPath;
-    }
-
-    // Try the /tmp directory
-    modelPath = getFirstModelFilePath(MODEL_DEFAULT_PATH, ".pte");
-    if (modelPath != null) {
-      return modelPath;
-    }
-
-    // throw new RuntimeException("[1] No model file found in " + resourcePath);
-    System.out.println("[1] No model file found in " + resourcePath);
-    return modelPath;
-  }
-
-  private static ModelRunner mModelRunner;
+  private static final int MAX_NUM_OF_IMAGES = 5;
+  private static final int REQUEST_IMAGE_CAPTURE = 1;
+  private static final int CONVERSATION_HISTORY_MESSAGE_LOOKBACK = 2;
 
   private EditText mEditTextMessage;
   private ImageButton mSendButton;
@@ -187,22 +124,202 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   private List<Uri> mSelectedImageUri;
   private ConstraintLayout mMediaPreviewConstraintLayout;
   private LinearLayout mAddMediaLayout;
-  private static final int MAX_NUM_OF_IMAGES = 5;
-  private static final int REQUEST_IMAGE_CAPTURE = 1;
   private Uri cameraImageUri;
   private DemoSharedPreferences mDemoSharedPreferences;
-  private SettingsFields mCurrentSettingsFields;
   private Handler mMemoryUpdateHandler;
   private Runnable memoryUpdater;
   private int promptID = 0;
   private long startPos = 0;
-  private static final int CONVERSATION_HISTORY_MESSAGE_LOOKBACK = 2;
   private Executor executor;
   private View progressBar;
-  private View progressBarText;
+  private TextView progressBarText;  // Changed from View to TextView
   private ProgressBar progressBarWheel;
   private View downloadingModelText;
-  // private View unzipingModelText;
+  private TextView downloadProgressText;
+  private ProgressBar downloadProgressBar;
+
+  //  private static final int DEFAULT_TIMEOUT_MINUTES = 10;
+  // private Button mLoadModelButton;
+
+  private boolean modelLoaded = false;
+
+  private SettingsFields mCurrentSettingsFields;
+  private LoadModelFromUrl mLoadModelFromUrl = null;
+  private ErrorReporting mErrorReporting = null;
+
+//  private void updateDownloadProgress(long bytesRead, long contentLength) {
+//    runOnUiThread(() -> {
+//      if (contentLength > 0) {
+//        int progress = (int) (100 * bytesRead / contentLength);
+//        downloadProgressBar.setProgress(progress);
+//        downloadProgressText.setText(String.format("Downloading: %d%%", progress));
+//      } else {
+//        downloadProgressText.setText(String.format("Downloading: %.2f MB", bytesRead / (1024.0 * 1024.0)));
+//      }
+//    });
+//  }
+
+//  private void showError(String error) {
+//    runOnUiThread(() -> {
+//      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//      builder.setTitle("Error")
+//             .setMessage(error)
+//             .setPositiveButton("Retry", (dialog, which) -> {
+//               // Retry model loading
+//               loadModel();
+//             })
+//             .setNegativeButton("Cancel", null)
+//             .show();
+//    });
+//  }
+
+  // private void loadModel() {
+  //   if (modelLoaded) {
+  //     Toast.makeText(this, "Model already loaded", Toast.LENGTH_SHORT).show();
+  //     return;
+  //   }
+
+  //   // Show loading indicators
+  //   if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+  //   if (progressBarText != null) {
+  //     progressBarText.setVisibility(View.VISIBLE);
+  //     progressBarText.setText("Loading model...");
+  //   }
+  //   if (progressBarWheel != null) progressBarWheel.setVisibility(View.VISIBLE);
+  //   // if (mLoadModelButton != null) mLoadModelButton.setEnabled(false);
+
+  //   // Initialize model in background thread using executor
+  //   executor.execute(() -> {
+  //     try {
+  //       mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
+  //       String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
+  //       String modelPath = mLoadModelFromUrl.getFirstModelFilePath(resourcePath, ".pte");
+  //       String tokenizerPath = resourcePath + "/tokenizer.model";
+
+  //       if (modelPath != null) {
+  //         ETLogging.getInstance().log("Loading model " + modelPath + " with tokenizer " + tokenizerPath);
+          
+  //         runOnUiThread(() -> {
+  //           if (progressBarText != null) {
+  //             progressBarText.setText("Initializing model...");
+  //           }
+  //         });
+
+  //         // Initialize model with proper waiting
+  //         synchronized (this) {
+  //           mModule = new LlamaModule(
+  //               ModelUtils.getModelCategory(
+  //                 mCurrentSettingsFields.getModelType(),
+  //                 mCurrentSettingsFields.getBackendType()),
+  //               modelPath,
+  //               tokenizerPath,
+  //               (float) mCurrentSettingsFields.getTemperature());
+
+  //           // Wait for initialization
+  //           wait(5000); // Wait up to 5 seconds for initialization
+  //         }
+
+  //         modelLoaded = true;
+  //         runOnUiThread(() -> {
+  //           if (mSendButton != null) mSendButton.setEnabled(true);
+  //           // if (mLoadModelButton != null) {
+  //           //   mLoadModelButton.setText("Model Loaded");
+  //           //   mLoadModelButton.setEnabled(false);
+  //           // }
+            
+  //           // Hide loading indicators
+  //           if (progressBar != null) progressBar.setVisibility(View.GONE);
+  //           if (progressBarText != null) progressBarText.setVisibility(View.GONE);
+  //           if (progressBarWheel != null) progressBarWheel.setVisibility(View.GONE);
+
+  //           Toast.makeText(MainActivity.this, "Model loaded successfully", Toast.LENGTH_SHORT).show();
+  //         });
+  //       } else {
+  //         mErrorReporting.showError("Failed to load model. Please check logs for details.");
+  //       }
+  //     } catch (Exception e) {
+  //       String error = "Error loading model: " + e.getMessage();
+  //       ETLogging.getInstance().log(error);
+  //       e.printStackTrace();
+        
+  //       runOnUiThread(() -> {
+  //         // Show error state
+  //         if (progressBarText != null) {
+  //           progressBarText.setText("Error loading model");
+  //           progressBarText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+  //         }
+  //         // if (mLoadModelButton != null) {
+  //         //   mLoadModelButton.setEnabled(true);
+  //         //   mLoadModelButton.setText("Retry Load Model");
+  //         // }
+          
+  //         Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
+  //       });
+  //     }
+  //   });
+  // }
+
+//  private String getWorkingModelFilePath(String resourcePath) throws InterruptedException, ExecutionException, IOException {
+//    File modelDir = new File(resourcePath);
+//    if (!modelDir.exists()) {
+//      boolean created = modelDir.mkdirs();
+//      if (!created) {
+//        throw new IOException("Failed to create directory: " + modelDir);
+//      }
+//    }
+//
+//    // First check if we already have the model
+//    String modelPath = getFirstModelFilePath(resourcePath, ".pte");
+//    if (modelPath != null) {
+//      Log.i("MainActivity", "Found existing model at: " + modelPath);
+//      return modelPath;
+//    }
+//
+//    // Set up progress tracking
+//    runOnUiThread(() -> {
+//      if (downloadProgressBar != null) downloadProgressBar.setVisibility(View.VISIBLE);
+//      if (downloadProgressText != null) downloadProgressText.setVisibility(View.VISIBLE);
+//      if (downloadingModelText != null) downloadingModelText.setVisibility(View.VISIBLE);
+//    });
+//
+//    try {
+//      // Set up progress listener
+//      LocalModelManagement.setDownloadProgressListener(new LocalModelManagement.DownloadProgressListener() {
+//        @Override
+//        public void onProgressUpdate(long bytesRead, long contentLength, boolean done) {
+//          updateDownloadProgress(bytesRead, contentLength);
+//        }
+//
+//        @Override
+//        public void onError(String error) {
+//          showError(error);
+//        }
+//      });
+//
+//      // Download and extract model
+//      String tarGzPath = resourcePath + "/model.tar.gz";
+//      LocalModelManagement.downloadZipFile(this, MODEL_URL, tarGzPath, DEFAULT_TIMEOUT_MINUTES);
+//      LocalModelManagement.unzipGz(tarGzPath, resourcePath);
+//
+//      // Check if model was extracted successfully
+//      modelPath = getFirstModelFilePath(resourcePath, ".pte");
+//      if (modelPath == null) {
+//        throw new IOException("Model file not found after extraction");
+//      }
+//
+//      return modelPath;
+//
+//    } catch (Exception e) {
+//      Log.e("MainActivity", "Error during model setup", e);
+//      throw e;
+//    } finally {
+//      runOnUiThread(() -> {
+//        if (downloadProgressBar != null) downloadProgressBar.setVisibility(View.GONE);
+//        if (downloadProgressText != null) downloadProgressText.setVisibility(View.GONE);
+//        if (downloadingModelText != null) downloadingModelText.setVisibility(View.GONE);
+//      });
+//    }
+//  }
 
   @Override
   public void onResult(String result) {
@@ -233,10 +350,11 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
   private void setLocalModel(String modelPath, String tokenizerPath, float temperature) {
     Message modelLoadingMessage = new Message("Loading model...", false, MessageType.SYSTEM, 0);
-    ETLogging.getInstance().log("Loading model " + modelPath + " with tokenizer " + tokenizerPath);
+    ETLogging.getInstance().log(">> Loading model: " + modelPath);
+    ETLogging.getInstance().log("   with tokenizer " + tokenizerPath);
     runOnUiThread(
         () -> {
-          mSendButton.setEnabled(false);
+          if (mSendButton != null) mSendButton.setEnabled(false);
           mMessageAdapter.add(modelLoadingMessage);
           mMessageAdapter.notifyDataSetChanged();
         });
@@ -247,30 +365,47 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       ETLogging.getInstance().log("Completed deallocating existing module instance");
     }
     long runStartTime = System.currentTimeMillis();
-    mModule =
-        new LlamaModule(
-            ModelUtils.getModelCategory(
-              mCurrentSettingsFields.getModelType(),
-              mCurrentSettingsFields.getBackendType()
-            ),
-            modelPath,
-            tokenizerPath,
-            temperature);
-    int loadResult = mModule.load();
-    long loadDuration = System.currentTimeMillis() - runStartTime;
+    int loadResult = -99;
     String modelLoadError = "";
     String modelInfo = "";
+    try {
+      mModule =
+          new LlamaModule(
+              ModelUtils.getModelCategory(
+                mCurrentSettingsFields.getModelType(),
+                mCurrentSettingsFields.getBackendType()
+              ),
+              modelPath,
+              tokenizerPath,
+              temperature);
+      loadResult = mModule.load();
+    } catch (Exception e) {
+      modelLoadError = "Error: " + e.getMessage();
+      ETLogging.getInstance().log(modelLoadError);
+      e.printStackTrace();
+      // mErrorReporting.showError(modelLoadError)
+      // return;
+    }
+    long loadDuration = System.currentTimeMillis() - runStartTime;
     if (loadResult != 0) {
-      // TODO: Map the error code to a reason to let the user know why model loading failed
-      modelInfo = "*Model could not load (Error Code: " + loadResult + ")*" + "\n";
+      modelInfo = "*Model could not load (Error Code: " + loadResult + ")*";
+      if (!modelLoadError.isEmpty()) {
+        modelInfo += "\n" + modelLoadError;
+      }
       loadDuration = 0;
+      // Show error in a dialog popup
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setTitle("Load failed: " + loadResult);
+      builder.setTitle("Model Load failed");
+      builder.setMessage(modelInfo);
+      // builder.setPositiveButton("Retry", (dialog, which) -> loadModel());
+      // builder.setNegativeButton("Cancel", null);
       runOnUiThread(
-          () -> {
-            AlertDialog alert = builder.create();
-            alert.show();
-          });
+        () -> {
+          AlertDialog alert = builder.create();
+          alert.show();
+        }
+      );
+
     } else {
       String[] segments = modelPath.split("/");
       String pteName = segments[segments.length - 1];
@@ -292,9 +427,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         ETLogging.getInstance().log("Llava completes prefill prompt");
       }
     }
-
-    Message modelLoadedMessage = new Message(modelInfo, false, MessageType.SYSTEM, 0);
-
+    // Show model load status and info in the log
     String modelLoggingInfo =
         modelLoadError
             + "Model path: "
@@ -312,10 +445,11 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
             + loadDuration
             + " ms";
     ETLogging.getInstance().log("Load complete. " + modelLoggingInfo);
-
+    // Show model info in the conversation
+    Message modelLoadedMessage = new Message(modelInfo, false, MessageType.SYSTEM, 0);
     runOnUiThread(
         () -> {
-          mSendButton.setEnabled(true);
+          if (mSendButton != null) mSendButton.setEnabled(true);
           mMessageAdapter.remove(modelLoadingMessage);
           mMessageAdapter.add(modelLoadedMessage);
           mMessageAdapter.notifyDataSetChanged();
@@ -324,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
   private void loadLocalModelAndParameters(
       String modelFilePath, String tokenizerFilePath, float temperature) {
-    Runnable runnable =
+      Runnable runnable =
         new Runnable() {
           @Override
           public void run() {
@@ -332,503 +466,6 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           }
         };
     new Thread(runnable).start();
-  }
-
-  private void populateExistingMessages(String existingMsgJSON) {
-    Gson gson = new Gson();
-    Type type = new TypeToken<ArrayList<Message>>() {}.getType();
-    ArrayList<Message> savedMessages = gson.fromJson(existingMsgJSON, type);
-    for (Message msg : savedMessages) {
-      mMessageAdapter.add(msg);
-    }
-    mMessageAdapter.notifyDataSetChanged();
-  }
-
-  private int setPromptID() {
-
-    return mMessageAdapter.getMaxPromptID() + 1;
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-
-    progressBar = findViewById(R.id.progressBar);
-    progressBarText = findViewById(R.id.progressBarText);
-    progressBarWheel = findViewById(R.id.progressBarWheel);
-    downloadingModelText = findViewById(R.id.downloadingModelText);
-    // unzipingModelText = findViewById(R.id.unzipingModelText);
-
-    View mainContent = findViewById(R.id.main_content);
-
-    progressBar.setVisibility(View.VISIBLE);
-    progressBarText.setVisibility(View.VISIBLE);
-    progressBarWheel.setVisibility(View.VISIBLE);
-    // downloadingModelText.setVisibility(View.GONE);
-    // unzipingModelText.setVisibility(View.GONE);
-    mainContent.setVisibility(View.GONE);
-
-    if (Build.VERSION.SDK_INT >= 21) {
-      getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar));
-      getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.nav_bar));
-    }
-
-    try {
-      Os.setenv("ADSP_LIBRARY_PATH", getApplicationInfo().nativeLibraryDir, true);
-      Os.setenv("LD_LIBRARY_PATH", getApplicationInfo().nativeLibraryDir, true);
-    } catch (ErrnoException e) {
-      finish();
-    }
-
-    mEditTextMessage = findViewById(R.id.editTextMessage);
-    mSendButton = findViewById(R.id.sendButton);
-    mSendButton.setEnabled(false);
-    mMessagesView = findViewById(R.id.messages_view);
-    mMessageAdapter = new MessageAdapter(this, R.layout.sent_message, new ArrayList<Message>());
-    mMessagesView.setAdapter(mMessageAdapter);
-    mDemoSharedPreferences = new DemoSharedPreferences(this.getApplicationContext());
-    String existingMsgJSON = mDemoSharedPreferences.getSavedMessages();
-    if (!existingMsgJSON.isEmpty()) {
-      populateExistingMessages(existingMsgJSON);
-      promptID = setPromptID();
-    }
-    mSettingsButton = findViewById(R.id.settings);
-    mSettingsButton.setOnClickListener(
-        view -> {
-          Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
-          MainActivity.this.startActivity(myIntent);
-        });
-
-    mCurrentSettingsFields = new SettingsFields();
-    mMemoryUpdateHandler = new Handler(Looper.getMainLooper());
-    onModelRunStopped();
-    setupMediaButton();
-    setupGalleryPicker();
-    setupCameraRoll();
-    startMemoryUpdate();
-    setupShowLogsButton();
-    executor = Executors.newSingleThreadExecutor();
-
-    // Call setLocalModel with default values at startup
-    new Handler(Looper.getMainLooper()).post(() -> {
-      // Set initial values for model path, tokenizer path, model type and temperature
-      String RESOURCE_PATH = getBaseModelsPath();
-      String DEFAULT_MODEL_PATH = null;
-      // Increase the timeout by running getWorkingModelFilePath in a separate thread
-      final String[] modelPathHolder = new String[1];
-      final Exception[] exceptionHolder = new Exception[1];
-      Thread modelPathThread = new Thread(() -> {
-        try {
-          modelPathHolder[0] = getWorkingModelFilePath(RESOURCE_PATH);
-        } catch (Exception e) {
-          exceptionHolder[0] = e;
-        }
-      });
-      modelPathThread.start();
-      try {
-        int timeoutMs = 10*60*1000; // Wait for up to 2 minutes
-        modelPathThread.join(timeoutMs);
-        if (modelPathThread.isAlive()) {
-          modelPathThread.interrupt();
-          throw new RuntimeException("Timeout waiting for model file path");
-        }
-        if (exceptionHolder[0] != null) {
-          throw exceptionHolder[0];
-        }
-        DEFAULT_MODEL_PATH = modelPathHolder[0];
-      } catch (InterruptedException e) {
-        throw new RuntimeException("Thread was interrupted", e);
-      } catch (ExecutionException e) {
-        throw new RuntimeException("Execution exception", e);
-      } catch (Exception e) {
-          throw new RuntimeException(e);
-      }
-      downloadingModelText.setVisibility(View.GONE);
-
-      // String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.bin";
-      String DEFAULT_TOKENIZER_PATH = RESOURCE_PATH + "/tokenizer.model";
-
-      mCurrentSettingsFields.saveModelPath(DEFAULT_MODEL_PATH);
-      mCurrentSettingsFields.saveTokenizerPath(DEFAULT_TOKENIZER_PATH);
-      mCurrentSettingsFields.saveModelType(DEFAULT_MODEL_TYPE);
-      mCurrentSettingsFields.saveParameters((double) DEFAULT_TEMPERATURE);
-      mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
-      String finalDEFAULT_MODEL_PATH = DEFAULT_MODEL_PATH;
-      new Thread(() -> {
-        // Load the model with default values
-        setLocalModel(finalDEFAULT_MODEL_PATH, DEFAULT_TOKENIZER_PATH, DEFAULT_TEMPERATURE);
-        runOnUiThread(() -> {
-          // Hide the progress bar and show the main content
-          mainContent.setVisibility(View.VISIBLE);
-          progressBar.setVisibility(View.GONE);
-          progressBarText.setVisibility(View.GONE);
-          progressBarWheel.setVisibility(View.GONE);
-        });
-      }).start();
-    });
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    mDemoSharedPreferences.addMessages(mMessageAdapter);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    // Check for if settings parameters have changed
-    Gson gson = new Gson();
-    String settingsFieldsJSON = mDemoSharedPreferences.getSettings();
-    if (!settingsFieldsJSON.isEmpty()) {
-      SettingsFields updatedSettingsFields =
-          gson.fromJson(settingsFieldsJSON, SettingsFields.class);
-      if (updatedSettingsFields == null) {
-        // Added this check, because gson.fromJson can return null
-        askUserToSelectModel();
-        return;
-      }
-      boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
-      boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
-      setBackendMode(updatedSettingsFields.getBackendType());
-      if (isUpdated) {
-        if (isLoadModel) {
-          // If users change the model file, but not pressing loadModelButton, we won't load the new
-          // model
-          checkForUpdateAndReloadModel(updatedSettingsFields);
-        } else {
-          askUserToSelectModel();
-        }
-
-        checkForClearChatHistory(updatedSettingsFields);
-        // Update current to point to the latest
-        mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
-      }
-    } else {
-      askUserToSelectModel();
-    }
-  }
-
-  private void setBackendMode(BackendType backendType) {
-    if (backendType.equals(BackendType.XNNPACK) || backendType.equals(BackendType.QUALCOMM)) {
-      setXNNPACKMode();
-    } else if (backendType.equals(BackendType.MEDIATEK)) {
-      setMediaTekMode();
-    }
-  }
-
-  private void setXNNPACKMode() {
-    requireViewById(R.id.addMediaButton).setVisibility(View.VISIBLE);
-  }
-
-  private void setMediaTekMode() {
-    requireViewById(R.id.addMediaButton).setVisibility(View.GONE);
-  }
-
-  private void checkForClearChatHistory(SettingsFields updatedSettingsFields) {
-    if (updatedSettingsFields.getIsClearChatHistory()) {
-      mMessageAdapter.clear();
-      mMessageAdapter.notifyDataSetChanged();
-      mDemoSharedPreferences.removeExistingMessages();
-      // changing to false since chat history has been cleared.
-      updatedSettingsFields.saveIsClearChatHistory(false);
-      mDemoSharedPreferences.addSettings(updatedSettingsFields);
-    }
-  }
-
-  private void checkForUpdateAndReloadModel(SettingsFields updatedSettingsFields) {
-    // TODO need to add 'load model' in settings and queue loading based on that
-    String modelPath = updatedSettingsFields.getModelFilePath();
-    String tokenizerPath = updatedSettingsFields.getTokenizerFilePath();
-    double temperature = updatedSettingsFields.getTemperature();
-    if (!modelPath.isEmpty() && !tokenizerPath.isEmpty()) {
-      if (updatedSettingsFields.getIsLoadModel()
-          || !modelPath.equals(mCurrentSettingsFields.getModelFilePath())
-          || !tokenizerPath.equals(mCurrentSettingsFields.getTokenizerFilePath())
-          || temperature != mCurrentSettingsFields.getTemperature()) {
-        loadLocalModelAndParameters(
-            updatedSettingsFields.getModelFilePath(),
-            updatedSettingsFields.getTokenizerFilePath(),
-            (float) updatedSettingsFields.getTemperature());
-        updatedSettingsFields.saveLoadModelAction(false);
-        mDemoSharedPreferences.addSettings(updatedSettingsFields);
-      }
-    } else {
-      askUserToSelectModel();
-    }
-  }
-
-  private void askUserToSelectModel() {
-    String askLoadModel =
-        "To get started, select your desired model and tokenizer " + "from the top right corner";
-    Message askLoadModelMessage = new Message(askLoadModel, false, MessageType.SYSTEM, 0);
-    ETLogging.getInstance().log(askLoadModel);
-    runOnUiThread(
-        () -> {
-          mMessageAdapter.add(askLoadModelMessage);
-          mMessageAdapter.notifyDataSetChanged();
-        });
-  }
-
-  private void setupShowLogsButton() {
-    ImageButton showLogsButton = requireViewById(R.id.showLogsButton);
-    showLogsButton.setOnClickListener(
-        view -> {
-          Intent myIntent = new Intent(MainActivity.this, LogsActivity.class);
-          MainActivity.this.startActivity(myIntent);
-        });
-  }
-
-  private void setupMediaButton() {
-    mAddMediaLayout = requireViewById(R.id.addMediaLayout);
-    mAddMediaLayout.setVisibility(View.GONE); // We hide this initially
-
-    ImageButton addMediaButton = requireViewById(R.id.addMediaButton);
-    addMediaButton.setOnClickListener(
-        view -> {
-          mAddMediaLayout.setVisibility(View.VISIBLE);
-        });
-
-    mGalleryButton = requireViewById(R.id.galleryButton);
-    mGalleryButton.setOnClickListener(
-        view -> {
-          // Launch the photo picker and let the user choose only images.
-          mPickGallery.launch(
-              new PickVisualMediaRequest.Builder()
-                  .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                  .build());
-        });
-    mCameraButton = requireViewById(R.id.cameraButton);
-    mCameraButton.setOnClickListener(
-        view -> {
-          Log.d("CameraRoll", "Check permission");
-          if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
-              != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                MainActivity.this,
-                new String[] {Manifest.permission.CAMERA},
-                REQUEST_IMAGE_CAPTURE);
-          } else {
-            launchCamera();
-          }
-        });
-  }
-
-  private void setupCameraRoll() {
-    // Registers a camera roll activity launcher.
-    mCameraRoll =
-        registerForActivityResult(
-            new ActivityResultContracts.TakePicture(),
-            result -> {
-              if (result && cameraImageUri != null) {
-                Log.d("CameraRoll", "Photo saved to uri: " + cameraImageUri);
-                mAddMediaLayout.setVisibility(View.GONE);
-                List<Uri> uris = new ArrayList<>();
-                uris.add(cameraImageUri);
-                showMediaPreview(uris);
-              } else {
-                // Delete the temp image file based on the url since the photo is not successfully
-                // taken
-                if (cameraImageUri != null) {
-                  ContentResolver contentResolver = MainActivity.this.getContentResolver();
-                  contentResolver.delete(cameraImageUri, null, null);
-                  Log.d("CameraRoll", "No photo taken. Delete temp uri");
-                }
-              }
-            });
-    mMediaPreviewConstraintLayout = requireViewById(R.id.mediaPreviewConstraintLayout);
-    ImageButton mediaPreviewCloseButton = requireViewById(R.id.mediaPreviewCloseButton);
-    mediaPreviewCloseButton.setOnClickListener(
-        view -> {
-          mMediaPreviewConstraintLayout.setVisibility(View.GONE);
-          mSelectedImageUri = null;
-        });
-
-    ImageButton addMoreImageButton = requireViewById(R.id.addMoreImageButton);
-    addMoreImageButton.setOnClickListener(
-        view -> {
-          Log.d("addMore", "clicked");
-          mMediaPreviewConstraintLayout.setVisibility(View.GONE);
-          // Direct user to select type of input
-          mCameraButton.callOnClick();
-        });
-  }
-
-  private String updateMemoryUsage() {
-    ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-    if (activityManager == null) {
-      return "---";
-    }
-    activityManager.getMemoryInfo(memoryInfo);
-    long totalMem = memoryInfo.totalMem / (1024 * 1024);
-    long availableMem = memoryInfo.availMem / (1024 * 1024);
-    long usedMem = totalMem - availableMem;
-    return usedMem + "MB";
-  }
-
-  private void startMemoryUpdate() {
-    mMemoryView = requireViewById(R.id.ram_usage_live);
-    memoryUpdater =
-        new Runnable() {
-          @Override
-          public void run() {
-            mMemoryView.setText(updateMemoryUsage());
-            mMemoryUpdateHandler.postDelayed(this, 1000);
-          }
-        };
-    mMemoryUpdateHandler.post(memoryUpdater);
-  }
-
-  @Override
-  public void onRequestPermissionsResult(
-      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    if (requestCode == REQUEST_IMAGE_CAPTURE && grantResults.length != 0) {
-      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        launchCamera();
-      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-        Log.d("CameraRoll", "Permission denied");
-      }
-    }
-  }
-
-  private void launchCamera() {
-    ContentValues values = new ContentValues();
-    values.put(MediaStore.Images.Media.TITLE, "New Picture");
-    values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
-    values.put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera/");
-    cameraImageUri =
-        MainActivity.this
-            .getContentResolver()
-            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-    mCameraRoll.launch(cameraImageUri);
-  }
-
-  private void setupGalleryPicker() {
-    // Registers a photo picker activity launcher in single-select mode.
-    mPickGallery =
-        registerForActivityResult(
-            new ActivityResultContracts.PickMultipleVisualMedia(MAX_NUM_OF_IMAGES),
-            uris -> {
-              if (!uris.isEmpty()) {
-                Log.d("PhotoPicker", "Selected URIs: " + uris);
-                mAddMediaLayout.setVisibility(View.GONE);
-                for (Uri uri : uris) {
-                  MainActivity.this
-                      .getContentResolver()
-                      .takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
-                showMediaPreview(uris);
-              } else {
-                Log.d("PhotoPicker", "No media selected");
-              }
-            });
-
-    mMediaPreviewConstraintLayout = requireViewById(R.id.mediaPreviewConstraintLayout);
-    ImageButton mediaPreviewCloseButton = requireViewById(R.id.mediaPreviewCloseButton);
-    mediaPreviewCloseButton.setOnClickListener(
-        view -> {
-          mMediaPreviewConstraintLayout.setVisibility(View.GONE);
-          mSelectedImageUri = null;
-        });
-
-    ImageButton addMoreImageButton = requireViewById(R.id.addMoreImageButton);
-    addMoreImageButton.setOnClickListener(
-        view -> {
-          Log.d("addMore", "clicked");
-          mMediaPreviewConstraintLayout.setVisibility(View.GONE);
-          mGalleryButton.callOnClick();
-        });
-  }
-
-  private List<ETImage> getProcessedImagesForModel(List<Uri> uris) {
-    List<ETImage> imageList = new ArrayList<>();
-    if (uris != null) {
-      uris.forEach(
-          (uri) -> {
-            imageList.add(new ETImage(this.getContentResolver(), uri));
-          });
-    }
-    return imageList;
-  }
-
-  private void showMediaPreview(List<Uri> uris) {
-    if (mSelectedImageUri == null) {
-      mSelectedImageUri = uris;
-    } else {
-      mSelectedImageUri.addAll(uris);
-    }
-
-    if (mSelectedImageUri.size() > MAX_NUM_OF_IMAGES) {
-      mSelectedImageUri = mSelectedImageUri.subList(0, MAX_NUM_OF_IMAGES);
-      Toast.makeText(
-              this, "Only max " + MAX_NUM_OF_IMAGES + " images are allowed", Toast.LENGTH_SHORT)
-          .show();
-    }
-    Log.d("mSelectedImageUri", mSelectedImageUri.size() + " " + mSelectedImageUri);
-
-    mMediaPreviewConstraintLayout.setVisibility(View.VISIBLE);
-
-    List<ImageView> imageViews = new ArrayList<ImageView>();
-
-    // Pre-populate all the image views that are available from the layout (currently max 5)
-    imageViews.add(requireViewById(R.id.mediaPreviewImageView1));
-    imageViews.add(requireViewById(R.id.mediaPreviewImageView2));
-    imageViews.add(requireViewById(R.id.mediaPreviewImageView3));
-    imageViews.add(requireViewById(R.id.mediaPreviewImageView4));
-    imageViews.add(requireViewById(R.id.mediaPreviewImageView5));
-
-    // Hide all the image views (reset state)
-    for (int i = 0; i < imageViews.size(); i++) {
-      imageViews.get(i).setVisibility(View.GONE);
-    }
-
-    // Only show/render those that have proper Image URIs
-    for (int i = 0; i < mSelectedImageUri.size(); i++) {
-      imageViews.get(i).setVisibility(View.VISIBLE);
-      imageViews.get(i).setImageURI(mSelectedImageUri.get(i));
-    }
-
-    // For LLava, we want to call prefill_image as soon as an image is selected
-    // Llava only support 1 image for now
-    if (mCurrentSettingsFields.getModelType() == ModelType.LLAVA_1_5) {
-      List<ETImage> processedImageList = getProcessedImagesForModel(mSelectedImageUri);
-      if (!processedImageList.isEmpty()) {
-        mMessageAdapter.add(
-            new Message("Llava - Starting image Prefill.", false, MessageType.SYSTEM, 0));
-        mMessageAdapter.notifyDataSetChanged();
-        Runnable runnable =
-            () -> {
-              Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
-              ETLogging.getInstance().log("Starting runnable prefill image");
-              ETImage img = processedImageList.get(0);
-              ETLogging.getInstance().log("Llava start prefill image");
-              startPos =
-                  mModule.prefillImages(
-                      img.getInts(),
-                      img.getWidth(),
-                      img.getHeight(),
-                      ModelUtils.VISION_MODEL_IMAGE_CHANNELS,
-                      startPos);
-            };
-        executor.execute(runnable);
-      }
-    }
-  }
-
-  private void addSelectedImagesToChatThread(List<Uri> selectedImageUri) {
-    if (selectedImageUri == null) {
-      return;
-    }
-    mMediaPreviewConstraintLayout.setVisibility(View.GONE);
-    for (int i = 0; i < selectedImageUri.size(); i++) {
-      Uri imageURI = selectedImageUri.get(i);
-      Log.d("image uri ", "test " + imageURI.getPath());
-      mMessageAdapter.add(new Message(imageURI.toString(), true, MessageType.IMAGE, 0));
-    }
-    mMessageAdapter.notifyDataSetChanged();
   }
 
   private String getConversationHistory() {
@@ -874,18 +511,18 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private void onModelRunStarted() {
-    mSendButton.setClickable(false);
-    mSendButton.setImageResource(R.drawable.baseline_stop_24);
-    mSendButton.setOnClickListener(
+    if (mSendButton != null) mSendButton.setClickable(false);
+    if (mSendButton != null) mSendButton.setImageResource(R.drawable.baseline_stop_24);
+    if (mSendButton != null) mSendButton.setOnClickListener(
         view -> {
           mModule.stop();
         });
   }
 
   private void onModelRunStopped() {
-    mSendButton.setClickable(true);
-    mSendButton.setImageResource(R.drawable.baseline_send_24);
-    mSendButton.setOnClickListener(
+    if (mSendButton != null) mSendButton.setClickable(true);
+    if (mSendButton != null) mSendButton.setImageResource(R.drawable.baseline_send_24);
+    if (mSendButton != null) mSendButton.setOnClickListener(
         view -> {
           try {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -1005,5 +642,557 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // This is to cover the case where the app is shutdown when user is on MainActivity but
     // never clicked on the logsActivity
     ETLogging.getInstance().saveLogs();
+  }
+
+  private boolean checkPermissions() {
+    return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+            == PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED;
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    ETLogging.getInstance().log("onCreate | started...");
+
+    super.onCreate(savedInstanceState);
+
+    mLoadModelFromUrl = new LoadModelFromUrl(this, getFilesDir());
+    mErrorReporting = new ErrorReporting(this);
+
+    mCurrentSettingsFields = new SettingsFields();
+    mCurrentSettingsFields.SetInitValues();
+
+    // Set theme
+    setTheme(R.style.AppTheme);
+
+    // Set layout
+    setContentView(R.layout.activity_main);
+
+    // Request necessary permissions
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (!checkPermissions()) {
+        ETLogging.getInstance().log("onCreate | requestPermissions...");
+        requestPermissions(
+          new String[] {
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+          },
+          1
+        );
+      }
+    }
+
+    // Initialize shared preferences
+    if (mDemoSharedPreferences == null) {
+      mDemoSharedPreferences = new DemoSharedPreferences(getBaseContext());
+    }
+
+    ETLogging.getInstance().log("onCreate | initializing UI...");
+
+    View mainContent = findViewById(R.id.main_content);
+    if (mainContent != null) mainContent.setVisibility(View.VISIBLE);
+
+    // Set initial visibility
+    progressBar = findViewById(R.id.progressBar);
+    progressBarText = findViewById(R.id.progressBarText);
+    progressBarWheel = findViewById(R.id.progressBarWheel);
+    downloadingModelText = findViewById(R.id.downloadingModelText);
+    downloadProgressBar = findViewById(R.id.downloadProgressBar);
+    downloadProgressText = findViewById(R.id.downloadProgressText);
+
+    if (progressBar != null) progressBar.setVisibility(View.GONE);
+    if (progressBarText != null) progressBarText.setVisibility(View.GONE);
+    if (progressBarWheel != null) progressBarWheel.setVisibility(View.GONE);
+    if (downloadingModelText != null) downloadingModelText.setVisibility(View.GONE);
+    if (downloadProgressBar != null) downloadProgressBar.setVisibility(View.GONE);
+    if (downloadProgressText != null) downloadProgressText.setVisibility(View.GONE);
+
+    // Initialize UI components
+    mEditTextMessage = findViewById(R.id.editTextMessage);
+    mSendButton = findViewById(R.id.sendButton);
+    if (mSendButton != null) mSendButton.setEnabled(false);
+    mMessagesView = findViewById(R.id.messages_view);
+    mMessageAdapter = new MessageAdapter(this, R.layout.sent_message, new ArrayList<Message>());
+    mMessagesView.setAdapter(mMessageAdapter);
+
+    mMemoryUpdateHandler = new Handler(Looper.getMainLooper());
+
+    // Set default values for settings
+    // String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
+    // String defaultModelPath = mLoadModelFromUrl.getFirstModelFilePath(resourcePath, ".pte");
+    // String defaultTokenizerPath = resourcePath + "/tokenizer.model";
+
+    // Initialize settings
+    // mLoadModelFromUrl.setDefaultParameters();
+
+  //  mCurrentSettingsFields = new SettingsFields();
+//    mCurrentSettingsFields.saveModelPath(defaultModelPath);
+//    mCurrentSettingsFields.saveTokenizerPath(defaultTokenizerPath);
+//    mCurrentSettingsFields.saveModelType(mLoadModelFromUrl.DEFAULT_MODEL_TYPE);
+//    mCurrentSettingsFields.saveParameters((double) mLoadModelFromUrl.DEFAULT_TEMPERATURE);
+//
+//    // Print the parameters:
+//    ETLogging.getInstance().log("Default model path: " + defaultModelPath);
+//    ETLogging.getInstance().log("Default tokenizer path: " + defaultTokenizerPath);
+//    ETLogging.getInstance().log("Default model type: " + mLoadModelFromUrl.DEFAULT_MODEL_TYPE);
+//    ETLogging.getInstance().log("Default temperature: " + mLoadModelFromUrl.DEFAULT_TEMPERATURE);
+//    // Print mCurrentSettingsFields
+//    ETLogging.getInstance().log("mCurrentSettingsFields: " + mCurrentSettingsFields);
+//
+//    // Save initial settings
+//    mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+
+    // Setup media button
+    setupMediaButton();
+
+    // Setup gallery picker
+    setupGalleryPicker();
+
+    // Setup camera
+    setupCameraRoll();
+  
+    // Setup memory settings
+    startMemoryUpdate();
+
+    // Setup settings (gear) button
+    mSettingsButton = findViewById(R.id.settings);
+    if (mSettingsButton != null) {
+        mSettingsButton.setOnClickListener(view -> {
+            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            MainActivity.this.startActivity(myIntent);
+        });
+    }
+
+    // Setup logs button
+    setupShowLogsButton();
+
+    ETLogging.getInstance().log("onCreate | Initialize executor for background tasks...");
+
+    // Initialize executor for background tasks
+    executor = Executors.newSingleThreadExecutor();
+
+    // Setup load model button
+    // mLoadModelButton = findViewById(R.id.loadModelButton);
+    // if (mLoadModelButton != null) {
+    //     mLoadModelButton.setOnClickListener(v -> loadModel());
+    //     mLoadModelButton.setEnabled(true);
+    // }
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    mDemoSharedPreferences.addMessages(mMessageAdapter);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    // Check for if settings parameters have changed
+    Gson gson = new Gson();
+    String settingsFieldsJSON = mDemoSharedPreferences.getSettings();
+
+    ETLogging.getInstance().log("onResume | settingsFieldsJSON: " + settingsFieldsJSON);
+
+    if (!settingsFieldsJSON.isEmpty()) {
+      SettingsFields updatedSettingsFields =
+          gson.fromJson(settingsFieldsJSON, SettingsFields.class);
+
+      ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
+
+      if (updatedSettingsFields == null) {
+        // Added this check, because gson.fromJson can return null
+        ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
+        askUserToSelectModel();
+        return;
+      }
+
+      ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
+      updatedSettingsFields.showOwnData();
+      ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
+      mCurrentSettingsFields.showOwnData();
+
+
+      boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
+      boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
+      setBackendMode(updatedSettingsFields.getBackendType());
+
+      ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
+
+      // if (isUpdated) {
+        if (isLoadModel) {
+          // If users change the model file, but not pressing loadModelButton, we won't load the new
+          // model
+          ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
+          // checkForUpdateAndReloadModel(updatedSettingsFields);
+          mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+          checkForUpdateAndReloadModel(mCurrentSettingsFields);
+        } else {
+          ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
+          askUserToSelectModel();
+        }
+
+        ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
+        checkForClearChatHistory(updatedSettingsFields);
+
+        // Update current to point to the latest
+        ETLogging.getInstance().log("onResume | Update current to point to the latest");
+        mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+      }
+    // } else {
+    //   ETLogging.getInstance().log("onResume | askUserToSelectModel # 2");
+    //   askUserToSelectModel();
+    // }
+  }
+
+  private void setBackendMode(BackendType backendType) {
+    if (backendType.equals(BackendType.XNNPACK) || backendType.equals(BackendType.QUALCOMM)) {
+      setXNNPACKMode();
+    } else if (backendType.equals(BackendType.MEDIATEK)) {
+      setMediaTekMode();
+    }
+  }
+
+  private void setXNNPACKMode() {
+    if (requireViewById(R.id.addMediaButton) != null) requireViewById(R.id.addMediaButton).setVisibility(View.VISIBLE);
+  }
+
+  private void setMediaTekMode() {
+    if (requireViewById(R.id.addMediaButton) != null) requireViewById(R.id.addMediaButton).setVisibility(View.GONE);
+  }
+
+  private void checkForClearChatHistory(SettingsFields updatedSettingsFields) {
+    if (updatedSettingsFields.getIsClearChatHistory()) {
+      mMessageAdapter.clear();
+      mMessageAdapter.notifyDataSetChanged();
+      mDemoSharedPreferences.removeExistingMessages();
+      // changing to false since chat history has been cleared.
+      updatedSettingsFields.saveIsClearChatHistory(false);
+      mDemoSharedPreferences.addSettings(updatedSettingsFields);
+    }
+  }
+
+  private void checkForUpdateAndReloadModel(SettingsFields updatedSettingsFields) {
+    // TODO need to add 'load model' in settings and queue loading based on that
+    String modelPath = updatedSettingsFields.getModelFilePath();
+    String tokenizerPath = updatedSettingsFields.getTokenizerFilePath();
+    double temperature = updatedSettingsFields.getTemperature();
+
+    // Log the parameters
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Model path: " + modelPath);
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Tokenizer path: " + tokenizerPath);
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Temperature: " + temperature);
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is load model: " + updatedSettingsFields.getIsLoadModel());
+
+    if (!modelPath.isEmpty() && !tokenizerPath.isEmpty()) {
+      if (updatedSettingsFields.getIsLoadModel()
+          || !modelPath.equals(mCurrentSettingsFields.getModelFilePath())
+          || !tokenizerPath.equals(mCurrentSettingsFields.getTokenizerFilePath())
+          || temperature != mCurrentSettingsFields.getTemperature()) {
+        loadLocalModelAndParameters(
+            updatedSettingsFields.getModelFilePath(),
+            updatedSettingsFields.getTokenizerFilePath(),
+            (float) updatedSettingsFields.getTemperature());
+        updatedSettingsFields.saveLoadModelAction(false);
+        mDemoSharedPreferences.addSettings(updatedSettingsFields);
+      }
+    } else {
+      askUserToSelectModel();
+    }
+  }
+
+  private void askUserToSelectModel() {
+    String askLoadModel =
+        "To get started, select the AI Model from the gear icon in the top right corner";
+    Message askLoadModelMessage = new Message(askLoadModel, false, MessageType.SYSTEM, 0);
+    ETLogging.getInstance().log(askLoadModel);
+    runOnUiThread(
+        () -> {
+          mMessageAdapter.add(askLoadModelMessage);
+          mMessageAdapter.notifyDataSetChanged();
+        });
+  }
+
+  private void setupShowLogsButton() {
+    ImageButton showLogsButton = requireViewById(R.id.showLogsButton);
+    showLogsButton.setOnClickListener(
+        view -> {
+          Intent myIntent = new Intent(MainActivity.this, LogsActivity.class);
+          MainActivity.this.startActivity(myIntent);
+        });
+  }
+
+  private void setupMediaButton() {
+    mAddMediaLayout = requireViewById(R.id.addMediaLayout);
+    if (mAddMediaLayout != null) mAddMediaLayout.setVisibility(View.GONE); // We hide this initially
+
+    ImageButton addMediaButton = requireViewById(R.id.addMediaButton);
+    addMediaButton.setOnClickListener(
+        view -> {
+          if (mAddMediaLayout != null) mAddMediaLayout.setVisibility(View.VISIBLE);
+        });
+
+    mGalleryButton = requireViewById(R.id.galleryButton);
+    mGalleryButton.setOnClickListener(
+        view -> {
+          // Launch the photo picker and let the user choose only images.
+          mPickGallery.launch(
+              new PickVisualMediaRequest.Builder()
+                  .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                  .build());
+        });
+    mCameraButton = requireViewById(R.id.cameraButton);
+    mCameraButton.setOnClickListener(
+        view -> {
+          Log.d("CameraRoll", "Check permission");
+          if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+              != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                MainActivity.this,
+                new String[] {Manifest.permission.CAMERA},
+                REQUEST_IMAGE_CAPTURE);
+          } else {
+            launchCamera();
+          }
+        });
+  }
+
+  private void setupCameraRoll() {
+    // Registers a camera roll activity launcher.
+    mCameraRoll =
+        registerForActivityResult(
+            new ActivityResultContracts.TakePicture(),
+            result -> {
+              if (result && cameraImageUri != null) {
+                Log.d("CameraRoll", "Photo saved to uri: " + cameraImageUri);
+                if (mAddMediaLayout != null) mAddMediaLayout.setVisibility(View.GONE);
+                List<Uri> uris = new ArrayList<>();
+                uris.add(cameraImageUri);
+                showMediaPreview(uris);
+              } else {
+                // Delete the temp image file based on the url since the photo is not successfully
+                // taken
+                if (cameraImageUri != null) {
+                  ContentResolver contentResolver = MainActivity.this.getContentResolver();
+                  contentResolver.delete(cameraImageUri, null, null);
+                  Log.d("CameraRoll", "No photo taken. Delete temp uri");
+                }
+              }
+            });
+    mMediaPreviewConstraintLayout = requireViewById(R.id.mediaPreviewConstraintLayout);
+    ImageButton mediaPreviewCloseButton = requireViewById(R.id.mediaPreviewCloseButton);
+    mediaPreviewCloseButton.setOnClickListener(
+        view -> {
+          if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.GONE);
+          mSelectedImageUri = null;
+        });
+
+    ImageButton addMoreImageButton = requireViewById(R.id.addMoreImageButton);
+    addMoreImageButton.setOnClickListener(
+        view -> {
+          Log.d("addMore", "clicked");
+          if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.GONE);
+          // Direct user to select type of input
+          if (mCameraButton != null) mCameraButton.callOnClick();
+        });
+  }
+
+  private String updateMemoryUsage() {
+    ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+    if (activityManager == null) {
+      return "---";
+    }
+    activityManager.getMemoryInfo(memoryInfo);
+    long totalMem = memoryInfo.totalMem / (1024 * 1024);
+    long availableMem = memoryInfo.availMem / (1024 * 1024);
+    long usedMem = totalMem - availableMem;
+    return usedMem + "MB";
+  }
+
+  private void startMemoryUpdate() {
+    mMemoryView = requireViewById(R.id.ram_usage_live);
+    memoryUpdater =
+        new Runnable() {
+          @Override
+          public void run() {
+            if (mMemoryView != null) mMemoryView.setText(updateMemoryUsage());
+            mMemoryUpdateHandler.postDelayed(this, 1000);
+          }
+        };
+    mMemoryUpdateHandler.post(memoryUpdater);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(
+      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode == REQUEST_IMAGE_CAPTURE && grantResults.length != 0) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        launchCamera();
+      } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+        Log.d("CameraRoll", "Permission denied");
+      }
+    }
+  }
+
+  private void launchCamera() {
+    ContentValues values = new ContentValues();
+    values.put(MediaStore.Images.Media.TITLE, "New Picture");
+    values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera");
+    values.put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera/");
+    cameraImageUri =
+        MainActivity.this
+            .getContentResolver()
+            .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    mCameraRoll.launch(cameraImageUri);
+  }
+
+  private void setupGalleryPicker() {
+    // Registers a photo picker activity launcher in single-select mode.
+    mPickGallery =
+        registerForActivityResult(
+            new ActivityResultContracts.PickMultipleVisualMedia(MAX_NUM_OF_IMAGES),
+            uris -> {
+              if (!uris.isEmpty()) {
+                Log.d("PhotoPicker", "Selected URIs: " + uris);
+                if (mAddMediaLayout != null) mAddMediaLayout.setVisibility(View.GONE);
+                for (Uri uri : uris) {
+                  MainActivity.this
+                      .getContentResolver()
+                      .takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+                showMediaPreview(uris);
+              } else {
+                Log.d("PhotoPicker", "No media selected");
+              }
+            });
+
+    mMediaPreviewConstraintLayout = requireViewById(R.id.mediaPreviewConstraintLayout);
+    ImageButton mediaPreviewCloseButton = requireViewById(R.id.mediaPreviewCloseButton);
+    mediaPreviewCloseButton.setOnClickListener(
+        view -> {
+          if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.GONE);
+          mSelectedImageUri = null;
+        });
+
+    ImageButton addMoreImageButton = requireViewById(R.id.addMoreImageButton);
+    addMoreImageButton.setOnClickListener(
+        view -> {
+          Log.d("addMore", "clicked");
+          if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.GONE);
+          // Direct user to select type of input
+          if (mGalleryButton != null) mGalleryButton.callOnClick();
+        });
+  }
+
+  private List<ETImage> getProcessedImagesForModel(List<Uri> uris) {
+    List<ETImage> imageList = new ArrayList<>();
+    if (uris != null) {
+      uris.forEach(
+          (uri) -> {
+            imageList.add(new ETImage(this.getContentResolver(), uri));
+          });
+    }
+    return imageList;
+  }
+
+  private void showMediaPreview(List<Uri> uris) {
+    if (mSelectedImageUri == null) {
+      mSelectedImageUri = uris;
+    } else {
+      mSelectedImageUri.addAll(uris);
+    }
+
+    if (mSelectedImageUri.size() > MAX_NUM_OF_IMAGES) {
+      mSelectedImageUri = mSelectedImageUri.subList(0, MAX_NUM_OF_IMAGES);
+      Toast.makeText(
+              this, "Only max " + MAX_NUM_OF_IMAGES + " images are allowed", Toast.LENGTH_SHORT)
+          .show();
+    }
+    Log.d("mSelectedImageUri", mSelectedImageUri.size() + " " + mSelectedImageUri);
+
+    if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.VISIBLE);
+
+    List<ImageView> imageViews = new ArrayList<ImageView>();
+
+    // Pre-populate all the image views that are available from the layout (currently max 5)
+    imageViews.add(requireViewById(R.id.mediaPreviewImageView1));
+    imageViews.add(requireViewById(R.id.mediaPreviewImageView2));
+    imageViews.add(requireViewById(R.id.mediaPreviewImageView3));
+    imageViews.add(requireViewById(R.id.mediaPreviewImageView4));
+    imageViews.add(requireViewById(R.id.mediaPreviewImageView5));
+
+    // Hide all the image views (reset state)
+    for (int i = 0; i < imageViews.size(); i++) {
+      if (imageViews.get(i) != null) imageViews.get(i).setVisibility(View.GONE);
+    }
+
+    // Only show/render those that have proper Image URIs
+    for (int i = 0; i < mSelectedImageUri.size(); i++) {
+      if (imageViews.get(i) != null) imageViews.get(i).setVisibility(View.VISIBLE);
+      if (imageViews.get(i) != null) imageViews.get(i).setImageURI(mSelectedImageUri.get(i));
+    }
+
+    // For LLava, we want to call prefill_image as soon as an image is selected
+    // Llava only support 1 image for now
+    if (mCurrentSettingsFields.getModelType() == ModelType.LLAVA_1_5) {
+      List<ETImage> processedImageList = getProcessedImagesForModel(mSelectedImageUri);
+      if (!processedImageList.isEmpty()) {
+        mMessageAdapter.add(
+            new Message("Llava - Starting image Prefill.", false, MessageType.SYSTEM, 0));
+        mMessageAdapter.notifyDataSetChanged();
+        Runnable runnable =
+            () -> {
+              Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
+              ETLogging.getInstance().log("Starting runnable prefill image");
+              ETImage img = processedImageList.get(0);
+              ETLogging.getInstance().log("Llava start prefill image");
+              startPos =
+                  mModule.prefillImages(
+                      img.getInts(),
+                      img.getWidth(),
+                      img.getHeight(),
+                      ModelUtils.VISION_MODEL_IMAGE_CHANNELS,
+                      startPos);
+            };
+        executor.execute(runnable);
+      }
+    }
+  }
+
+  private void addSelectedImagesToChatThread(List<Uri> selectedImageUri) {
+    if (selectedImageUri == null) {
+      return;
+    }
+    if (mMediaPreviewConstraintLayout != null) mMediaPreviewConstraintLayout.setVisibility(View.GONE);
+    for (int i = 0; i < selectedImageUri.size(); i++) {
+      Uri imageURI = selectedImageUri.get(i);
+      Log.d("image uri ", "test " + imageURI.getPath());
+      mMessageAdapter.add(new Message(imageURI.toString(), true, MessageType.IMAGE, 0));
+    }
+    mMessageAdapter.notifyDataSetChanged();
+  }
+
+  private void populateExistingMessages(String existingMsgJSON) {
+    Gson gson = new Gson();
+    Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+    ArrayList<Message> savedMessages = gson.fromJson(existingMsgJSON, type);
+    for (Message msg : savedMessages) {
+      mMessageAdapter.add(msg);
+    }
+    mMessageAdapter.notifyDataSetChanged();
+  }
+
+  private int setPromptID() {
+
+    return mMessageAdapter.getMaxPromptID() + 1;
   }
 }

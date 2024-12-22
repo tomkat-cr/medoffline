@@ -17,6 +17,17 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## Unreleased
+## 0.0.3 (2024-12-16)
+---
+
+### Changes
+Android app: automatic model download and load at startup disabled and moved to the gear screen.
+
+### Fixes
+Android app: model load error.
+
+
 ## 0.0.2 (2024-11-30)
 ---
 

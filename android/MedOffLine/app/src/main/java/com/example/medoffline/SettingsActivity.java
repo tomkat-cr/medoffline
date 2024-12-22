@@ -50,6 +50,8 @@ public class SettingsActivity extends AppCompatActivity {
   private DemoSharedPreferences mDemoSharedPreferences;
   public static double TEMPERATURE_MIN_VALUE = 0.0;
 
+  private LoadModelFromUrl mLoadModelFromUrl = null;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -59,60 +61,76 @@ public class SettingsActivity extends AppCompatActivity {
       getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.nav_bar));
     }
     ViewCompat.setOnApplyWindowInsetsListener(
-        requireViewById(R.id.main),
+        findViewById(R.id.main),
         (v, insets) -> {
           Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
           v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
           return insets;
         });
+
+    mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
+    SettingsFields mCurrentSettingsFields = mLoadModelFromUrl.setDefaultParameters();
+
     mDemoSharedPreferences = new DemoSharedPreferences(getBaseContext());
-    mSettingsFields = new SettingsFields();
+    mSettingsFields = new SettingsFields(mCurrentSettingsFields);
     setupSettings();
   }
 
   private void setupSettings() {
-    mBackendTextView = requireViewById(R.id.backendTextView);
-    mModelTextView = requireViewById(R.id.modelTextView);
-    mTokenizerTextView = requireViewById(R.id.tokenizerTextView);
-    mModelTypeTextView = requireViewById(R.id.modelTypeTextView);
-    ImageButton backendImageButton = requireViewById(R.id.backendImageButton);
-    ImageButton modelImageButton = requireViewById(R.id.modelImageButton);
-    ImageButton tokenizerImageButton = requireViewById(R.id.tokenizerImageButton);
-    ImageButton modelTypeImageButton = requireViewById(R.id.modelTypeImageButton);
-    mSystemPromptEditText = requireViewById(R.id.systemPromptText);
-    mUserPromptEditText = requireViewById(R.id.userPromptText);
+    mBackendTextView = findViewById(R.id.backendTextView);
+    mModelTextView = findViewById(R.id.modelTextView);
+    mTokenizerTextView = findViewById(R.id.tokenizerTextView);
+    mModelTypeTextView = findViewById(R.id.modelTypeTextView);
+    ImageButton backendImageButton = findViewById(R.id.backendImageButton);
+    ImageButton modelImageButton = findViewById(R.id.modelImageButton);
+    ImageButton tokenizerImageButton = findViewById(R.id.tokenizerImageButton);
+    ImageButton modelTypeImageButton = findViewById(R.id.modelTypeImageButton);
+    mSystemPromptEditText = findViewById(R.id.systemPromptText);
+    mUserPromptEditText = findViewById(R.id.userPromptText);
+
     loadSettings();
 
-    // TODO: The two setOnClickListeners will be removed after file path issue is resolved
-    backendImageButton.setOnClickListener(
-        view -> {
-          setupBackendSelectorDialog();
-        });
-    modelImageButton.setOnClickListener(
-        view -> {
-          setupModelSelectorDialog();
-        });
-    tokenizerImageButton.setOnClickListener(
-        view -> {
-          setupTokenizerSelectorDialog();
-        });
-    modelTypeImageButton.setOnClickListener(
-        view -> {
-          setupModelTypeSelectorDialog();
-        });
+    if (backendImageButton != null) {
+      backendImageButton.setOnClickListener(
+          view -> {
+            setupBackendSelectorDialog();
+          });
+    }
+    if (modelImageButton != null) {
+      modelImageButton.setOnClickListener(
+          view -> {
+            setupModelSelectorDialog();
+          });
+    }
+    if (tokenizerImageButton != null) {
+      tokenizerImageButton.setOnClickListener(
+          view -> {
+            setupTokenizerSelectorDialog();
+          });
+    }
+    if (modelTypeImageButton != null) {
+      modelTypeImageButton.setOnClickListener(
+          view -> {
+            setupModelTypeSelectorDialog();
+          });
+    }
+
     mModelFilePath = mSettingsFields.getModelFilePath();
     if (!mModelFilePath.isEmpty()) {
       mModelTextView.setText(getFilenameFromPath(mModelFilePath));
     }
+
     mTokenizerFilePath = mSettingsFields.getTokenizerFilePath();
     if (!mTokenizerFilePath.isEmpty()) {
       mTokenizerTextView.setText(getFilenameFromPath(mTokenizerFilePath));
     }
+
     mModelType = mSettingsFields.getModelType();
     ETLogging.getInstance().log("mModelType from settings " + mModelType);
     if (mModelType != null) {
       mModelTypeTextView.setText(mModelType.toString());
     }
+
     mBackendType = mSettingsFields.getBackendType();
     ETLogging.getInstance().log("mBackendType from settings " + mBackendType);
     if (mBackendType != null) {
@@ -127,46 +145,50 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setupLoadModelButton() {
-    mLoadModelButton = requireViewById(R.id.loadModelButton);
+    mLoadModelButton = findViewById(R.id.loadModelButton);
     mLoadModelButton.setEnabled(true);
-    mLoadModelButton.setOnClickListener(
-        view -> {
-          new AlertDialog.Builder(this)
-              .setTitle("Load Model")
-              .setMessage("Do you really want to load the new model?")
-              .setIcon(android.R.drawable.ic_dialog_alert)
-              .setPositiveButton(
-                  android.R.string.yes,
-                  new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                      mSettingsFields.saveLoadModelAction(true);
-                      mLoadModelButton.setEnabled(false);
-                      onBackPressed();
-                    }
-                  })
-              .setNegativeButton(android.R.string.no, null)
-              .show();
-        });
+    if (mLoadModelButton != null) {
+      mLoadModelButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Load Model")
+                .setMessage("Do you really want to load the new model?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        mSettingsFields.saveLoadModelAction(true);
+                        mLoadModelButton.setEnabled(false);
+                        onBackPressed();
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private void setupClearChatHistoryButton() {
-    Button clearChatButton = requireViewById(R.id.clearChatButton);
-    clearChatButton.setOnClickListener(
-        view -> {
-          new AlertDialog.Builder(this)
-              .setTitle("Delete Chat History")
-              .setMessage("Do you really want to delete chat history?")
-              .setIcon(android.R.drawable.ic_dialog_alert)
-              .setPositiveButton(
-                  android.R.string.yes,
-                  new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                      mSettingsFields.saveIsClearChatHistory(true);
-                    }
-                  })
-              .setNegativeButton(android.R.string.no, null)
-              .show();
-        });
+    Button clearChatButton = findViewById(R.id.clearChatButton);
+    if (clearChatButton != null) {
+      clearChatButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Delete Chat History")
+                .setMessage("Do you really want to delete chat history?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        mSettingsFields.saveIsClearChatHistory(true);
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private void setupParameterSettings() {
@@ -175,25 +197,27 @@ public class SettingsActivity extends AppCompatActivity {
 
   private void setupTemperatureSettings() {
     mSetTemperature = mSettingsFields.getTemperature();
-    EditText temperatureEditText = requireViewById(R.id.temperatureEditText);
-    temperatureEditText.setText(String.valueOf(mSetTemperature));
-    temperatureEditText.addTextChangedListener(
-        new TextWatcher() {
-          @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    EditText temperatureEditText = findViewById(R.id.temperatureEditText);
+    if (temperatureEditText != null) {
+      temperatureEditText.setText(String.valueOf(mSetTemperature));
+      temperatureEditText.addTextChangedListener(
+          new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-          @Override
-          public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-          @Override
-          public void afterTextChanged(Editable s) {
-            mSetTemperature = Double.parseDouble(s.toString());
-            // This is needed because temperature is changed together with model loading
-            // Once temperature is no longer in LlamaModule constructor, we can remove this
-            mSettingsFields.saveLoadModelAction(true);
-            saveSettings();
-          }
-        });
+            @Override
+            public void afterTextChanged(Editable s) {
+              mSetTemperature = Double.parseDouble(s.toString());
+              // This is needed because temperature is changed together with model loading
+              // Once temperature is no longer in LlamaModule constructor, we can remove this
+              mSettingsFields.saveLoadModelAction(true);
+              saveSettings();
+            }
+          });
+    }
   }
 
   private void setupPromptSettings() {
@@ -218,24 +242,26 @@ public class SettingsActivity extends AppCompatActivity {
           }
         });
 
-    ImageButton resetSystemPrompt = requireViewById(R.id.resetSystemPrompt);
-    resetSystemPrompt.setOnClickListener(
-        view -> {
-          new AlertDialog.Builder(this)
-              .setTitle("Reset System Prompt")
-              .setMessage("Do you really want to reset system prompt?")
-              .setIcon(android.R.drawable.ic_dialog_alert)
-              .setPositiveButton(
-                  android.R.string.yes,
-                  new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                      // Clear the messageAdapter and sharedPreference
-                      mSystemPromptEditText.setText(PromptFormat.DEFAULT_SYSTEM_PROMPT);
-                    }
-                  })
-              .setNegativeButton(android.R.string.no, null)
-              .show();
-        });
+    ImageButton resetSystemPrompt = findViewById(R.id.resetSystemPrompt);
+    if (resetSystemPrompt != null) {
+      resetSystemPrompt.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Reset System Prompt")
+                .setMessage("Do you really want to reset system prompt?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        // Clear the messageAdapter and sharedPreference
+                        mSystemPromptEditText.setText(PromptFormat.DEFAULT_SYSTEM_PROMPT);
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private void setupUserPromptSettings() {
@@ -259,24 +285,26 @@ public class SettingsActivity extends AppCompatActivity {
           }
         });
 
-    ImageButton resetUserPrompt = requireViewById(R.id.resetUserPrompt);
-    resetUserPrompt.setOnClickListener(
-        view -> {
-          new AlertDialog.Builder(this)
-              .setTitle("Reset Prompt Template")
-              .setMessage("Do you really want to reset the prompt template?")
-              .setIcon(android.R.drawable.ic_dialog_alert)
-              .setPositiveButton(
-                  android.R.string.yes,
-                  new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                      // Clear the messageAdapter and sharedPreference
-                      mUserPromptEditText.setText(PromptFormat.getUserPromptTemplate(mModelType));
-                    }
-                  })
-              .setNegativeButton(android.R.string.no, null)
-              .show();
-        });
+    ImageButton resetUserPrompt = findViewById(R.id.resetUserPrompt);
+    if (resetUserPrompt != null) {
+      resetUserPrompt.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Reset Prompt Template")
+                .setMessage("Do you really want to reset the prompt template?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        // Clear the messageAdapter and sharedPreference
+                        mUserPromptEditText.setText(PromptFormat.getUserPromptTemplate(mModelType));
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private boolean isValidUserPrompt(String userPrompt) {
@@ -324,7 +352,9 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setupModelSelectorDialog() {
-    String[] pteFiles = listLocalFile("/data/local/tmp/llama/", ".pte");
+    String resourcePath = mLoadModelFromUrl.getBaseModelsPath() + "/";
+    // String[] pteFiles = listLocalFile("/data/local/tmp/llama/", ".pte");
+    String[] pteFiles = listLocalFile(resourcePath, ".pte");
     AlertDialog.Builder modelPathBuilder = new AlertDialog.Builder(this);
     modelPathBuilder.setTitle("Select model path");
 
@@ -380,8 +410,11 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setupTokenizerSelectorDialog() {
-    String[] binFiles = listLocalFile("/data/local/tmp/llama/", ".bin");
-    String[] modelFiles = listLocalFile("/data/local/tmp/llama/", ".model");
+    String resourcePath = mLoadModelFromUrl.getBaseModelsPath() + "/";
+    // String[] binFiles = listLocalFile("/data/local/tmp/llama/", ".bin");
+    // String[] modelFiles = listLocalFile("/data/local/tmp/llama/", ".model");
+    String[] binFiles = listLocalFile(resourcePath, ".bin");
+    String[] modelFiles = listLocalFile(resourcePath, ".model");
     String[] tokenizerFiles = new String[binFiles.length + modelFiles.length];
     System.arraycopy(binFiles, 0, tokenizerFiles, 0, binFiles.length);
     System.arraycopy(modelFiles, 0, tokenizerFiles, binFiles.length, modelFiles.length);
@@ -417,19 +450,43 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setXNNPACKSettingMode() {
-    requireViewById(R.id.modelLayout).setVisibility(View.VISIBLE);
-    requireViewById(R.id.tokenizerLayout).setVisibility(View.VISIBLE);
-    requireViewById(R.id.parametersView).setVisibility(View.VISIBLE);
-    requireViewById(R.id.temperatureLayout).setVisibility(View.VISIBLE);
+    View modelLayout = findViewById(R.id.modelLayout);
+    if (modelLayout != null) {
+      modelLayout.setVisibility(View.VISIBLE);
+    }
+    View tokenizerLayout = findViewById(R.id.tokenizerLayout);
+    if (tokenizerLayout != null) {
+      tokenizerLayout.setVisibility(View.VISIBLE);
+    }
+    View parametersView = findViewById(R.id.parametersView);
+    if (parametersView != null) {
+      parametersView.setVisibility(View.VISIBLE);
+    }
+    View temperatureLayout = findViewById(R.id.temperatureLayout);
+    if (temperatureLayout != null) {
+      temperatureLayout.setVisibility(View.VISIBLE);
+    }
     mModelFilePath = "";
     mTokenizerFilePath = "";
   }
 
   private void setMediaTekSettingMode() {
-    requireViewById(R.id.modelLayout).setVisibility(View.GONE);
-    requireViewById(R.id.tokenizerLayout).setVisibility(View.GONE);
-    requireViewById(R.id.parametersView).setVisibility(View.GONE);
-    requireViewById(R.id.temperatureLayout).setVisibility(View.GONE);
+    View modelLayout = findViewById(R.id.modelLayout);
+    if (modelLayout != null) {
+      modelLayout.setVisibility(View.GONE);
+    }
+    View tokenizerLayout = findViewById(R.id.tokenizerLayout);
+    if (tokenizerLayout != null) {
+      tokenizerLayout.setVisibility(View.GONE);
+    }
+    View parametersView = findViewById(R.id.parametersView);
+    if (parametersView != null) {
+      parametersView.setVisibility(View.GONE);
+    }
+    View temperatureLayout = findViewById(R.id.temperatureLayout);
+    if (temperatureLayout != null) {
+      temperatureLayout.setVisibility(View.GONE);
+    }
     mModelFilePath = "/in/mtk/llama/runner";
     mTokenizerFilePath = "/in/mtk/llama/runner";
   }

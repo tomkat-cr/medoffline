@@ -271,6 +271,14 @@
         android:gravity="center_horizontal|center_vertical"
         android:id="@+id/progressBar">
 
+        <!-- <Button
+            android:id="@+id/loadModelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Load Model 123"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" /> -->
+
         <TextView
             android:id="@+id/progressBarText"
             android:layout_width="wrap_content"
@@ -286,6 +294,28 @@
             android:text="Downloading model, please be patient..."
             android:textColor="@android:color/black"
             android:paddingEnd="10dp" />
+
+        <TextView
+            android:id="@+id/downloadProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/downloadingModelText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/black"
+            android:visibility="gone"
+            android:text="Downloading: 0%" />
+
+        <ProgressBar
+            android:id="@+id/downloadProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/downloadProgressText"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            android:max="100" />
 
         <ProgressBar
             android:id="@+id/progressBarWheel"

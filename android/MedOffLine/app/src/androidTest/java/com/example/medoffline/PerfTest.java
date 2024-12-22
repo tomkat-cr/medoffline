@@ -26,7 +26,7 @@ import org.pytorch.executorch.LlamaModule;
 @RunWith(AndroidJUnit4.class)
 public class PerfTest implements LlamaCallback {
 
-  private static final String RESOURCE_PATH = "/data/local/tmp/llama/";
+  // private static final String RESOURCE_PATH = "/data/local/tmp/llama/";
   // private static final String TOKENIZER_BIN = "tokenizer.bin";
   private static final String TOKENIZER_BIN = "tokenizer.model";
 
@@ -35,6 +35,10 @@ public class PerfTest implements LlamaCallback {
 
   @Test
   public void testTokensPerSecond() {
+    LoadModelFromUrl mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
+    String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
+    String RESOURCE_PATH = resourcePath + "/";
+
     String tokenizerPath = RESOURCE_PATH + TOKENIZER_BIN;
     // Find out the model name
     File directory = new File(RESOURCE_PATH);
