@@ -14,8 +14,8 @@ public class SettingsFields {
     return modelFilePath;
   }
 
-  public String getModelDownloadUrlId() {
-    return modelDownloadUrl;
+  public String getModelToDownload() {
+    return modelToDownload;
   }
 
   public String getModelDownloadUrl() {
@@ -71,8 +71,12 @@ public class SettingsFields {
     return isDownloadModel;
   }
 
+  public boolean getIsModelLoaded() {
+    return isModelLoaded;
+  }
+
   private String modelFilePath;
-  private String modelDownloadUrlId;
+  private String modelToDownload;
   private String modelDownloadUrl;
   private String tokenizerFilePath;
   private double temperature;
@@ -83,6 +87,7 @@ public class SettingsFields {
   private boolean isDownloadModel;
   private ModelType modelType;
   private BackendType backendType;
+  private boolean isModelLoaded;
 
   public SettingsFields() {
     ETLogging.getInstance().log("SettingsFields # 1 | No parameters");
@@ -91,7 +96,7 @@ public class SettingsFields {
   public SettingsFields(SettingsFields settingsFields) {
     ETLogging.getInstance().log("SettingsFields # 2 | With parameter settingsFields: " + settingsFields);
     this.modelFilePath = settingsFields.modelFilePath;
-    this.modelDownloadUrlId = settingsFields.modelDownloadUrlId;
+    this.modelToDownload = settingsFields.modelToDownload;
     this.modelDownloadUrl = settingsFields.modelDownloadUrl;
     this.tokenizerFilePath = settingsFields.tokenizerFilePath;
     this.temperature = settingsFields.temperature;
@@ -102,13 +107,14 @@ public class SettingsFields {
     this.isDownloadModel = settingsFields.getIsDownloadModel();
     this.modelType = settingsFields.modelType;
     this.backendType = settingsFields.backendType;
+    this.isModelLoaded = settingsFields.isModelLoaded;
   }
 
   public void SetInitValues() {
     ModelType DEFAULT_MODEL = ModelType.LLAMA_3_2;
     BackendType DEFAULT_BACKEND = BackendType.XNNPACK;
     this.modelFilePath = "";
-    this.modelDownloadUrlId = "";
+    this.modelToDownload = "";
     this.modelDownloadUrl = "";
     this.tokenizerFilePath = "";
     this.temperature = SettingsActivity.TEMPERATURE_MIN_VALUE;
@@ -119,11 +125,12 @@ public class SettingsFields {
     this.isDownloadModel = false;
     this.modelType = DEFAULT_MODEL;
     this.backendType = DEFAULT_BACKEND;
+    this.isModelLoaded = false;
   }
 
   public void showOwnData() {
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelFilePath: " + this.modelFilePath);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelDownloadUrlId: " + this.modelDownloadUrlId);
+    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelToDownload: " + this.modelToDownload);
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelDownloadUrl: " + this.modelDownloadUrl);
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.tokenizerFilePath: " + this.tokenizerFilePath);
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.temperature: " + this.temperature);
@@ -134,14 +141,15 @@ public class SettingsFields {
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.isDownloadModel: " + this.isDownloadModel);
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelType: " + this.modelType);
     ETLogging.getInstance().log("SettingsFields # showOwnData | this.backendType: " + this.backendType);
+    ETLogging.getInstance().log("SettingsFields # showOwnData | this.isModelLoaded: " + this.isModelLoaded);
   }
 
   public void saveModelPath(String modelFilePath) {
     this.modelFilePath = modelFilePath;
   }
 
-  public void saveModelDownloadUrlId(String modelDownloadUrlId) {
-    this.modelDownloadUrlId = modelDownloadUrlId;
+  public void saveModelToDownload(String modelToDownload) {
+    this.modelToDownload = modelToDownload;
   }
 
   public void saveModelDownloadUrl(String modelDownloadUrl) {
@@ -181,10 +189,18 @@ public class SettingsFields {
     this.isLoadModel = shouldLoadModel;
   }
 
+  public void saveDownloadModelAction(boolean shouldDownloadModel) {
+    this.isDownloadModel = shouldDownloadModel;
+  }
+
+  public void saveIsModelLoaded(boolean isModelLoaded) {
+    this.isModelLoaded = isModelLoaded;
+  }
+
   public boolean equals(SettingsFields anotherSettingsFields) {
     if (this == anotherSettingsFields) return true;
     return modelFilePath.equals(anotherSettingsFields.modelFilePath)
-        && modelDownloadUrlId.equals(anotherSettingsFields.modelDownloadUrlId)
+        && modelToDownload.equals(anotherSettingsFields.modelToDownload)
         && modelDownloadUrl.equals(anotherSettingsFields.modelDownloadUrl)
         && tokenizerFilePath.equals(anotherSettingsFields.tokenizerFilePath)
         && temperature == anotherSettingsFields.temperature
@@ -193,6 +209,8 @@ public class SettingsFields {
         && isClearChatHistory == anotherSettingsFields.isClearChatHistory
         && isLoadModel == anotherSettingsFields.isLoadModel
         && modelType == anotherSettingsFields.modelType
-        && backendType == anotherSettingsFields.backendType;
+        && backendType == anotherSettingsFields.backendType
+        && isDownloadModel == anotherSettingsFields.isDownloadModel
+        && isModelLoaded == anotherSettingsFields.isModelLoaded;
   }
 }

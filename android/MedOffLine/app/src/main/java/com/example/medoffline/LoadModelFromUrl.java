@@ -32,11 +32,12 @@ public class LoadModelFromUrl {
     private static final Boolean USE_MODEL_DEFAULT_PATH = false;
     private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
 
-    // private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/2/download";
-    // public final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
-
-    // public final Float DEFAULT_TEMPERATURE = 0.1f;
     private static final int DEFAULT_TIMEOUT_MINUTES = 10;
+
+    public static Float DEFAULT_TEMPERATURE = 0.1f;
+
+    // public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "http://192.168.1.100/get_model_config";
+    public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "https://medoffline.aclics.com/get_model_config";
 
     private View downloadingModelText;
     private TextView downloadProgressText;
@@ -74,7 +75,9 @@ public class LoadModelFromUrl {
             ETLogging.getInstance().log("Not exist, creating it...");
             boolean isCreated = modelDir.mkdirs();
             if (!isCreated) {
-                throw new RuntimeException("Failed to create directory: " + modelDir);
+                // throw new RuntimeException("Failed to create directory: " + modelDir);
+                String errorMessage = "Failed to create directory: " + modelDir;
+                mErrorReporting.showError(errorMessage);
             } else {
                 ETLogging.getInstance().log("Directory created successfully: " + modelDir);
             }
@@ -118,83 +121,94 @@ public class LoadModelFromUrl {
         });
     }
 
-    // public String getWorkingModelFilePath(String resourcePath)
-    //         throws InterruptedException, ExecutionException, IOException {
-    //     File modelDir = new File(resourcePath);
-    //     if (!modelDir.exists()) {
-    //         boolean created = modelDir.mkdirs();
-    //         if (!created) {
-    //             throw new IOException("Failed to create directory: " + modelDir);
-    //         }
-    //     }
+    // public String getWorkingModelFilePath(String resourcePath, String ModelUrl)
+    public void downloadModel(SettingsFields mCurrentSettingsFields, DemoSharedPreferences mDemoSharedPreferences)
+        throws InterruptedException, ExecutionException, IOException {
 
-    //     // First check if we already have the model
-    //     String modelPath = getFirstModelFilePath(resourcePath, ".pte");
-    //     if (modelPath != null) {
-    //         Log.i("MainActivity", "Found existing model at: " + modelPath);
-    //         return modelPath;
-    //     }
+        ETLogging.getInstance().log("downloadModel | started...");
+        
+        String modelToDownload = mCurrentSettingsFields.getModelToDownload();
 
-    //     // Set up progress tracking
-    //     // runOnUiThread(() -> {
-    //     new Handler(Looper.getMainLooper()).post(() -> {
-    //         if (downloadProgressBar != null)
-    //             downloadProgressBar.setVisibility(View.VISIBLE);
-    //         if (downloadProgressText != null)
-    //             downloadProgressText.setVisibility(View.VISIBLE);
-    //         if (downloadingModelText != null)
-    //             downloadingModelText.setVisibility(View.VISIBLE);
-    //     });
+        String resourcePath = getBaseModelsPath();
+        File modelDir = new File(resourcePath);
+        if (!modelDir.exists()) {
+            boolean created = modelDir.mkdirs();
+            if (!created) {
+                throw new IOException("Failed to create directory: " + modelDir);
+            }
+        }
 
-    //     try {
-    //         // Set up progress listener
-    //         LocalModelManagement.setDownloadProgressListener(new LocalModelManagement.DownloadProgressListener() {
-    //             @Override
-    //             public void onProgressUpdate(long bytesRead, long contentLength, boolean done) {
-    //                 updateDownloadProgress(bytesRead, contentLength);
-    //             }
+        ModelsConfig modelsConfig = new ModelsConfig(this.context);
+        String ModelUrl = modelsConfig.getModelUrl(modelToDownload);
+        if (ModelUrl == null) {
+            throw new IOException("Model URL not found for model: " + modelToDownload);
+        }
 
-    //             @Override
-    //             public void onError(String error) {
-    //                 mErrorReporting.showError(error);
-    //             }
-    //         });
+        // Set up progress tracking
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (downloadProgressBar != null)
+                downloadProgressBar.setVisibility(View.VISIBLE);
+            if (downloadProgressText != null)
+                downloadProgressText.setVisibility(View.VISIBLE);
+            if (downloadingModelText != null)
+                downloadingModelText.setVisibility(View.VISIBLE);
+        });
 
-    //         // Download and extract model
-    //         String tarGzPath = resourcePath + "/model.tar.gz";
-    //         LocalModelManagement.downloadZipFile(context, MODEL_URL, tarGzPath, DEFAULT_TIMEOUT_MINUTES);
-    //         LocalModelManagement.unzipGz(tarGzPath, resourcePath);
+        try {
+            // Set up progress listener
+            LocalModelManagement.setDownloadProgressListener(new LocalModelManagement.DownloadProgressListener() {
+                @Override
+                public void onProgressUpdate(long bytesRead, long contentLength, boolean done) {
+                    updateDownloadProgress(bytesRead, contentLength);
+                }
 
-    //         // Check if model was extracted successfully
-    //         modelPath = getFirstModelFilePath(resourcePath, ".pte");
-    //         if (modelPath == null) {
-    //             throw new IOException("Model file not found after extraction");
-    //         }
+                @Override
+                public void onError(String error) {
+                    mErrorReporting.showError(error);
+                }
+            });
 
-    //         return modelPath;
+            // Download and extract model
+            String tarGzPath = resourcePath + "/model.tar.gz";
+            LocalModelManagement.downloadZipFile(context, ModelUrl, tarGzPath, DEFAULT_TIMEOUT_MINUTES);
+            LocalModelManagement.unzipGz(tarGzPath, resourcePath);
 
-    //     } catch (Exception e) {
-    //         Log.e("MainActivity", "Error during model setup", e);
-    //         throw e;
-    //     } finally {
-    //         // runOnUiThread(() -> {
-    //         new Handler(Looper.getMainLooper()).post(() -> {
-    //             if (downloadProgressBar != null)
-    //                 downloadProgressBar.setVisibility(View.GONE);
-    //             if (downloadProgressText != null)
-    //                 downloadProgressText.setVisibility(View.GONE);
-    //             if (downloadingModelText != null)
-    //                 downloadingModelText.setVisibility(View.GONE);
-    //         });
-    //     }
-    // }
+            // Check if model was extracted successfully
+            String modelPath = getFirstModelFilePath(resourcePath, ".pte");
+            if (modelPath == null) {
+                throw new IOException("Model file not found after extraction");
+            }
+            String tokenizerPath = getTokenizerPath(modelPath);
+
+            mCurrentSettingsFields.saveModelPath(modelPath);
+            mCurrentSettingsFields.saveTokenizerPath(tokenizerPath);
+
+            // Save model path to SharedPreferences
+            mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+
+        } catch (Exception e) {
+            String errorMessage = "Error downloading model: " + e.getMessage();
+            Log.e("LoadModelFromUrl | downloadModel", "Error during model setup", e);
+            mErrorReporting.showError(errorMessage);
+            // throw e;
+        } finally {
+            // runOnUiThread(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (downloadProgressBar != null)
+                    downloadProgressBar.setVisibility(View.GONE);
+                if (downloadProgressText != null)
+                    downloadProgressText.setVisibility(View.GONE);
+                if (downloadingModelText != null)
+                    downloadingModelText.setVisibility(View.GONE);
+            });
+        }
+    }
 
     public SettingsFields setDefaultParameters() {
         // Set default values for settings
 
         ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
         BackendType DEFAULT_BACKEND_TYPE = BackendType.XNNPACK;
-        Float DEFAULT_TEMPERATURE = 0.1f;
 
         // Initialize settings
         SettingsFields mCurrentSettingsFields = new SettingsFields();
@@ -202,7 +216,7 @@ public class LoadModelFromUrl {
 
         String resourcePath = getBaseModelsPath();
 
-        String defaultModeModelDownloadUrl = "";
+        String defaultModeModelDownloadUrl = DEFAULT_MODEL_CONFIG_DOWNLOAD_URL;
         String defaultModelPath = "";
         String defaultTokenizerPath = "";
 
@@ -243,7 +257,7 @@ public class LoadModelFromUrl {
             if (defaultModelPath == null) {
                 defaultModelPath = "";
             } else {
-                defaultTokenizerPath = resourcePath + "/tokenizer.model";
+                defaultTokenizerPath = getTokenizerPath(defaultModelPath);
             }
         }
 
@@ -266,14 +280,33 @@ public class LoadModelFromUrl {
         // Print mCurrentSettingsFields
         ETLogging.getInstance().log("setDefaultParameters | mCurrentSettingsFields: " + mCurrentSettingsFields);
 
-        // Initialize shared preferences
-        DemoSharedPreferences mDemoSharedPreferences;
-        mDemoSharedPreferences = new DemoSharedPreferences(context);
-
         // Save initial settings
-        mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+        saveSettings(mCurrentSettingsFields);
 
         // Return the mCurrentSettingsFields
         return mCurrentSettingsFields;
+    }
+
+    public String getTokenizerPath(String modelPath) {
+        String resourcePath = getBaseModelsPath();
+        String tokenizerPath = resourcePath + "/tokenizer.model";
+        // Verify if tokenizer file exists
+        File tokenizerFile = new File(tokenizerPath);
+        if (!tokenizerFile.exists()) {
+            tokenizerPath = modelPath.replace(".pte", ".bin");
+            tokenizerFile = new File(tokenizerPath);
+            if (!tokenizerFile.exists()) {
+                String errorMessage = "Error: tokenizer file does not exist";
+                Log.e("LoadModelFromUrl | getTokenizerPath", errorMessage);
+                mErrorReporting.showError(errorMessage);
+            }
+        }
+        return tokenizerPath;
+    }
+
+    private void saveSettings(SettingsFields updatedSettingsFields) {
+        // Save settings to shared preferences
+        DemoSharedPreferences mDemoSharedPreferences = new DemoSharedPreferences(context);
+        mDemoSharedPreferences.addSettings(updatedSettingsFields);
     }
 }

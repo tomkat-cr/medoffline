@@ -31,21 +31,33 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
-  private String mModelFilePath = "";
-  private String mTokenizerFilePath = "";
+  private TextView mModelToDownloadLabel;
+  private TextView mBackendLabel;
+  private TextView mModelLabel;
+  private TextView mTokenizerLabel;
+  private TextView mModelTypeLabel;
+
+  private TextView mModelToDownloadTextView;
   private TextView mBackendTextView;
   private TextView mModelTextView;
   private TextView mTokenizerTextView;
   private TextView mModelTypeTextView;
+
   private EditText mSystemPromptEditText;
   private EditText mUserPromptEditText;
+
   private Button mLoadModelButton;
+
+  private String mModelDownloadUrl = "";
+  private String mModelToDownload = "";
+  private String mModelFilePath = "";
+  private String mTokenizerFilePath = "";
   private double mSetTemperature;
   private String mSystemPrompt;
   private String mUserPrompt;
   private BackendType mBackendType;
   private ModelType mModelType;
-  public SettingsFields mSettingsFields;
+  private SettingsFields mSettingsFields;
 
   private DemoSharedPreferences mDemoSharedPreferences;
   public static double TEMPERATURE_MIN_VALUE = 0.0;
@@ -77,18 +89,47 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setupSettings() {
+    mModelToDownloadLabel = findViewById(R.id.modelToDownloadLabel);
+    mBackendLabel = findViewById(R.id.backendLabel);
+    mModelLabel = findViewById(R.id.modelLabel);
+    mTokenizerLabel = findViewById(R.id.tokenizerLabel);
+    mModelTypeLabel = findViewById(R.id.modelTypeLabel);
+    
+    mModelToDownloadTextView = findViewById(R.id.modelToDownloadTextView);
     mBackendTextView = findViewById(R.id.backendTextView);
     mModelTextView = findViewById(R.id.modelTextView);
     mTokenizerTextView = findViewById(R.id.tokenizerTextView);
     mModelTypeTextView = findViewById(R.id.modelTypeTextView);
+    
+    ImageButton modelToDownloadImageButton = findViewById(R.id.modelToDownloadImageButton);
     ImageButton backendImageButton = findViewById(R.id.backendImageButton);
     ImageButton modelImageButton = findViewById(R.id.modelImageButton);
     ImageButton tokenizerImageButton = findViewById(R.id.tokenizerImageButton);
     ImageButton modelTypeImageButton = findViewById(R.id.modelTypeImageButton);
+  
     mSystemPromptEditText = findViewById(R.id.systemPromptText);
     mUserPromptEditText = findViewById(R.id.userPromptText);
 
     loadSettings();
+
+    if (modelToDownloadImageButton != null) {
+      modelToDownloadImageButton.setOnClickListener(
+          view -> {
+            setupModelToDownloadSelectorDialog();
+          });
+    }
+    if (mModelToDownloadTextView != null) {
+      mModelToDownloadTextView.setOnClickListener(
+          view -> {
+            setupModelToDownloadSelectorDialog();
+          });
+    }
+    if (mModelToDownloadLabel != null) {
+      mModelToDownloadLabel.setOnClickListener(
+          view -> {
+            setupModelToDownloadSelectorDialog();
+          });
+    }
 
     if (backendImageButton != null) {
       backendImageButton.setOnClickListener(
@@ -96,20 +137,71 @@ public class SettingsActivity extends AppCompatActivity {
             setupBackendSelectorDialog();
           });
     }
+    if (mBackendLabel != null) {
+      mBackendLabel.setOnClickListener(
+          view -> {
+            setupBackendSelectorDialog();
+          });
+    }
+    if (mBackendTextView != null) {
+      mBackendTextView.setOnClickListener(
+          view -> {
+            setupBackendSelectorDialog();
+          });
+    }
+
     if (modelImageButton != null) {
       modelImageButton.setOnClickListener(
           view -> {
             setupModelSelectorDialog();
           });
     }
+    if (mModelLabel != null) {
+      mModelLabel.setOnClickListener(
+          view -> {
+            setupModelSelectorDialog();
+          });
+    }
+    if (mModelTextView != null) {
+      mModelTextView.setOnClickListener(
+          view -> {
+            setupModelSelectorDialog();
+          });
+    }
+
     if (tokenizerImageButton != null) {
       tokenizerImageButton.setOnClickListener(
           view -> {
             setupTokenizerSelectorDialog();
           });
     }
+    if (mTokenizerLabel != null) {
+      mTokenizerLabel.setOnClickListener(
+          view -> {
+            setupTokenizerSelectorDialog();
+          });
+    }
+    if (mTokenizerTextView != null) {
+      mTokenizerTextView.setOnClickListener(
+          view -> {
+            setupTokenizerSelectorDialog();
+          });
+    }
+
     if (modelTypeImageButton != null) {
       modelTypeImageButton.setOnClickListener(
+          view -> {
+            setupModelTypeSelectorDialog();
+          });
+    }
+    if (mModelTypeLabel != null) {
+      mModelTypeLabel.setOnClickListener(
+          view -> {
+            setupModelTypeSelectorDialog();
+          });
+    }
+    if (mModelTypeTextView != null) {
+      mModelTypeTextView.setOnClickListener(
           view -> {
             setupModelTypeSelectorDialog();
           });
@@ -142,6 +234,33 @@ public class SettingsActivity extends AppCompatActivity {
     setupPromptSettings();
     setupClearChatHistoryButton();
     setupLoadModelButton();
+    setupDownloadModelButton();
+    setupModelDownloadUrlSettings();
+  }
+
+  private void setupDownloadModelButton() {
+    Button mDownloadModelButton = findViewById(R.id.downloadModelButton);
+    mDownloadModelButton.setEnabled(true);
+    if (mDownloadModelButton != null) {
+      mDownloadModelButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Download Model")
+                .setMessage("Do you really want to download the new model?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        mSettingsFields.saveDownloadModelAction(true);
+                        mLoadModelButton.setEnabled(false);
+                        onBackPressed();
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private void setupLoadModelButton() {
@@ -223,6 +342,52 @@ public class SettingsActivity extends AppCompatActivity {
   private void setupPromptSettings() {
     setupSystemPromptSettings();
     setupUserPromptSettings();
+  }
+
+  private void setupModelDownloadUrlSettings() {
+    mModelDownloadUrl = mSettingsFields.getModelDownloadUrl();
+    if (mModelDownloadUrl.isEmpty()) {
+      mModelDownloadUrl = LoadModelFromUrl.DEFAULT_MODEL_CONFIG_DOWNLOAD_URL;
+    }
+    EditText modelDownloadUrlText = findViewById(R.id.modelDownloadUrlText);
+    modelDownloadUrlText.setText(mModelDownloadUrl);
+    modelDownloadUrlText.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+          @Override
+          public void afterTextChanged(Editable s) {
+            mModelDownloadUrl = s.toString();
+            saveSettings();
+          }
+        });
+
+    ImageButton resetModelDownloadUrl = findViewById(R.id.resetModelDownloadUrl);
+    if (resetModelDownloadUrl != null) {
+      resetModelDownloadUrl.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Reset Model Download URL")
+                .setMessage("Do you really want to reset model download URL?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        // Clear the messageAdapter and sharedPreference
+                        mModelDownloadUrl = LoadModelFromUrl.DEFAULT_MODEL_CONFIG_DOWNLOAD_URL;
+                        modelDownloadUrlText.setText(mModelDownloadUrl);
+                        saveSettings();
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
   }
 
   private void setupSystemPromptSettings() {
@@ -328,11 +493,43 @@ public class SettingsActivity extends AppCompatActivity {
         .show();
   }
 
+  private void setupModelToDownloadSelectorDialog() {
+    ModelsConfig modelsConfig = new ModelsConfig(getBaseContext());
+    List<String> modelToDownloadList = new ArrayList<>();
+    List<ModelInfo> modelToDownloadObjectList = modelsConfig.getModelsList();
+    int selectedModelIndex = modelToDownloadObjectList.indexOf(
+        modelToDownloadObjectList.stream()
+            .filter(modelInfo -> modelInfo.getModelName().equals(mModelToDownload))
+            .findFirst()
+            .orElse(null));
+    for (ModelInfo modelInfo : modelToDownloadObjectList) {
+      modelToDownloadList.add(modelInfo.getModelName());
+    }
+    // Alert dialog builder takes in arr of string instead of list
+    String[] modelsToDownload = modelToDownloadList.toArray(new String[0]);
+    AlertDialog.Builder modelToDownloadBuilder = new AlertDialog.Builder(this);
+    modelToDownloadBuilder.setTitle("Select model to download");
+    modelToDownloadBuilder.setSingleChoiceItems(
+        modelsToDownload,
+        selectedModelIndex,
+        (dialog, item) -> {
+          mModelToDownloadTextView.setText(modelsToDownload[item]);
+          mModelToDownload = modelsToDownload[item];
+          // setBackendSettingMode();
+          dialog.dismiss();
+        });
+    modelToDownloadBuilder.create().show();
+  }
+
   private void setupBackendSelectorDialog() {
     // Convert enum to list
     List<String> backendTypesList = new ArrayList<>();
+    int selectedBackendIndex = -1;
     for (BackendType backendType : BackendType.values()) {
       backendTypesList.add(backendType.toString());
+      if (backendType == mBackendType) {
+        selectedBackendIndex = backendTypesList.indexOf(backendType.toString());
+      }
     }
     // Alert dialog builder takes in arr of string instead of list
     String[] backendTypes = backendTypesList.toArray(new String[0]);
@@ -340,7 +537,7 @@ public class SettingsActivity extends AppCompatActivity {
     backendTypeBuilder.setTitle("Select backend type");
     backendTypeBuilder.setSingleChoiceItems(
         backendTypes,
-        -1,
+        selectedBackendIndex,
         (dialog, item) -> {
           mBackendTextView.setText(backendTypes[item]);
           mBackendType = BackendType.valueOf(backendTypes[item]);
@@ -355,12 +552,29 @@ public class SettingsActivity extends AppCompatActivity {
     String resourcePath = mLoadModelFromUrl.getBaseModelsPath() + "/";
     // String[] pteFiles = listLocalFile("/data/local/tmp/llama/", ".pte");
     String[] pteFiles = listLocalFile(resourcePath, ".pte");
+
+    if (pteFiles.length == 0) {
+      new AlertDialog.Builder(this)
+          .setTitle("No model found")
+          .setMessage("Please download a model first")
+          .setIcon(android.R.drawable.ic_dialog_alert)
+          .setPositiveButton(android.R.string.yes, null)
+          .show();
+      return;
+    }
+    int selectedModelIndex = -1;
+    for (int i = 0; i < pteFiles.length; i++) {
+      if (pteFiles[i].equals(mModelFilePath)) {
+        selectedModelIndex = i;
+        break;
+      }
+    }
+
     AlertDialog.Builder modelPathBuilder = new AlertDialog.Builder(this);
     modelPathBuilder.setTitle("Select model path");
-
     modelPathBuilder.setSingleChoiceItems(
         pteFiles,
-        -1,
+        selectedModelIndex,
         (dialog, item) -> {
           mModelFilePath = pteFiles[item];
           mModelTextView.setText(getFilenameFromPath(mModelFilePath));
@@ -394,11 +608,20 @@ public class SettingsActivity extends AppCompatActivity {
     }
     // Alert dialog builder takes in arr of string instead of list
     String[] modelTypes = modelTypesList.toArray(new String[0]);
+
+    int selectedModelIndex = -1;
+    for (int i = 0; i < modelTypes.length; i++) {
+      if (modelTypes[i].equals(mModelType.toString())) {
+        selectedModelIndex = i;
+        break;
+      }
+    }
+
     AlertDialog.Builder modelTypeBuilder = new AlertDialog.Builder(this);
     modelTypeBuilder.setTitle("Select model type");
     modelTypeBuilder.setSingleChoiceItems(
         modelTypes,
-        -1,
+        selectedModelIndex,
         (dialog, item) -> {
           mModelTypeTextView.setText(modelTypes[item]);
           mModelType = ModelType.valueOf(modelTypes[item]);
@@ -418,11 +641,28 @@ public class SettingsActivity extends AppCompatActivity {
     String[] tokenizerFiles = new String[binFiles.length + modelFiles.length];
     System.arraycopy(binFiles, 0, tokenizerFiles, 0, binFiles.length);
     System.arraycopy(modelFiles, 0, tokenizerFiles, binFiles.length, modelFiles.length);
+
+    if (tokenizerFiles.length == 0) {
+      new AlertDialog.Builder(this)
+          .setTitle("No tokenizer found")
+          .setMessage("Please download a tokenizer first")
+          .setIcon(android.R.drawable.ic_dialog_alert)
+          .setPositiveButton(android.R.string.yes, null)
+          .show();
+      return;
+    }
+    int selectedModelIndex = -1;
+    for (int i = 0; i < tokenizerFiles.length; i++) {
+      if (tokenizerFiles[i].equals(mTokenizerFilePath)) {
+        selectedModelIndex = i;
+        break;
+      }
+    }
     AlertDialog.Builder tokenizerPathBuilder = new AlertDialog.Builder(this);
     tokenizerPathBuilder.setTitle("Select tokenizer path");
     tokenizerPathBuilder.setSingleChoiceItems(
         tokenizerFiles,
-        -1,
+        selectedModelIndex,
         (dialog, item) -> {
           mTokenizerFilePath = tokenizerFiles[item];
           mTokenizerTextView.setText(getFilenameFromPath(mTokenizerFilePath));
@@ -500,6 +740,8 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void saveSettings() {
+    mSettingsFields.saveModelDownloadUrl(mModelDownloadUrl);
+    mSettingsFields.saveModelToDownload(mModelToDownload);
     mSettingsFields.saveModelPath(mModelFilePath);
     mSettingsFields.saveTokenizerPath(mTokenizerFilePath);
     mSettingsFields.saveParameters(mSetTemperature);

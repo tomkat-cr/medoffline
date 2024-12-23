@@ -10,7 +10,6 @@ package com.example.medoffline;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -52,59 +51,6 @@ import org.pytorch.executorch.LlamaCallback;
 import org.pytorch.executorch.LlamaModule;
 
 public class MainActivity extends AppCompatActivity implements Runnable, LlamaCallback {
-//  private static final Boolean USE_MODEL_DEFAULT_PATH = false;
-//  private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/llama";
-
-//  private static final String MODEL_URL_VERSION = "2";
-//  private static final String MODEL_URL = "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_3b_pte/pyTorch/executorch/" + MODEL_URL_VERSION + "/download";
-
-//  private final ModelType DEFAULT_MODEL_TYPE = ModelType.LLAMA_3_2;
-//  private final Float DEFAULT_TEMPERATURE = 0.1f;
-
-//  private String getBaseModelsPath() {
-//    if (USE_MODEL_DEFAULT_PATH) {
-//      return MODEL_DEFAULT_PATH;
-//    }
-//    return getFilesDir().getAbsolutePath() + "/llama";
-//  }
-
-//  private String getFirstModelFilePath(String resourcePath, String fileExtension) {
-//    File modelDir = new File(resourcePath);
-//
-//    ETLogging.getInstance().log("Checking directory: " + modelDir);
-//    if (!modelDir.exists()) {
-//      ETLogging.getInstance().log("Not exist, creating it...");
-//        boolean isCreated = modelDir.mkdirs();
-//      if (!isCreated) {
-//          throw new RuntimeException("Failed to create directory: " + modelDir);
-//      } else {
-//        ETLogging.getInstance().log("Directory created successfully: " + modelDir);
-//      }
-//    }
-//
-//    // Print the modelDir files
-//    ETLogging.getInstance().log("Files in " + resourcePath);
-//    File[] files = modelDir.listFiles();
-//    for (File file : files) {
-//        ETLogging.getInstance().log("File: " + file.getName() + ", Size: " + file.length() + " bytes");
-//    }
-//
-//    File model =
-//        Arrays.stream(modelDir.listFiles())
-//            // .filter(file -> file.getName().endsWith(".pte"))
-//            .filter(file -> file.getName().endsWith(fileExtension))
-//            .findFirst()
-//            .orElse(null);
-//    String modelPath = null;
-//    if (model != null) {
-//        modelPath = model.getAbsolutePath();
-//        ETLogging.getInstance().log("getFirstModelFilePath | modelPath: " + modelPath);
-//    }
-//    return modelPath;
-//  }
-
-//  private static ModelRunner mModelRunner;
-
   private static final int MAX_NUM_OF_IMAGES = 5;
   private static final int REQUEST_IMAGE_CAPTURE = 1;
   private static final int CONVERSATION_HISTORY_MESSAGE_LOOKBACK = 2;
@@ -113,213 +59,36 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   private ImageButton mSendButton;
   private ImageButton mGalleryButton;
   private ImageButton mCameraButton;
-  private ListView mMessagesView;
-  private MessageAdapter mMessageAdapter;
-  private LlamaModule mModule = null;
-  private Message mResultMessage = null;
   private ImageButton mSettingsButton;
+  private ListView mMessagesView;
+  private View progressBar;
+  private View downloadingModelText;
   private TextView mMemoryView;
+  private TextView progressBarText;  // Changed from View to TextView
+  private TextView downloadProgressText;
+  private ProgressBar progressBarWheel;
+  private ProgressBar downloadProgressBar;
+  private MessageAdapter mMessageAdapter;
+  private Message mResultMessage = null;
+  private ConstraintLayout mMediaPreviewConstraintLayout;
+
   private ActivityResultLauncher<PickVisualMediaRequest> mPickGallery;
   private ActivityResultLauncher<Uri> mCameraRoll;
+
+  private DemoSharedPreferences mDemoSharedPreferences;
   private List<Uri> mSelectedImageUri;
-  private ConstraintLayout mMediaPreviewConstraintLayout;
   private LinearLayout mAddMediaLayout;
   private Uri cameraImageUri;
-  private DemoSharedPreferences mDemoSharedPreferences;
   private Handler mMemoryUpdateHandler;
   private Runnable memoryUpdater;
   private int promptID = 0;
   private long startPos = 0;
   private Executor executor;
-  private View progressBar;
-  private TextView progressBarText;  // Changed from View to TextView
-  private ProgressBar progressBarWheel;
-  private View downloadingModelText;
-  private TextView downloadProgressText;
-  private ProgressBar downloadProgressBar;
-
-  //  private static final int DEFAULT_TIMEOUT_MINUTES = 10;
-  // private Button mLoadModelButton;
-
-  private boolean modelLoaded = false;
+  private LlamaModule mModule = null;
 
   private SettingsFields mCurrentSettingsFields;
   private LoadModelFromUrl mLoadModelFromUrl = null;
   private ErrorReporting mErrorReporting = null;
-
-//  private void updateDownloadProgress(long bytesRead, long contentLength) {
-//    runOnUiThread(() -> {
-//      if (contentLength > 0) {
-//        int progress = (int) (100 * bytesRead / contentLength);
-//        downloadProgressBar.setProgress(progress);
-//        downloadProgressText.setText(String.format("Downloading: %d%%", progress));
-//      } else {
-//        downloadProgressText.setText(String.format("Downloading: %.2f MB", bytesRead / (1024.0 * 1024.0)));
-//      }
-//    });
-//  }
-
-//  private void showError(String error) {
-//    runOnUiThread(() -> {
-//      AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//      builder.setTitle("Error")
-//             .setMessage(error)
-//             .setPositiveButton("Retry", (dialog, which) -> {
-//               // Retry model loading
-//               loadModel();
-//             })
-//             .setNegativeButton("Cancel", null)
-//             .show();
-//    });
-//  }
-
-  // private void loadModel() {
-  //   if (modelLoaded) {
-  //     Toast.makeText(this, "Model already loaded", Toast.LENGTH_SHORT).show();
-  //     return;
-  //   }
-
-  //   // Show loading indicators
-  //   if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-  //   if (progressBarText != null) {
-  //     progressBarText.setVisibility(View.VISIBLE);
-  //     progressBarText.setText("Loading model...");
-  //   }
-  //   if (progressBarWheel != null) progressBarWheel.setVisibility(View.VISIBLE);
-  //   // if (mLoadModelButton != null) mLoadModelButton.setEnabled(false);
-
-  //   // Initialize model in background thread using executor
-  //   executor.execute(() -> {
-  //     try {
-  //       mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
-  //       String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
-  //       String modelPath = mLoadModelFromUrl.getFirstModelFilePath(resourcePath, ".pte");
-  //       String tokenizerPath = resourcePath + "/tokenizer.model";
-
-  //       if (modelPath != null) {
-  //         ETLogging.getInstance().log("Loading model " + modelPath + " with tokenizer " + tokenizerPath);
-          
-  //         runOnUiThread(() -> {
-  //           if (progressBarText != null) {
-  //             progressBarText.setText("Initializing model...");
-  //           }
-  //         });
-
-  //         // Initialize model with proper waiting
-  //         synchronized (this) {
-  //           mModule = new LlamaModule(
-  //               ModelUtils.getModelCategory(
-  //                 mCurrentSettingsFields.getModelType(),
-  //                 mCurrentSettingsFields.getBackendType()),
-  //               modelPath,
-  //               tokenizerPath,
-  //               (float) mCurrentSettingsFields.getTemperature());
-
-  //           // Wait for initialization
-  //           wait(5000); // Wait up to 5 seconds for initialization
-  //         }
-
-  //         modelLoaded = true;
-  //         runOnUiThread(() -> {
-  //           if (mSendButton != null) mSendButton.setEnabled(true);
-  //           // if (mLoadModelButton != null) {
-  //           //   mLoadModelButton.setText("Model Loaded");
-  //           //   mLoadModelButton.setEnabled(false);
-  //           // }
-            
-  //           // Hide loading indicators
-  //           if (progressBar != null) progressBar.setVisibility(View.GONE);
-  //           if (progressBarText != null) progressBarText.setVisibility(View.GONE);
-  //           if (progressBarWheel != null) progressBarWheel.setVisibility(View.GONE);
-
-  //           Toast.makeText(MainActivity.this, "Model loaded successfully", Toast.LENGTH_SHORT).show();
-  //         });
-  //       } else {
-  //         mErrorReporting.showError("Failed to load model. Please check logs for details.");
-  //       }
-  //     } catch (Exception e) {
-  //       String error = "Error loading model: " + e.getMessage();
-  //       ETLogging.getInstance().log(error);
-  //       e.printStackTrace();
-        
-  //       runOnUiThread(() -> {
-  //         // Show error state
-  //         if (progressBarText != null) {
-  //           progressBarText.setText("Error loading model");
-  //           progressBarText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-  //         }
-  //         // if (mLoadModelButton != null) {
-  //         //   mLoadModelButton.setEnabled(true);
-  //         //   mLoadModelButton.setText("Retry Load Model");
-  //         // }
-          
-  //         Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-  //       });
-  //     }
-  //   });
-  // }
-
-//  private String getWorkingModelFilePath(String resourcePath) throws InterruptedException, ExecutionException, IOException {
-//    File modelDir = new File(resourcePath);
-//    if (!modelDir.exists()) {
-//      boolean created = modelDir.mkdirs();
-//      if (!created) {
-//        throw new IOException("Failed to create directory: " + modelDir);
-//      }
-//    }
-//
-//    // First check if we already have the model
-//    String modelPath = getFirstModelFilePath(resourcePath, ".pte");
-//    if (modelPath != null) {
-//      Log.i("MainActivity", "Found existing model at: " + modelPath);
-//      return modelPath;
-//    }
-//
-//    // Set up progress tracking
-//    runOnUiThread(() -> {
-//      if (downloadProgressBar != null) downloadProgressBar.setVisibility(View.VISIBLE);
-//      if (downloadProgressText != null) downloadProgressText.setVisibility(View.VISIBLE);
-//      if (downloadingModelText != null) downloadingModelText.setVisibility(View.VISIBLE);
-//    });
-//
-//    try {
-//      // Set up progress listener
-//      LocalModelManagement.setDownloadProgressListener(new LocalModelManagement.DownloadProgressListener() {
-//        @Override
-//        public void onProgressUpdate(long bytesRead, long contentLength, boolean done) {
-//          updateDownloadProgress(bytesRead, contentLength);
-//        }
-//
-//        @Override
-//        public void onError(String error) {
-//          showError(error);
-//        }
-//      });
-//
-//      // Download and extract model
-//      String tarGzPath = resourcePath + "/model.tar.gz";
-//      LocalModelManagement.downloadZipFile(this, MODEL_URL, tarGzPath, DEFAULT_TIMEOUT_MINUTES);
-//      LocalModelManagement.unzipGz(tarGzPath, resourcePath);
-//
-//      // Check if model was extracted successfully
-//      modelPath = getFirstModelFilePath(resourcePath, ".pte");
-//      if (modelPath == null) {
-//        throw new IOException("Model file not found after extraction");
-//      }
-//
-//      return modelPath;
-//
-//    } catch (Exception e) {
-//      Log.e("MainActivity", "Error during model setup", e);
-//      throw e;
-//    } finally {
-//      runOnUiThread(() -> {
-//        if (downloadProgressBar != null) downloadProgressBar.setVisibility(View.GONE);
-//        if (downloadProgressText != null) downloadProgressText.setVisibility(View.GONE);
-//        if (downloadingModelText != null) downloadingModelText.setVisibility(View.GONE);
-//      });
-//    }
-//  }
 
   @Override
   public void onResult(String result) {
@@ -348,13 +117,23 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         });
   }
 
+  private void setSendButtonState(boolean state) {
+    mSendButton = findViewById(R.id.sendButton);
+    if (mSendButton != null) {
+      ETLogging.getInstance().log(">> setSendButtonState: " + state);
+      mSendButton.setEnabled(state);
+    } else {
+      ETLogging.getInstance().log(">> mSendButton is null");
+    }
+  }
+
   private void setLocalModel(String modelPath, String tokenizerPath, float temperature) {
     Message modelLoadingMessage = new Message("Loading model...", false, MessageType.SYSTEM, 0);
     ETLogging.getInstance().log(">> Loading model: " + modelPath);
     ETLogging.getInstance().log("   with tokenizer " + tokenizerPath);
     runOnUiThread(
         () -> {
-          if (mSendButton != null) mSendButton.setEnabled(false);
+          setSendButtonState(false);
           mMessageAdapter.add(modelLoadingMessage);
           mMessageAdapter.notifyDataSetChanged();
         });
@@ -383,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       modelLoadError = "Error: " + e.getMessage();
       ETLogging.getInstance().log(modelLoadError);
       e.printStackTrace();
-      // mErrorReporting.showError(modelLoadError)
-      // return;
+      mErrorReporting.showError(modelLoadError);
+      return;
     }
     long loadDuration = System.currentTimeMillis() - runStartTime;
     if (loadResult != 0) {
@@ -393,19 +172,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         modelInfo += "\n" + modelLoadError;
       }
       loadDuration = 0;
-      // Show error in a dialog popup
-      AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setTitle("Model Load failed");
-      builder.setMessage(modelInfo);
-      // builder.setPositiveButton("Retry", (dialog, which) -> loadModel());
-      // builder.setNegativeButton("Cancel", null);
-      runOnUiThread(
-        () -> {
-          AlertDialog alert = builder.create();
-          alert.show();
-        }
-      );
-
+      mErrorReporting.showError(modelInfo, "Model Load failed");
     } else {
       String[] segments = modelPath.split("/");
       String pteName = segments[segments.length - 1];
@@ -420,6 +187,10 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
               + (float) loadDuration / 1000
               + " sec."
               + " You can send text or image for inference";
+
+      mCurrentSettingsFields.saveIsModelLoaded(true);
+      mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+      onModelRunStopped();
 
       if (mCurrentSettingsFields.getModelType() == ModelType.LLAVA_1_5) {
         ETLogging.getInstance().log("Llava start prefill prompt");
@@ -449,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     Message modelLoadedMessage = new Message(modelInfo, false, MessageType.SYSTEM, 0);
     runOnUiThread(
         () -> {
-          if (mSendButton != null) mSendButton.setEnabled(true);
+          setSendButtonState(true);
           mMessageAdapter.remove(modelLoadingMessage);
           mMessageAdapter.add(modelLoadedMessage);
           mMessageAdapter.notifyDataSetChanged();
@@ -520,10 +291,13 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private void onModelRunStopped() {
+    ETLogging.getInstance().log("onModelRunStopped | Stating model run...");
+
     if (mSendButton != null) mSendButton.setClickable(true);
     if (mSendButton != null) mSendButton.setImageResource(R.drawable.baseline_send_24);
     if (mSendButton != null) mSendButton.setOnClickListener(
         view -> {
+          ETLogging.getInstance().log("onModelRunStopped | mSendButton clicked");
           try {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -610,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
               };
           executor.execute(runnable);
         });
-    mMessageAdapter.notifyDataSetChanged();
+        // mMessageAdapter.notifyDataSetChanged();
   }
 
   @Override
@@ -717,37 +491,10 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // Initialize UI components
     mEditTextMessage = findViewById(R.id.editTextMessage);
     mSendButton = findViewById(R.id.sendButton);
-    if (mSendButton != null) mSendButton.setEnabled(false);
     mMessagesView = findViewById(R.id.messages_view);
     mMessageAdapter = new MessageAdapter(this, R.layout.sent_message, new ArrayList<Message>());
     mMessagesView.setAdapter(mMessageAdapter);
-
     mMemoryUpdateHandler = new Handler(Looper.getMainLooper());
-
-    // Set default values for settings
-    // String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
-    // String defaultModelPath = mLoadModelFromUrl.getFirstModelFilePath(resourcePath, ".pte");
-    // String defaultTokenizerPath = resourcePath + "/tokenizer.model";
-
-    // Initialize settings
-    // mLoadModelFromUrl.setDefaultParameters();
-
-  //  mCurrentSettingsFields = new SettingsFields();
-//    mCurrentSettingsFields.saveModelPath(defaultModelPath);
-//    mCurrentSettingsFields.saveTokenizerPath(defaultTokenizerPath);
-//    mCurrentSettingsFields.saveModelType(mLoadModelFromUrl.DEFAULT_MODEL_TYPE);
-//    mCurrentSettingsFields.saveParameters((double) mLoadModelFromUrl.DEFAULT_TEMPERATURE);
-//
-//    // Print the parameters:
-//    ETLogging.getInstance().log("Default model path: " + defaultModelPath);
-//    ETLogging.getInstance().log("Default tokenizer path: " + defaultTokenizerPath);
-//    ETLogging.getInstance().log("Default model type: " + mLoadModelFromUrl.DEFAULT_MODEL_TYPE);
-//    ETLogging.getInstance().log("Default temperature: " + mLoadModelFromUrl.DEFAULT_TEMPERATURE);
-//    // Print mCurrentSettingsFields
-//    ETLogging.getInstance().log("mCurrentSettingsFields: " + mCurrentSettingsFields);
-//
-//    // Save initial settings
-//    mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
 
     // Setup media button
     setupMediaButton();
@@ -773,17 +520,17 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // Setup logs button
     setupShowLogsButton();
 
+    setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
+    if (mCurrentSettingsFields.getIsModelLoaded()) {
+      onModelRunStopped();
+    } else {
+      ETLogging.getInstance().log("onCreate | onModelRunStopped not called");
+    }
+
     ETLogging.getInstance().log("onCreate | Initialize executor for background tasks...");
 
     // Initialize executor for background tasks
     executor = Executors.newSingleThreadExecutor();
-
-    // Setup load model button
-    // mLoadModelButton = findViewById(R.id.loadModelButton);
-    // if (mLoadModelButton != null) {
-    //     mLoadModelButton.setOnClickListener(v -> loadModel());
-    //     mLoadModelButton.setEnabled(true);
-    // }
   }
 
   @Override
@@ -814,24 +561,23 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         return;
       }
 
-      ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
-      updatedSettingsFields.showOwnData();
-      ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
-      mCurrentSettingsFields.showOwnData();
-
+      // ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
+      // updatedSettingsFields.showOwnData();
+      // ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
+      // mCurrentSettingsFields.showOwnData();
 
       boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
       boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
+      boolean isDownloadModel = updatedSettingsFields.getIsDownloadModel();
       setBackendMode(updatedSettingsFields.getBackendType());
 
       ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
 
       // if (isUpdated) {
-        if (isLoadModel) {
+        if (isLoadModel || isDownloadModel) {
           // If users change the model file, but not pressing loadModelButton, we won't load the new
           // model
           ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
-          // checkForUpdateAndReloadModel(updatedSettingsFields);
           mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
           checkForUpdateAndReloadModel(mCurrentSettingsFields);
         } else {
@@ -839,13 +585,22 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           askUserToSelectModel();
         }
 
+        if (mCurrentSettingsFields.getIsModelLoaded()) {
+          onModelRunStopped();
+        } else {
+          ETLogging.getInstance().log("onResume | onModelRunStopped not called");
+        }
+
+        ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
+        setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
+
         ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
         checkForClearChatHistory(updatedSettingsFields);
 
         // Update current to point to the latest
         ETLogging.getInstance().log("onResume | Update current to point to the latest");
         mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
-      }
+    }
     // } else {
     //   ETLogging.getInstance().log("onResume | askUserToSelectModel # 2");
     //   askUserToSelectModel();
@@ -880,7 +635,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private void checkForUpdateAndReloadModel(SettingsFields updatedSettingsFields) {
-    // TODO need to add 'load model' in settings and queue loading based on that
+    String modelToDownload = updatedSettingsFields.getModelToDownload();
+
     String modelPath = updatedSettingsFields.getModelFilePath();
     String tokenizerPath = updatedSettingsFields.getTokenizerFilePath();
     double temperature = updatedSettingsFields.getTemperature();
@@ -890,6 +646,34 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     ETLogging.getInstance().log("checkForUpdateAndReloadModel | Tokenizer path: " + tokenizerPath);
     ETLogging.getInstance().log("checkForUpdateAndReloadModel | Temperature: " + temperature);
     ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is load model: " + updatedSettingsFields.getIsLoadModel());
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is download model: " + updatedSettingsFields.getIsDownloadModel());
+    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is model loaded: " + updatedSettingsFields.getIsModelLoaded());
+
+    if (!modelToDownload.isEmpty()) {
+      if (updatedSettingsFields.getIsDownloadModel()) {
+        Thread thread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+            mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
+            try {
+              mLoadModelFromUrl.downloadModel(updatedSettingsFields, mDemoSharedPreferences);
+            } catch (Exception e) {
+              String errorMessage = "Model download exception: " + e.getMessage();
+              ETLogging.getInstance().log(errorMessage);
+              e.printStackTrace();
+              mErrorReporting.showError(e.getMessage(), "Model download exception");
+              return;
+            }
+            updatedSettingsFields.saveDownloadModelAction(false);
+            updatedSettingsFields.saveLoadModelAction(true);
+            mDemoSharedPreferences.addSettings(updatedSettingsFields);
+          }
+        });
+        thread.start(); 
+        modelPath = updatedSettingsFields.getModelFilePath();
+        tokenizerPath = updatedSettingsFields.getTokenizerFilePath();
+      }
+    }
 
     if (!modelPath.isEmpty() && !tokenizerPath.isEmpty()) {
       if (updatedSettingsFields.getIsLoadModel()
@@ -1192,7 +976,6 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private int setPromptID() {
-
     return mMessageAdapter.getMaxPromptID() + 1;
   }
 }

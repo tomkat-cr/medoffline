@@ -116,4 +116,21 @@ public class ModelsConfig {
         }
         return modelsMap;
     }
+
+    public String getModelUrl(String modelName) {
+        ETLogging.getInstance().log("ModelsConfig | getModelUrl | modelName parameter: " + modelName);
+        String ModelUrl = null;
+        List<ModelInfo> modelToDownloadObjectList = getModelsList();
+        for (ModelInfo modelInfo : modelToDownloadObjectList) {
+          // Log model name
+          ETLogging.getInstance().log("ModelsConfig | getModelUrl | Comparing to model name: " + modelInfo.getModelName());
+          if (modelName.equals(modelInfo.getModelName())) {
+            ModelUrl = modelInfo.getModelDownloadUrl();
+            ETLogging.getInstance().log("ModelsConfig | getModelUrl | Model URL found: " + ModelUrl);
+            break;
+          }
+        }
+        return ModelUrl;
+    }
+
 }

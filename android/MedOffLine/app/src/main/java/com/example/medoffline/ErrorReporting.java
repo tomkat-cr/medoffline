@@ -17,13 +17,15 @@ class ErrorReporting {
         this.context = context;
     }
 
-    public boolean showError(String error) {
+    public boolean showError(String error, String title) {
         final boolean[] retryPressed = {false};
         CountDownLatch latch = new CountDownLatch(1);
 
+        ETLogging.getInstance().log(title + ": " + error);
+
         new Handler(Looper.getMainLooper()).post(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Error")
+            builder.setTitle(title)
                     .setMessage(error)
                     .setPositiveButton("Retry", (dialog, which) -> {
                         retryPressed[0] = true;
@@ -41,5 +43,9 @@ class ErrorReporting {
         }
 
         return retryPressed[0];
+    }
+
+    public boolean showError(String error) {
+        return showError(error, "Error");
     }
 }

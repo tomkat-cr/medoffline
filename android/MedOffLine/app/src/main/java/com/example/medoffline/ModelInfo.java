@@ -21,15 +21,15 @@ public class ModelInfo {
 
     public ModelInfo(String modelId, String modelName, String modelType, String modelDownloadUrl, String modelFileName, 
                      int modelFileSize, String tokenizerFileName, int tokenizerFileSize, String systemPrompt) {
-        this.modelId = modelId;
-        this.modelName = modelName;
-        this.modelType = modelType;
-        this.modelDownloadUrl = modelDownloadUrl;
-        this.modelFileName = modelFileName;
+        this.modelId = modelId.trim();
+        this.modelName = modelName.trim();
+        this.modelType = modelType.trim();
+        this.modelDownloadUrl = modelDownloadUrl.trim();
+        this.modelFileName = modelFileName.trim();
         this.modelFileSize = modelFileSize;
-        this.tokenizerFileName = tokenizerFileName;
+        this.tokenizerFileName = tokenizerFileName.trim();
         this.tokenizerFileSize = tokenizerFileSize;
-        this.systemPrompt = systemPrompt;
+        this.systemPrompt = systemPrompt.trim();
     }
 
     // Getters and setters

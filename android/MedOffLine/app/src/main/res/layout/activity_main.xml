@@ -48,7 +48,7 @@
                     android:paddingLeft="5dp"
                     android:text="0 MB"
                     android:textAlignment="viewEnd"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@android:color/white"
                     android:textSize="14sp" />
 
                 <ImageButton
@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:background="@drawable/chat_background"
-                    android:divider="#fff"
+                    android:divider="@android:color/white"
                     android:stackFromBottom="true"
                     android:transcriptMode="alwaysScroll" />
 
@@ -196,8 +196,8 @@
                         android:inputType="text"
                         android:paddingHorizontal="10dp"
                         android:text=""
-                        android:textColor="#ffffff"
-                        android:textColorHint="#ffffff"
+                        android:textColor="@android:color/white"
+                        android:textColorHint="@android:color/white"
                         android:translationY="5dp" />
 
                     <ImageButton
@@ -284,7 +284,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading MedOffLine✨"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:paddingEnd="10dp" />
 
         <TextView
@@ -292,7 +292,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Downloading model, please be patient..."
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:paddingEnd="10dp" />
 
         <TextView
@@ -302,7 +302,7 @@
             android:layout_below="@id/downloadingModelText"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:visibility="gone"
             android:text="Downloading: 0%" />
 
