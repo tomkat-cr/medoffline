@@ -203,7 +203,13 @@ def source_code_page():
 
     # Models on Kaggle:
     st.link_button(
-        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT"),
+        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT") +
+        ": Meta Llama 3.2 1B (.pte)",
+        "https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte")
+
+    st.link_button(
+        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT") +
+        ": Meta Llama 3.2 3B (.pte)",
         "https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte")
 
     # Back to homepage

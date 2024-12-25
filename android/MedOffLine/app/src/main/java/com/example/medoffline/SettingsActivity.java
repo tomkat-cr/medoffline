@@ -634,8 +634,6 @@ public class SettingsActivity extends AppCompatActivity {
 
   private void setupTokenizerSelectorDialog() {
     String resourcePath = mLoadModelFromUrl.getBaseModelsPath() + "/";
-    // String[] binFiles = listLocalFile("/data/local/tmp/llama/", ".bin");
-    // String[] modelFiles = listLocalFile("/data/local/tmp/llama/", ".model");
     String[] binFiles = listLocalFile(resourcePath, ".bin");
     String[] modelFiles = listLocalFile(resourcePath, ".model");
     String[] tokenizerFiles = new String[binFiles.length + modelFiles.length];
@@ -645,7 +643,7 @@ public class SettingsActivity extends AppCompatActivity {
     if (tokenizerFiles.length == 0) {
       new AlertDialog.Builder(this)
           .setTitle("No tokenizer found")
-          .setMessage("Please download a tokenizer first")
+          .setMessage("Please download a model first")
           .setIcon(android.R.drawable.ic_dialog_alert)
           .setPositiveButton(android.R.string.yes, null)
           .show();

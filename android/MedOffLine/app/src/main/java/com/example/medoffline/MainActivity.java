@@ -384,6 +384,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
               };
           executor.execute(runnable);
         });
+
+        // TODO this doesn't work, it stops with the error:
+        // FATAL EXCEPTION: Thread-2: android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
         // mMessageAdapter.notifyDataSetChanged();
   }
 

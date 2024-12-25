@@ -37,7 +37,8 @@ public class LoadModelFromUrl {
     public static Float DEFAULT_TEMPERATURE = 0.1f;
 
     // public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "http://192.168.1.100/get_model_config";
-    public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "https://medoffline.aclics.com/get_model_config";
+    // public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "https://medoffline.aclics.com/get_model_config";
+    public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "https://www.carlosjramirez.com/downloads/medoffline_model_config.json";
 
     private View downloadingModelText;
     private TextView downloadProgressText;
@@ -95,7 +96,6 @@ public class LoadModelFromUrl {
         }
 
         File model = Arrays.stream(modelDir.listFiles())
-                // .filter(file -> file.getName().endsWith(".pte"))
                 .filter(file -> file.getName().endsWith(fileExtension))
                 .findFirst()
                 .orElse(null);
@@ -121,7 +121,6 @@ public class LoadModelFromUrl {
         });
     }
 
-    // public String getWorkingModelFilePath(String resourcePath, String ModelUrl)
     public void downloadModel(SettingsFields mCurrentSettingsFields, DemoSharedPreferences mDemoSharedPreferences)
         throws InterruptedException, ExecutionException, IOException {
 

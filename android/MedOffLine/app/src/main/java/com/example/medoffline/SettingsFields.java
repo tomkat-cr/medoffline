@@ -129,19 +129,21 @@ public class SettingsFields {
   }
 
   public void showOwnData() {
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelFilePath: " + this.modelFilePath);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelToDownload: " + this.modelToDownload);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelDownloadUrl: " + this.modelDownloadUrl);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.tokenizerFilePath: " + this.tokenizerFilePath);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.temperature: " + this.temperature);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.systemPrompt: " + this.systemPrompt);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.userPrompt: " + this.userPrompt);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.isClearChatHistory: " + this.isClearChatHistory);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.isLoadModel: " + this.isLoadModel);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.isDownloadModel: " + this.isDownloadModel);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.modelType: " + this.modelType);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.backendType: " + this.backendType);
-    ETLogging.getInstance().log("SettingsFields # showOwnData | this.isModelLoaded: " + this.isModelLoaded);
+    ETLogging.getInstance().log(
+      "SettingsFields # showOwnData:" +
+      "\n | this.modelFilePath: " + this.modelFilePath +
+      "\n | this.modelToDownload: " + this.modelToDownload +
+      "\n | this.modelDownloadUrl: " + this.modelDownloadUrl +
+      "\n | this.tokenizerFilePath: " + this.tokenizerFilePath +
+      "\n | this.temperature: " + this.temperature +
+      "\n | this.systemPrompt: " + this.systemPrompt +
+      "\n | this.userPrompt: " + this.userPrompt +
+      "\n | this.isClearChatHistory: " + this.isClearChatHistory +
+      "\n | this.isLoadModel: " + this.isLoadModel +
+      "\n | this.isDownloadModel: " + this.isDownloadModel +
+      "\n | this.modelType: " + this.modelType +
+      "\n | this.backendType: " + this.backendType +
+      "\n | this.isModelLoaded: " + this.isModelLoaded);
   }
 
   public void saveModelPath(String modelFilePath) {
