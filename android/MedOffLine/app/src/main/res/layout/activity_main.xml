@@ -156,7 +156,6 @@
 
                         </LinearLayout>
 
-
                     </HorizontalScrollView>
 
                     <ImageButton
@@ -207,6 +206,28 @@
                         android:background="@android:color/transparent"
                         android:padding="10dp"
                         android:src="@drawable/baseline_send_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#16293D"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                >
+
+                    <TextView
+                        android:id="@+id/footer_warning_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:textSize="10dp"
+                        android:gravity="center"
+                        android:text="Warning: Medoffline model can make mistakes. Check important info."
+                    />
+
                 </LinearLayout>
 
                 <ProgressBar
