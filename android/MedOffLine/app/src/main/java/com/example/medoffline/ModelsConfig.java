@@ -14,9 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,14 +48,29 @@ public class ModelsConfig {
 
     // Getters and setters
     public String getModelConfigFile() { return modelConfigFile; }
+
     public void setModelConfigFile(String modelConfigFile) { this.modelConfigFile = modelConfigFile; }
+
     public String getError() { return error; }
+
+    private InputStream getFileInputStream() throws IOException {
+        InputStream is;
+        if (modelConfigFile.contains("/")) {
+            // If the modelConfigFile has "/", get the InputStream from the path
+            is = Files.newInputStream(Paths.get(modelConfigFile));
+        } else {
+            // Otherwise, get the InputStream from the assets folder
+            is = context.getAssets().open(modelConfigFile);
+        }
+        return is;
+    }
 
     public List<ModelInfo> getModelsList() {
         // Read Models From the JSON file in the Assets Folder and return them as a List
         List<ModelInfo> models = new ArrayList<>();
         try {
-            InputStream is = context.getAssets().open(modelConfigFile);
+            // InputStream is = context.getAssets().open(modelConfigFile);
+            InputStream is = getFileInputStream();
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -85,7 +104,8 @@ public class ModelsConfig {
     public Map<String, ModelInfo> getModelsMap() {
         Map<String, ModelInfo> modelsMap = new HashMap<>();
         try {
-            InputStream is = context.getAssets().open(modelConfigFile);
+            // InputStream is = context.getAssets().open(modelConfigFile);
+            InputStream is = getFileInputStream();
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -120,17 +140,28 @@ public class ModelsConfig {
     public String getModelUrl(String modelName) {
         ETLogging.getInstance().log("ModelsConfig | getModelUrl | modelName parameter: " + modelName);
         String ModelUrl = null;
+        ModelInfo modelInfo = getModelData(modelName);
+        if (modelInfo != null) {
+            ModelUrl = modelInfo.getModelDownloadUrl();
+            ETLogging.getInstance().log("ModelsConfig | getModelUrl | Model URL found: " + ModelUrl);
+        }
+        return ModelUrl;
+    }
+
+    public ModelInfo getModelData(String modelName) {
+        ETLogging.getInstance().log("ModelsConfig | getModelData | modelName parameter: " + modelName);
+        ModelInfo modelData = null;
         List<ModelInfo> modelToDownloadObjectList = getModelsList();
         for (ModelInfo modelInfo : modelToDownloadObjectList) {
           // Log model name
-          ETLogging.getInstance().log("ModelsConfig | getModelUrl | Comparing to model name: " + modelInfo.getModelName());
+          ETLogging.getInstance().log("ModelsConfig | getModelData | Comparing to model name: " + modelInfo.getModelName());
           if (modelName.equals(modelInfo.getModelName())) {
-            ModelUrl = modelInfo.getModelDownloadUrl();
-            ETLogging.getInstance().log("ModelsConfig | getModelUrl | Model URL found: " + ModelUrl);
+            modelData = modelInfo;
+            ETLogging.getInstance().log("ModelsConfig | getModelData | Model data found: " + modelData);
             break;
           }
         }
-        return ModelUrl;
+        return modelData;
     }
 
 }

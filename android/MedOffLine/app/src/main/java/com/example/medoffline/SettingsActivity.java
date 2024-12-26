@@ -80,11 +80,25 @@ public class SettingsActivity extends AppCompatActivity {
           return insets;
         });
 
-    mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
-    SettingsFields mCurrentSettingsFields = mLoadModelFromUrl.setDefaultParameters();
+    // if (mModelDownloadUrl.isEmpty()) {
+    //   ETLogging.getInstance().log("Settings Activity | onCreate | default values loading...");
+    //   mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
+    //   SettingsFields mDefaultSettingsFields = mLoadModelFromUrl.setDefaultParameters();
+    //   mModelDownloadUrl = mDefaultSettingsFields.getModelDownloadUrl();
+    //   mModelToDownload = mDefaultSettingsFields.getModelToDownload();
+    //   mModelFilePath = mDefaultSettingsFields.getModelFilePath();
+    //   mTokenizerFilePath = mDefaultSettingsFields.getTokenizerFilePath();
+    //   mSetTemperature = mDefaultSettingsFields.getTemperature();
+    //   mSystemPrompt = mDefaultSettingsFields.getSystemPrompt();
+    //   mUserPrompt = mDefaultSettingsFields.getUserPrompt();
+    //   mModelType = mDefaultSettingsFields.getModelType();
+    //   mBackendType = mDefaultSettingsFields.getBackendType();
+    //   saveSettings();  
+    // }
 
+    mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
     mDemoSharedPreferences = new DemoSharedPreferences(getBaseContext());
-    mSettingsFields = new SettingsFields(mCurrentSettingsFields);
+    mSettingsFields = new SettingsFields();
     setupSettings();
   }
 
@@ -235,6 +249,7 @@ public class SettingsActivity extends AppCompatActivity {
     setupClearChatHistoryButton();
     setupLoadModelButton();
     setupDownloadModelButton();
+    setupDownloadModelConfigButton();
     setupModelDownloadUrlSettings();
   }
 
@@ -253,6 +268,31 @@ public class SettingsActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                       public void onClick(DialogInterface dialog, int whichButton) {
                         mSettingsFields.saveDownloadModelAction(true);
+                        mLoadModelButton.setEnabled(false);
+                        onBackPressed();
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
+  }
+
+  private void setupDownloadModelConfigButton() {
+    Button mDownloadModelConfigButton = findViewById(R.id.downloadModelConfigButton);
+    mDownloadModelConfigButton.setEnabled(true);
+    if (mDownloadModelConfigButton != null) {
+      mDownloadModelConfigButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Download Model Config")
+                .setMessage("Do you really want to download the new model config?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        mSettingsFields.saveDownloadModelConfigAction(true);
                         mLoadModelButton.setEnabled(false);
                         onBackPressed();
                       }
@@ -494,7 +534,7 @@ public class SettingsActivity extends AppCompatActivity {
   }
 
   private void setupModelToDownloadSelectorDialog() {
-    ModelsConfig modelsConfig = new ModelsConfig(getBaseContext());
+    ModelsConfig modelsConfig = mLoadModelFromUrl.getModelsConfig();
     List<String> modelToDownloadList = new ArrayList<>();
     List<ModelInfo> modelToDownloadObjectList = modelsConfig.getModelsList();
     int selectedModelIndex = modelToDownloadObjectList.indexOf(

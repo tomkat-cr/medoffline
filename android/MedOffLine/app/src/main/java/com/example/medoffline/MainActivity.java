@@ -534,6 +534,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
     // Initialize executor for background tasks
     executor = Executors.newSingleThreadExecutor();
+
+    ETLogging.getInstance().log("onCreate | executor for background tasks was initialized");
   }
 
   @Override
@@ -544,70 +546,80 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
   @Override
   protected void onResume() {
-    super.onResume();
     // Check for if settings parameters have changed
+
+    super.onResume();
+
     Gson gson = new Gson();
     String settingsFieldsJSON = mDemoSharedPreferences.getSettings();
 
     ETLogging.getInstance().log("onResume | settingsFieldsJSON: " + settingsFieldsJSON);
 
-    if (!settingsFieldsJSON.isEmpty()) {
-      SettingsFields updatedSettingsFields =
+    SettingsFields updatedSettingsFields;
+    if (settingsFieldsJSON.isEmpty()) {
+      ETLogging.getInstance().log("onResume | call setDefaultParameters...");
+      updatedSettingsFields = mLoadModelFromUrl.setDefaultParameters();
+    } else {
+      ETLogging.getInstance().log("onResume | load settings from shared preferences...");
+      updatedSettingsFields =
           gson.fromJson(settingsFieldsJSON, SettingsFields.class);
+    }
 
-      ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
+    ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
 
-      if (updatedSettingsFields == null) {
-        // Added this check, because gson.fromJson can return null
-        ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
+    if (updatedSettingsFields == null) {
+      // Added this check, because gson.fromJson can return null
+      ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
+      askUserToSelectModel();
+      return;
+    }
+
+    // ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
+    // updatedSettingsFields.showOwnData();
+    // ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
+    // mCurrentSettingsFields.showOwnData();
+
+    boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
+
+    boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
+    boolean isDownloadModel = updatedSettingsFields.getIsDownloadModel();
+    boolean isDownloadModelConfig = updatedSettingsFields.getIsDownloadModelConfig();
+
+    setBackendMode(updatedSettingsFields.getBackendType());
+
+    ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
+
+    if (isUpdated) {
+      if (isDownloadModelConfig) {
+        ETLogging.getInstance().log("onResume | Calls checkForDownloadModelConfig()");
+        downloadModelConfig(mCurrentSettingsFields);
+      } else if (isLoadModel || isDownloadModel) {
+        // If users change the model file, but not pressing loadModelButton, we won't load the new
+        // model
+        ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
+        mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+        checkForUpdateAndReloadModel(mCurrentSettingsFields);
+      } else {
+        ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
         askUserToSelectModel();
-        return;
       }
 
-      // ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
-      // updatedSettingsFields.showOwnData();
-      // ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
-      // mCurrentSettingsFields.showOwnData();
+      if (mCurrentSettingsFields.getIsModelLoaded()) {
+        onModelRunStopped();
+      } else {
+        ETLogging.getInstance().log("onResume | onModelRunStopped not called");
+      }
 
-      boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
-      boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
-      boolean isDownloadModel = updatedSettingsFields.getIsDownloadModel();
-      setBackendMode(updatedSettingsFields.getBackendType());
+      ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
+      setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
 
-      ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
+      ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
+      checkForClearChatHistory(updatedSettingsFields);
 
-      // if (isUpdated) {
-        if (isLoadModel || isDownloadModel) {
-          // If users change the model file, but not pressing loadModelButton, we won't load the new
-          // model
-          ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
-          mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
-          checkForUpdateAndReloadModel(mCurrentSettingsFields);
-        } else {
-          ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
-          askUserToSelectModel();
-        }
-
-        if (mCurrentSettingsFields.getIsModelLoaded()) {
-          onModelRunStopped();
-        } else {
-          ETLogging.getInstance().log("onResume | onModelRunStopped not called");
-        }
-
-        ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
-        setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
-
-        ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
-        checkForClearChatHistory(updatedSettingsFields);
-
-        // Update current to point to the latest
-        ETLogging.getInstance().log("onResume | Update current to point to the latest");
-        mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+      // Update current to point to the latest
+      ETLogging.getInstance().log("onResume | Update current to point to the latest");
+      mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
     }
-    // } else {
-    //   ETLogging.getInstance().log("onResume | askUserToSelectModel # 2");
-    //   askUserToSelectModel();
-    // }
   }
 
   private void setBackendMode(BackendType backendType) {
@@ -663,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
             } catch (Exception e) {
               String errorMessage = "Model download exception: " + e.getMessage();
               ETLogging.getInstance().log(errorMessage);
-              e.printStackTrace();
+              // e.printStackTrace();
               mErrorReporting.showError(e.getMessage(), "Model download exception");
               return;
             }
@@ -693,6 +705,30 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     } else {
       askUserToSelectModel();
     }
+  }
+
+
+  private void downloadModelConfig(SettingsFields updatedSettingsFields) {
+    ETLogging.getInstance().log(">> Download Model Config start...");
+    Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
+        try {
+          mLoadModelFromUrl.downloadModelConfig(updatedSettingsFields);
+        } catch (Exception e) {
+          String errorMessage = "Model configuration download exception: " + e.getMessage();
+          ETLogging.getInstance().log(errorMessage);
+          // e.printStackTrace();
+          mErrorReporting.showError(e.getMessage(), "Model configuration download exception");
+          return;
+        }
+        updatedSettingsFields.saveDownloadModelConfigAction(false);
+        mDemoSharedPreferences.addSettings(updatedSettingsFields);
+        mErrorReporting.showError("Model configuration downloaded. Go to Settings to load the new models.", "Configuration Download");
+      }
+    });
+    thread.start();
   }
 
   private void askUserToSelectModel() {

@@ -71,6 +71,10 @@ public class SettingsFields {
     return isDownloadModel;
   }
 
+  public boolean getIsDownloadModelConfig() {
+    return isDownloadModelConfig;
+  }
+
   public boolean getIsModelLoaded() {
     return isModelLoaded;
   }
@@ -85,6 +89,7 @@ public class SettingsFields {
   private boolean isClearChatHistory;
   private boolean isLoadModel;
   private boolean isDownloadModel;
+  private boolean isDownloadModelConfig;
   private ModelType modelType;
   private BackendType backendType;
   private boolean isModelLoaded;
@@ -105,6 +110,7 @@ public class SettingsFields {
     this.isClearChatHistory = settingsFields.getIsClearChatHistory();
     this.isLoadModel = settingsFields.getIsLoadModel();
     this.isDownloadModel = settingsFields.getIsDownloadModel();
+    this.isDownloadModelConfig = settingsFields.getIsDownloadModelConfig();
     this.modelType = settingsFields.modelType;
     this.backendType = settingsFields.backendType;
     this.isModelLoaded = settingsFields.isModelLoaded;
@@ -123,6 +129,7 @@ public class SettingsFields {
     this.isClearChatHistory = false;
     this.isLoadModel = false;
     this.isDownloadModel = false;
+    this.isDownloadModelConfig = false;
     this.modelType = DEFAULT_MODEL;
     this.backendType = DEFAULT_BACKEND;
     this.isModelLoaded = false;
@@ -141,6 +148,7 @@ public class SettingsFields {
       "\n | this.isClearChatHistory: " + this.isClearChatHistory +
       "\n | this.isLoadModel: " + this.isLoadModel +
       "\n | this.isDownloadModel: " + this.isDownloadModel +
+      "\n | this.isDownloadModelConfig: " + this.isDownloadModelConfig +
       "\n | this.modelType: " + this.modelType +
       "\n | this.backendType: " + this.backendType +
       "\n | this.isModelLoaded: " + this.isModelLoaded);
@@ -195,6 +203,10 @@ public class SettingsFields {
     this.isDownloadModel = shouldDownloadModel;
   }
 
+  public void saveDownloadModelConfigAction(boolean shouldDownloadModelConfig) {
+    this.isDownloadModelConfig = shouldDownloadModelConfig;
+  }
+
   public void saveIsModelLoaded(boolean isModelLoaded) {
     this.isModelLoaded = isModelLoaded;
   }
@@ -213,6 +225,7 @@ public class SettingsFields {
         && modelType == anotherSettingsFields.modelType
         && backendType == anotherSettingsFields.backendType
         && isDownloadModel == anotherSettingsFields.isDownloadModel
-        && isModelLoaded == anotherSettingsFields.isModelLoaded;
+        && isModelLoaded == anotherSettingsFields.isModelLoaded
+        && isDownloadModelConfig == anotherSettingsFields.isDownloadModelConfig;
   }
 }

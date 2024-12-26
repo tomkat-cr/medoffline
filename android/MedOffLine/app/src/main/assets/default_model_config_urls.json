@@ -1,0 +1,14 @@
+[
+    {
+        "model_config_name": "Mirror 1 (carlosjramirez.com)",
+        "model_config_download_url": "https://www.carlosjramirez.com/downloads/medoffline_model_config.json"
+    },
+    {
+        "model_config_name": "Mirror 2 (medoffline.aclics.com)",
+        "model_config_download_url": "https://medoffline.aclics.com/get_model_config"
+    },
+    {
+        "model_config_name": "Local (192.168.1.100)",
+        "model_config_download_url": "http://192.168.1.100/get_model_config"
+    }
+]

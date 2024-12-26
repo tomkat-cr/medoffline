@@ -4,28 +4,37 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.RequestBody;
+import okhttp3.MediaType;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.StatFs;
 import android.util.Log;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LocalModelManagement {
     private static final String TAG = "LocalModelManagement";
     private static final int DEFAULT_TIMEOUT_MINUTES = 10;
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 2000; // 2 seconds base delay
-    private static final long MIN_STORAGE_SPACE = 2L * 1024 * 1024 * 1024; // 2GB
     private static DownloadProgressListener progressListener;
 
     public interface DownloadProgressListener {
@@ -37,19 +46,26 @@ public class LocalModelManagement {
         progressListener = listener;
     }
 
-    private static boolean checkInternetConnection(Context context) {
+    public static boolean checkInternetConnection(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    private static boolean checkStorageSpace(String path) {
-        StatFs stat = new StatFs(path);
-        long availableBytes = stat.getAvailableBytes();
-        return availableBytes >= MIN_STORAGE_SPACE;
+    public static String readableFileSize(long size) {
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB", "PB", "EB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
-    public static void downloadZipFile(Context context, String url, String destPath, int timeoutMinutes) throws ExecutionException, InterruptedException, IOException {
+    public static boolean checkStorageSpace(String path, long requiredSpace) {
+        StatFs stat = new StatFs(path);
+        long availableBytes = stat.getAvailableBytes();
+        return availableBytes >= requiredSpace;
+    }
+
+    public static void downloadFileFromUrl(Context context, String url, String destPath, long requiredSpace, int timeoutMinutes) throws ExecutionException, InterruptedException, IOException {
         if (!checkInternetConnection(context)) {
             String error = "No internet connection available";
             Log.e(TAG, error);
@@ -57,8 +73,8 @@ public class LocalModelManagement {
             throw new IOException(error);
         }
 
-        if (!checkStorageSpace(new File(destPath).getParent())) {
-            String error = "Insufficient storage space. Need at least 2GB free";
+        if (!checkStorageSpace(new File(destPath).getParent(), requiredSpace)) {
+            String error = "Insufficient storage space. Need at least " + readableFileSize(requiredSpace) + " free";
             Log.e(TAG, error);
             if (progressListener != null) progressListener.onError(error);
             throw new IOException(error);
@@ -104,28 +120,51 @@ public class LocalModelManagement {
         }
     }
 
-    private static void downloadWithProgress(String url, String destPath, int timeoutMinutes) throws IOException {
+    public static boolean checkFileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    public static void deleteDestFiles(String destPath) {
+        // Clean up destination file(s) if it exists
+        // File tempFile = new File(destPath);
+        // if (tempFile.exists()) {
+        //     tempFile.delete();
+        // }
+        File[] tmpFiles = new File(destPath).listFiles();
+        if (tmpFiles != null) {
+            for (File file : tmpFiles) {
+                file.delete();
+            }
+        }
+    }
+
+    private static void downloadWithProgress(
+        String url,
+        String destPath,
+        int timeoutMinutes
+    ) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(timeoutMinutes, TimeUnit.MINUTES)
-            .readTimeout(timeoutMinutes, TimeUnit.MINUTES)
-            .writeTimeout(timeoutMinutes, TimeUnit.MINUTES)
-            .retryOnConnectionFailure(true)
-            .build();
+                .connectTimeout(timeoutMinutes, TimeUnit.MINUTES)
+                .readTimeout(timeoutMinutes, TimeUnit.MINUTES)
+                .writeTimeout(timeoutMinutes, TimeUnit.MINUTES)
+                .retryOnConnectionFailure(true)
+                .build();
 
         Request request = new Request.Builder()
-            .url(url)
-            .addHeader("Connection", "keep-alive")
-            .addHeader("Accept", "*/*")
-            .addHeader("User-Agent", "MedOffLine-Android")
-            .build();
-        
-        Response response = null;
+                .url(url)
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept", "*/*")
+                .addHeader("User-Agent", "MedOffLine-Android")
+                .build();
+
+        Response response;
         try {
             response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
                 String errorBody = response.body() != null ? response.body().string() : "No error body";
-                String error = String.format("Download failed with code %d: %s - %s", 
-                    response.code(), response.message(), errorBody);
+                String error = String.format("Download failed with code %d: %s - %s",
+                        response.code(), response.message(), errorBody);
                 Log.e(TAG, error);
                 if (progressListener != null) {
                     progressListener.onError(error);
@@ -140,16 +179,21 @@ public class LocalModelManagement {
 
             File outputFile = new File(destPath);
             File tempFile = new File(destPath + ".tmp");
-            
+
             // Ensure parent directory exists
             File parentDir = outputFile.getParentFile();
             if (!parentDir.exists() && !parentDir.mkdirs()) {
                 throw new IOException("Failed to create directory: " + parentDir);
             }
 
+            // Remove all .tmp files if they exist
+            deleteDestFiles(destPath + ".tmp");
+
             // Download to temporary file first
-            try (InputStream input = body.byteStream();
-                 FileOutputStream output = new FileOutputStream(tempFile)) {
+            try (
+                    InputStream input = body.byteStream();
+                    FileOutputStream output = new FileOutputStream(tempFile)
+            ) {
 
                 byte[] buffer = new byte[8192];
                 long totalBytesRead = 0;
@@ -181,6 +225,9 @@ public class LocalModelManagement {
                 }
             }
 
+            // Remove destination files if they exist
+            deleteDestFiles(destPath);
+
             // Move temp file to final destination
             if (!tempFile.renameTo(outputFile)) {
                 throw new IOException("Failed to move temporary file to final destination");
@@ -188,15 +235,103 @@ public class LocalModelManagement {
 
         } catch (IOException e) {
             // Clean up temp file if it exists
-            File tempFile = new File(destPath + ".tmp");
-            if (tempFile.exists()) {
-                tempFile.delete();
-            }
+            deleteDestFiles(destPath + ".tmp");
             throw e;
-        } finally {
-            if (response != null) {
-                response.close();
+        // } finally {
+        //     if (response != null) {
+        //         response.close();
+        //     }
+        }
+    }
+
+    private static JSONObject httpRequestWithProgress(
+        String url,
+        String contentType,
+        String body,
+        Map<String, String> headers,
+        int timeoutMinutes
+    ) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(timeoutMinutes, TimeUnit.MINUTES)
+            .readTimeout(timeoutMinutes, TimeUnit.MINUTES)
+            .writeTimeout(timeoutMinutes, TimeUnit.MINUTES)
+            .retryOnConnectionFailure(true)
+            .build();
+
+        RequestBody requestBody = RequestBody.create(MediaType.get(contentType), body);
+
+        AtomicReference<Request> request = new AtomicReference<>(new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept", "*/*")
+                .addHeader("User-Agent", "MedOffLine-Android")
+                .build());
+
+        headers.forEach((key, value) -> request.set(request.get().newBuilder().addHeader(key, value).build()));
+
+        try {
+            if (progressListener != null) {
+                progressListener.onProgressUpdate(0, 100, false);
             }
+
+            Response response = null;
+            response = client.newCall(request.get()).execute();
+
+            if (progressListener != null) {
+                progressListener.onProgressUpdate(50, 100, false);
+            }
+
+            if (!response.isSuccessful()) {
+                String errorBody = response.body() != null ? response.body().string() : "No error body";
+                String error = String.format("Download failed with code %d: %s - %s", 
+                    response.code(), response.message(), errorBody);
+                Log.e(TAG, error);
+                if (progressListener != null) {
+                    progressListener.onError(error);
+                }
+                throw new IOException(error);
+            }
+
+            // long contentLength = response.body().contentLength();
+            // long totalBytesRead = 0;
+            // long lastProgressUpdate = System.currentTimeMillis();
+
+            // InputStream in = response.body().byteStream();
+            // byte[] buffer = new byte[1024];
+            // int bytesRead;
+            // while ((bytesRead = in.read(buffer)) != -1) {
+            //     totalBytesRead += bytesRead;
+            //     long currentTime = System.currentTimeMillis();
+            //     if (currentTime - lastProgressUpdate > 100) { // Update progress every 100ms
+            //         if (progressListener != null) {
+            //             progressListener.onProgressUpdate(totalBytesRead, contentLength, false);
+            //         }
+            //         lastProgressUpdate = currentTime;
+            //     }
+            // }
+            // if (!response.isSuccessful()) {
+            //     String errorBody = response.body() != null ? response.body().string() : "No error body";
+            //     String error = String.format("Download failed with code %d: %s - %s", 
+            //         response.code(), response.message(), errorBody);
+            //     Log.e(TAG, error);
+            //     if (progressListener != null) {
+            //         progressListener.onError(error);
+            //     }
+            //     throw new IOException(error);
+            // }
+            ResponseBody responseBody = response.body();
+            if (progressListener != null) {
+                progressListener.onProgressUpdate(100, 100, false);
+            }
+
+            if (responseBody == null) {
+                throw new IOException("Response body is null");
+            }
+
+            return new JSONObject(responseBody.string());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -257,33 +392,35 @@ public class LocalModelManagement {
         }
     }
 
-//    public static void unzip(String zipFilePath, String destDir) {
-//        File dir = new File(destDir);
-//        if (!dir.exists()) dir.mkdirs(); // Create destination directory if it doesn't exist
-//
-//        try (ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFilePath)))) {
-//            ZipEntry entry;
-//            while ((entry = zipInputStream.getNextEntry()) != null) {
-//                File file = new File(dir, entry.getName());
-//                if (entry.isDirectory()) {
-//                    file.mkdirs(); // Create directory
-//                } else {
-//                    // Create parent directories if necessary
-//                    new File(file.getParent()).mkdirs();
-//                    try (FileOutputStream fos = new FileOutputStream(file)) {
-//                        byte[] buffer = new byte[2048];
-//                        int len;
-//                        while ((len = zipInputStream.read(buffer)) > 0) {
-//                            fos.write(buffer, 0, len);
-//                        }
-//                    }
-//                }
-//                zipInputStream.closeEntry();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static void unzip(String zipFilePath, String destDir) {
+        File dir = new File(destDir);
+        if (!dir.exists())
+            dir.mkdirs(); // Create destination directory if it doesn't exist
+
+        try (ZipInputStream zipInputStream = new ZipInputStream(
+                new BufferedInputStream(Files.newInputStream(Paths.get(zipFilePath))))) {
+            ZipEntry entry;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                File file = new File(dir, entry.getName());
+                if (entry.isDirectory()) {
+                    file.mkdirs(); // Create directory
+                } else {
+                    // Create parent directories if necessary
+                    new File(file.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        byte[] buffer = new byte[2048];
+                        int len;
+                        while ((len = zipInputStream.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                }
+                zipInputStream.closeEntry();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static boolean copyAssetToPrivateStorage(Context context, String assetName, String destPath) {
         try {
