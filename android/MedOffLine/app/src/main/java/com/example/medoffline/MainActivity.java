@@ -8,6 +8,8 @@
 
 package com.example.medoffline;
 
+import static androidx.core.app.DialogCompat.requireViewById;
+
 import android.Manifest;
 import android.app.ActivityManager;
 import android.content.ContentResolver;
@@ -449,6 +451,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
     // Set layout
     setContentView(R.layout.activity_main);
+
+    // Update app version
+    appVersionUpdate();
 
     // Request necessary permissions
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -897,10 +902,10 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       return "---";
     }
     activityManager.getMemoryInfo(memoryInfo);
-    long totalMem = memoryInfo.totalMem / (1024 * 1024);
-    long availableMem = memoryInfo.availMem / (1024 * 1024);
+    long totalMem = memoryInfo.totalMem;
+    long availableMem = memoryInfo.availMem;
     long usedMem = totalMem - availableMem;
-    return usedMem + "MB";
+    return LocalModelManagement.readableFileSize(usedMem);
   }
 
   private void startMemoryUpdate() {
@@ -914,6 +919,11 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           }
         };
     mMemoryUpdateHandler.post(memoryUpdater);
+  }
+
+  private void appVersionUpdate() {
+    TextView mAppVersionView = requireViewById(R.id.app_version);
+    mAppVersionView.setText(BuildConfig.VERSION_NAME);
   }
 
   @Override

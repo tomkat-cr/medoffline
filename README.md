@@ -91,44 +91,48 @@ Viabilidad técnica y económica:
 
 ## Uso
 
-1. Entrar en el sitio web: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
+1. Mediante un navegador Web en su dispositivo Android, entre en el sitio web: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
    ![MedOffline langing page](./assets/screenshots/Screenshot%202024-11-25%20at%201.25.27 PM.png)
 
-2. Aparecerá una página con las instrucciones. Hacer clic en el botón **Descargar APK**. 
+2. Aparecerá una página con las instrucciones. Toque el botón **Descargar APK**. 
 
-3. Esperar que se complete la descarga.
+Aparecerá un mensaje de advertencia: `Es posible que el archivo sea dañino`. Esto es normal cuando se instalan Apps fuera de la Play Store. Toque el botón **Descargar de todos modos**.
 
-4. Ve a **Descargas** en el menú del navegador y pulsa el archivo **medoffline.apk**.
+3. Espere que se complete la descarga.
 
-5. Espera que se termine la instalación y haz clic en "Abrir Aplicacion"
+4. Vaya a **Descargas** en el menú del navegador y toque el archivo **medoffline.apk**.
 
-6. Busca el ícono de la aplicación **MedOffline** y presiónalo.
+5. Espere que se termine la instalación.
 
-7. Haz clic en el ícono del engranaje para abrir la pantalla de Ajustes.
+6. Toque el botón "Abrir Aplicacion" o busque el ícono de la aplicación **MedOffline** y toquelo.
 
-8. Haz clic en "Model to Download".
+7. Toque el ícono del engranaje en la parte superiorpara abrir la pantalla de Ajustes.
 
-9. Haz clic en "Llama 3.2 1B" (liviano) o "Llama 3.2 3B" (más grande).
+8. Toque "Model to Download".
 
-10. Haz clic en el botón "DOWNLOAD MODEL".
+9. Toque "Llama 3.2 1B" (modelo liviano) o "Llama 3.2 3B" (modelo más grande).
 
-11. Haz clic en el botón "ACEPTAR".
+10. Toque el botón "DOWNLOAD MODEL".
+
+11. Toque el botón "ACEPTAR".
 
 12. Espera a que se complete la descarga.
 
 Con una conexión rápida a Internet, la descarga tardará aproximadamente 2 minutos en completarse cuando se selecciona "Llama 3.2 1B", o 3 minutos o más cuando se selecciona "Llama 3.2 3B".
 
-13. Una vez que se complete la descarga, haz clic en el ícono del engranaje para abrir la pantalla de Ajustes nuevamente.
+13. Una vez que se complete la descarga, aparecerá un mensaje indicando que el modelo fue cargado. entonces la pantalla principal con la interfaz estilo ChatBot estará lista para usar.
 
-14. Haga clic en "Model" y selecciona el modelo descargado.
+14. En caso que desee cambiar el modelo en uso, toque el ícono del engranaje para abrir la pantalla de Ajustes nuevamente.
 
-15. Haga clic en "Tokenizer" y seleccione el tokenizador del modelo descargado (debe tener el mismo nombre y terminar en .bin).
+15. Toque "Model" y seleccione el modelo descargado.
 
-16. Haga clic en el botón "LOAD MODEL".
+16. Toque "Tokenizer" y seleccione el tokenizador del modelo descargado (debe tener el mismo nombre y terminar en `.bin`).
 
-17. Haga clic en el botón "ACEPTAR".
+17. Toque el botón "LOAD MODEL".
 
-18. Una vez que se complete, la pantalla principal con la interfaz de usuario estilo chatbot estará lista para usar.
+18. Toque el botón "ACEPTAR".
+
+19. Una vez que se complete la carga del modelo, la pantalla principal con la interfaz estilo ChatBot estará lista para usar.
    ![App UI](./assets/screenshots/IMG_0732.jpeg)
 
 ## Tecnología utilizada
@@ -282,12 +286,14 @@ Its implementation could reduce preventable health complications.
 
 ## Usage
 
-1. Visit the website: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
+1. On a web browser in your Android device, visit the website: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
    ![MedOffline english landing page](./assets/screenshots/Screenshot%202024-11-27%20at%206.13.33%E2%80%AFAM.png)
 
-2. Click the **Download APK** button.
+2. Tap the **Download APK** button.
 
-3. A new page will be opened with the instructions. Click the **Download APK** button when ready.
+3. A new page will be opened with the instructions. Tap the **Download APK** button when ready.
+
+A warning message will appear: `The file may be harmful`. This is normal when installing apps from outside the Play Store. Tap the **Download anyway** button.
 
 4. Wait for the download to complete.
 
@@ -295,31 +301,33 @@ Its implementation could reduce preventable health complications.
 
 6. Search for the **MedOffline** App icon and tap it.
 
-7. Click on the gear icon to open Settings.
+7. Tap on the gear icon to open Settings.
 
-8. Click on "Model to Download".
+8. Tap on "Model to Download".
 
-9. Click on "Llama 3.2 1B" (lightweight) or "Llama 3.2 3B" (bigger).
+9. Tap on "Llama 3.2 1B" (lightweight) or "Llama 3.2 3B" (bigger).
 
-10. Click on "DOWNLOAD MODEL" button.
+10. Tap on "DOWNLOAD MODEL" button.
 
-11. Click on "ACCEPT" button.
+11. Tap on "ACCEPT" button.
 
 12. Wait for the download to complete.
 
-With a fast Internet connection, it will take about 2 minutes for the download to complete when "Llama 3.2 1B" is selected, or 3+ minutes when "Llama 3.2 3B" is selected.
+With a fast Internet connection, it can take about 2 minutes for the download to complete when "Llama 3.2 1B" is selected, or 3+ minutes when "Llama 3.2 3B" is selected.
 
-13. Once the download is complete, Click on the gear icon again to open Settings.
+13. Once the download is complete a message will appear indicating that the model was loaded. Then, the main screen with the chatbot-style user interface will be ready to use.
 
-14. Click on "Model" and select the downloaded model.
+14. To change the model in use, tap on the gear icon to open Settings.
 
-15. Click on "Tokenizer" and select the downloaded model's tokenizer (it should have the same name as the Model, ending with ".bin").
+15. Tap on "Model" and select the downloaded model.
 
-16. Click on "LOAD MODEL" button.
+16. Tap on "Tokenizer" and select the downloaded model's tokenizer (it should have the same name as the Model, ending with ".bin").
 
-17. Click on "ACCEPT" button.
+17. Tap on "LOAD MODEL" button.
 
-18. Once completed, the main screen with the chatbot-style user interface will be ready to use.<BR/><BR/>
+18. Tap on "ACCEPT" button.
+
+19. Once completed, the main screen with the chatbot-style user interface will be ready to use.<BR/><BR/>
    ![App UI](./assets/screenshots/IMG_0732.jpeg)
 
 ## Technology Used

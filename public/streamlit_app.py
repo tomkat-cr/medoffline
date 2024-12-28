@@ -154,6 +154,7 @@ def add_main_content():
                     on_click=cgsl.set_query_param,
                     args=("page", "source_code"))
 
+
 def add_check_buttons_pushed():
     """
     Check buttons pushed
@@ -169,8 +170,8 @@ def add_footer():
     """
     # Logo
     st.write("")
-    button_cols = st.columns(5)
-    with button_cols[2]:
+    button_cols = st.columns(7)
+    with button_cols[3]:
         # st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
         st.image("./assets/MedOffLine.circled.logo.500.png")
     # Copyright
@@ -225,6 +226,11 @@ def source_code_page():
         ": Meta Llama 3.2 3B (.pte)",
         "https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte")
 
+    # Datasets
+    st.link_button(
+        cgsl.get_par_value("KAGGLE_DATASET_01_BUTTON_TEXT"),
+        cgsl.get_par_value("KAGGLE_DATASET_01_BUTTON_URL"))
+
     # Back to homepage
     add_homepage_button()
 
@@ -247,9 +253,14 @@ def download_apk_page():
     st.write(cgsl.get_par_value("DOWNLOAD_INSTRUCTIONS"))
 
     # Button to download a file from "./apk/app.apk"
-    st.link_button(
-        cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
-        APK_DONWLOAD_URL)
+    st.divider()
+
+    cols = st.columns(3)
+    with cols[1]:
+        st.write(f"{cgsl.get_par_value('DOWNLOAD_WARNING')}")
+    with cols[2]:
+        st.link_button(cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
+                       APK_DONWLOAD_URL)
 
     # Back to homepage
     add_homepage_button()

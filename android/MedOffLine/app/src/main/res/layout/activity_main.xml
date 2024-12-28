@@ -40,6 +40,17 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/app_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@android:color/white"
+                    android:text="..."
+                    android:textSize="10sp"
+                />
+
+                <TextView
                     android:id="@+id/ram_usage_live"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -225,7 +236,7 @@
                         android:layout_marginBottom="3dp"
                         android:textSize="10dp"
                         android:gravity="center"
-                        android:text="Warning: Medoffline model can make mistakes. Check important info."
+                        android:text="WARNING: Medoffline models can make mistakes. Check important info.\nThis is a beta version of the App and IS ONLY A PROTOTYPE FOR TESTING, so please be careful when using it."
                     />
 
                 </LinearLayout>
