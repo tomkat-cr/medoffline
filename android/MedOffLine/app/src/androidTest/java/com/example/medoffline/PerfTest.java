@@ -28,24 +28,25 @@ public class PerfTest implements LlamaCallback {
 
   // private static final String RESOURCE_PATH = "/data/local/tmp/llama/";
   // private static final String TOKENIZER_BIN = "tokenizer.bin";
-  private static final String TOKENIZER_BIN = "tokenizer.model";
+  private static final String RESOURCE_PATH = "/data/user/0/com.example.medoffline/files/llama/";
 
   private final List<String> results = new ArrayList<>();
   private final List<Float> tokensPerSecond = new ArrayList<>();
 
   @Test
   public void testTokensPerSecond() {
-    LoadModelFromUrl mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
-    String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
-    String RESOURCE_PATH = resourcePath + "/";
+    // LoadModelFromUrl mLoadModelFromUrl = new LoadModelFromUurl(getBaseContext(), getFilesDir());
+    // String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
+    // String RESOURCE_PATH = resourcePath + "/";
+    // String tokenizerPath = RESOURCE_PATH + TOKENIZER_BIN;
 
-    String tokenizerPath = RESOURCE_PATH + TOKENIZER_BIN;
     // Find out the model name
     File directory = new File(RESOURCE_PATH);
     Arrays.stream(directory.listFiles())
         .filter(file -> file.getName().endsWith(".pte"))
         .forEach(
             model -> {
+              String tokenizerPath = model.getPath().replace(".pte", ".bin");
               LlamaModule mModule = new LlamaModule(model.getPath(), tokenizerPath, 0.8f);
               // Print the model name because there might be more than one of them
               report("ModelName", model.getName());

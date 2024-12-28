@@ -55,6 +55,10 @@ public class LoadModelFromUrl {
         this.downloadProgressBar = null;
         mErrorReporting = new ErrorReporting(context);
     }
+   
+    public LoadModelFromUrl(Context context) {
+        this(context, context.getFilesDir());
+    }
 
     public void setUiElements(View downloadingModelText, TextView downloadProgressText, ProgressBar downloadProgressBar) {
         this.downloadingModelText = downloadingModelText;
@@ -167,7 +171,7 @@ public class LoadModelFromUrl {
             if (!isCreated) {
                 // throw new RuntimeException("Failed to create directory: " + modelDir);
                 String errorMessage = "Failed to create directory: " + modelDir;
-                mErrorReporting.showError(errorMessage);
+                mErrorReporting.showErrorCancel(errorMessage);
             } else {
                 ETLogging.getInstance().log("Directory created successfully: " + modelDir);
             }
@@ -205,17 +209,21 @@ public class LoadModelFromUrl {
         return modelsConfig;
     }
 
+    public ModelInfo getModelInfo(String modelToDownload) {
+        ModelsConfig modelsConfig = getModelsConfig();
+        ModelInfo modelInfo = modelsConfig.getModelData(modelToDownload);
+        return modelInfo;
+    }
+
     public void downloadModel(SettingsFields mCurrentSettingsFields, DemoSharedPreferences mDemoSharedPreferences)
         throws InterruptedException, ExecutionException, IOException {
 
         ETLogging.getInstance().log("downloadModel | started...");
         
-        String modelToDownload = mCurrentSettingsFields.getModelToDownload();
         String resourcePath = getBaseModelsPath();
+        String modelToDownload = mCurrentSettingsFields.getModelToDownload();
 
-        ModelsConfig modelsConfig = getModelsConfig();
-
-        ModelInfo modelInfo = modelsConfig.getModelData(modelToDownload);
+        ModelInfo modelInfo = getModelInfo(modelToDownload);
         if (modelInfo == null) {
             throw new IOException("Model info not found for model: " + modelToDownload);
         }
@@ -301,9 +309,8 @@ public class LoadModelFromUrl {
         AssetFileReader mAssetFileReader = new AssetFileReader(context, "default_system_prompt.txt");
         String defaultSystemPrompt = mAssetFileReader.read();
         if (!mAssetFileReader.getError().isEmpty()) {
-            if (!mErrorReporting.showError(mAssetFileReader.getError())) {
-                return mCurrentSettingsFields;
-            }
+            mErrorReporting.showErrorCancel(mAssetFileReader.getError());
+            return mCurrentSettingsFields;
         }
 
         // Get the model list from the "default_model_db.json" JSON file in the assets
@@ -312,14 +319,12 @@ public class LoadModelFromUrl {
         List<ModelInfo> mModelInfoList = mModelsConfig.getModelsList();
 
         if (!mModelsConfig.getError().isEmpty()) {
-            if (!mErrorReporting.showError(mModelsConfig.getError())) {
-                return mCurrentSettingsFields;
-            }
+            mErrorReporting.showErrorCancel(mModelsConfig.getError());
+            return mCurrentSettingsFields;
         }
         if (mModelInfoList.isEmpty()) {
-            if (!mErrorReporting.showError("No models found")) {
-                return mCurrentSettingsFields;
-            }
+            mErrorReporting.showErrorCancel("No models found");
+            return mCurrentSettingsFields;
         } else {
             // Get the 1st model from the list
             ModelInfo firstModelInfo = mModelInfoList.get(0);
@@ -375,7 +380,7 @@ public class LoadModelFromUrl {
             if (!tokenizerFile.exists()) {
                 String errorMessage = "Error: tokenizer file does not exist";
                 Log.e("LoadModelFromUrl | getTokenizerPath", errorMessage);
-                mErrorReporting.showError(errorMessage);
+                mErrorReporting.showErrorCancel(errorMessage);
             }
         }
         return tokenizerPath;

@@ -129,8 +129,8 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
   private void setLocalModel(String modelPath, String tokenizerPath, float temperature) {
     Message modelLoadingMessage = new Message("Loading model...", false, MessageType.SYSTEM, 0);
-    ETLogging.getInstance().log(">> Loading model: " + modelPath);
-    ETLogging.getInstance().log("   with tokenizer " + tokenizerPath);
+    ETLogging.getInstance().log(">> Loading model: " + modelPath +
+                              "\n   with tokenizer " + tokenizerPath);
     runOnUiThread(
         () -> {
           setSendButtonState(false);
@@ -160,9 +160,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       loadResult = mModule.load();
     } catch (Exception e) {
       modelLoadError = "Error: " + e.getMessage();
-      ETLogging.getInstance().log(modelLoadError);
-      e.printStackTrace();
-      mErrorReporting.showError(modelLoadError);
+      // ETLogging.getInstance().log(modelLoadError);
+      // e.printStackTrace();
+      mErrorReporting.showErrorCancel(modelLoadError);
       return;
     }
     long loadDuration = System.currentTimeMillis() - runStartTime;
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         modelInfo += "\n" + modelLoadError;
       }
       loadDuration = 0;
-      mErrorReporting.showError(modelInfo, "Model Load failed");
+      mErrorReporting.showDialogOk(modelInfo, "Model Load failed");
     } else {
       String[] segments = modelPath.split("/");
       String pteName = segments[segments.length - 1];
@@ -547,9 +547,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   @Override
   protected void onResume() {
     // Check for if settings parameters have changed
-
     super.onResume();
 
+    // Read settings from shared preferences
     Gson gson = new Gson();
     String settingsFieldsJSON = mDemoSharedPreferences.getSettings();
 
@@ -557,9 +557,11 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
     SettingsFields updatedSettingsFields;
     if (settingsFieldsJSON.isEmpty()) {
+      // First time the app is run... so set default parameters
       ETLogging.getInstance().log("onResume | call setDefaultParameters...");
       updatedSettingsFields = mLoadModelFromUrl.setDefaultParameters();
     } else {
+      // Load settings from shared preferences
       ETLogging.getInstance().log("onResume | load settings from shared preferences...");
       updatedSettingsFields =
           gson.fromJson(settingsFieldsJSON, SettingsFields.class);
@@ -568,57 +570,58 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
 
     if (updatedSettingsFields == null) {
-      // Added this check, because gson.fromJson can return null
+      // First time the app is run... so ask the user to enter the settings screen to set parameters
       ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
       askUserToSelectModel();
       return;
     }
 
-    // ETLogging.getInstance().log("1) onResume | updatedSettingsFields.showOwnData()");
-    // updatedSettingsFields.showOwnData();
-    // ETLogging.getInstance().log("2) onResume | mCurrentSettingsFields.showOwnData()");
-    // mCurrentSettingsFields.showOwnData();
-
+    // Verify if the settings have changed
     boolean isUpdated = !mCurrentSettingsFields.equals(updatedSettingsFields);
 
+    // Too check the user click on any of the buttons in the settings screen
     boolean isLoadModel = updatedSettingsFields.getIsLoadModel();
     boolean isDownloadModel = updatedSettingsFields.getIsDownloadModel();
     boolean isDownloadModelConfig = updatedSettingsFields.getIsDownloadModelConfig();
 
+    // Set backend type according to the updated settings
     setBackendMode(updatedSettingsFields.getBackendType());
 
     ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
 
     if (isUpdated) {
+      // Update current to point to the latest
+      ETLogging.getInstance().log("onResume | Update current to point to the latest");
+      mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+
       if (isDownloadModelConfig) {
+        // Download model config
         ETLogging.getInstance().log("onResume | Calls checkForDownloadModelConfig()");
         downloadModelConfig(mCurrentSettingsFields);
       } else if (isLoadModel || isDownloadModel) {
-        // If users change the model file, but not pressing loadModelButton, we won't load the new
-        // model
+        // If users change the model file, but not pressing loadModelButton, we won't load the new model
         ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
-        mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
         checkForUpdateAndReloadModel(mCurrentSettingsFields);
       } else {
+        // Settings changed but nomodel load or download pressed
         ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
         askUserToSelectModel();
       }
 
       if (mCurrentSettingsFields.getIsModelLoaded()) {
+        // If the model was loaded, enable the model to run
         onModelRunStopped();
       } else {
         ETLogging.getInstance().log("onResume | onModelRunStopped not called");
       }
 
+      // Enable the send button if the model is loaded
       ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
       setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
 
+      // Check if the user wants to clear the chat history
       ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
-      checkForClearChatHistory(updatedSettingsFields);
-
-      // Update current to point to the latest
-      ETLogging.getInstance().log("onResume | Update current to point to the latest");
-      mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
+      checkForClearChatHistory(mCurrentSettingsFields);
     }
   }
 
@@ -657,36 +660,39 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     double temperature = updatedSettingsFields.getTemperature();
 
     // Log the parameters
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Model path: " + modelPath);
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Tokenizer path: " + tokenizerPath);
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Temperature: " + temperature);
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is load model: " + updatedSettingsFields.getIsLoadModel());
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is download model: " + updatedSettingsFields.getIsDownloadModel());
-    ETLogging.getInstance().log("checkForUpdateAndReloadModel | Is model loaded: " + updatedSettingsFields.getIsModelLoaded());
+    ETLogging.getInstance().log(
+      "checkForUpdateAndReloadModel | Model path: " + modelPath +
+      "\n | Tokenizer path: " + tokenizerPath + 
+      "\n | Temperature: " + temperature + 
+      "\n | Is load model: " + updatedSettingsFields.getIsLoadModel() + 
+      "\n | Is download model: " + updatedSettingsFields.getIsDownloadModel() + 
+      "\n | Is model loaded: " + updatedSettingsFields.getIsModelLoaded()
+    );
+
+    ETLogging.getInstance().log(">>--> checkForUpdateAndReloadModel | Are we in the main thread? " + (Looper.myLooper() == Looper.getMainLooper()));
 
     if (!modelToDownload.isEmpty()) {
       if (updatedSettingsFields.getIsDownloadModel()) {
-        Thread thread = new Thread(new Runnable() {
-          @Override
-          public void run() {
-            mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
-            try {
-              mLoadModelFromUrl.downloadModel(updatedSettingsFields, mDemoSharedPreferences);
-            } catch (Exception e) {
-              String errorMessage = "Model download exception: " + e.getMessage();
-              ETLogging.getInstance().log(errorMessage);
-              // e.printStackTrace();
-              mErrorReporting.showError(e.getMessage(), "Model download exception");
-              return;
-            }
-            updatedSettingsFields.saveDownloadModelAction(false);
-            updatedSettingsFields.saveLoadModelAction(true);
-            mDemoSharedPreferences.addSettings(updatedSettingsFields);
-          }
-        });
-        thread.start(); 
-        modelPath = updatedSettingsFields.getModelFilePath();
-        tokenizerPath = updatedSettingsFields.getTokenizerFilePath();
+
+        ETLogging.getInstance().log("|| checkForUpdateAndReloadModel | Check for internet connection...");
+        if (!LocalModelManagement.checkInternetConnection(getBaseContext())) {
+          ETLogging.getInstance().log("|| checkForUpdateAndReloadModel |> There's no internet connection, show dialog to stop");
+          mErrorReporting.showErrorCancel("No internet connection available");
+          return;
+        }
+
+        ETLogging.getInstance().log("||| checkForUpdateAndReloadModel | Check for wifi connection...");
+        if (!LocalModelManagement.checkWifiConnection(getBaseContext())) {
+          ETLogging.getInstance().log("|||| checkForUpdateAndReloadModel | Confirm to proceed with NO wifi connection...");
+          mErrorReporting.showDialogYesNo(
+              "Are you sure you want to download the model over a non-Wifi connection?",
+              "No Wifi connection",
+              downloadModelRunnable(),
+              null
+          );
+          return;
+        }
+        downloadModel(updatedSettingsFields);
       }
     }
 
@@ -695,18 +701,75 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           || !modelPath.equals(mCurrentSettingsFields.getModelFilePath())
           || !tokenizerPath.equals(mCurrentSettingsFields.getTokenizerFilePath())
           || temperature != mCurrentSettingsFields.getTemperature()) {
-        loadLocalModelAndParameters(
-            updatedSettingsFields.getModelFilePath(),
-            updatedSettingsFields.getTokenizerFilePath(),
-            (float) updatedSettingsFields.getTemperature());
-        updatedSettingsFields.saveLoadModelAction(false);
-        mDemoSharedPreferences.addSettings(updatedSettingsFields);
+        loadModel(updatedSettingsFields);
       }
-    } else {
-      askUserToSelectModel();
+    // } else {
+    //   askUserToSelectModel();
     }
   }
 
+  private void loadModel(SettingsFields updatedSettingsFields) {
+    // Load model
+    loadLocalModelAndParameters(
+      updatedSettingsFields.getModelFilePath(),
+      updatedSettingsFields.getTokenizerFilePath(),
+      (float) updatedSettingsFields.getTemperature()
+    );
+    // Changing the Load Model Action to false since model has been loaded
+    updatedSettingsFields.saveLoadModelAction(false);
+    mDemoSharedPreferences.addSettings(updatedSettingsFields);
+  }
+
+  public Runnable downloadModelRunnable() {
+    return new Runnable() {
+      @Override
+      public void run() {
+        downloadModel(mCurrentSettingsFields);
+      }
+    };
+  }
+
+  private void downloadModel(SettingsFields updatedSettingsFields) {
+    ETLogging.getInstance().log(">> Download Model start...");
+    Thread thread = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
+        try {
+          // Download the model
+          mLoadModelFromUrl.downloadModel(updatedSettingsFields, mDemoSharedPreferences);
+        } catch (Exception e) {
+          String errorMessage = "Model download exception: " + e.getMessage();
+          ETLogging.getInstance().log(errorMessage);
+          // e.printStackTrace();
+          mErrorReporting.showErrorCancel("Model download exception: " + e.getMessage());
+          return;
+        }
+
+        // Changing the Download Model Action to false since model has been downloaded
+        updatedSettingsFields.saveDownloadModelAction(false);
+        mDemoSharedPreferences.addSettings(updatedSettingsFields);
+
+        // Update the model and tokenizer paths to be the new ones
+        String downloadedModel = mCurrentSettingsFields.getModelToDownload();
+        ModelInfo modelInfo = mLoadModelFromUrl.getModelInfo(downloadedModel);
+        if (modelInfo == null) {
+            mErrorReporting.showErrorCancel("Model info not found for the downloaded model: " + downloadedModel);
+            return;
+        }
+        String resourcePath = mLoadModelFromUrl.getBaseModelsPath();
+        String modelPath = resourcePath + "/" + modelInfo.getModelFileName();
+        String tokenizerPath = mLoadModelFromUrl.getTokenizerPath(modelPath);
+        mCurrentSettingsFields.saveModelPath(modelPath);
+        mCurrentSettingsFields.saveTokenizerPath(tokenizerPath);
+        mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+
+        // Load the new model
+        loadModel(updatedSettingsFields);
+      }
+    });
+    thread.start(); 
+  }
 
   private void downloadModelConfig(SettingsFields updatedSettingsFields) {
     ETLogging.getInstance().log(">> Download Model Config start...");
@@ -720,12 +783,12 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           String errorMessage = "Model configuration download exception: " + e.getMessage();
           ETLogging.getInstance().log(errorMessage);
           // e.printStackTrace();
-          mErrorReporting.showError(e.getMessage(), "Model configuration download exception");
+          mErrorReporting.showErrorCancel("Model configuration download exception: " + e.getMessage());
           return;
         }
         updatedSettingsFields.saveDownloadModelConfigAction(false);
         mDemoSharedPreferences.addSettings(updatedSettingsFields);
-        mErrorReporting.showError("Model configuration downloaded. Go to Settings to load the new models.", "Configuration Download");
+        mErrorReporting.showDialogOk("Model configuration downloaded. Go to Settings to load the new models.", "Configuration Download");
       }
     });
     thread.start();

@@ -94,17 +94,41 @@ Viabilidad técnica y económica:
 1. Entrar en el sitio web: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
    ![MedOffline langing page](./assets/screenshots/Screenshot%202024-11-25%20at%201.25.27 PM.png)
 
-2. Hacer clic en el botón Descargar APK.
+2. Aparecerá una página con las instrucciones. Hacer clic en el botón **Descargar APK**. 
 
-3. Esperar que la descarga termine.
+3. Esperar que se complete la descarga.
 
-4. Ir a **Descargas** en el menú del navegador y tocar el archivo medoffline.apk.
+4. Ve a **Descargas** en el menú del navegador y pulsa el archivo **medoffline.apk**.
 
-5. Buscar el icono de la App **MedOffline** y tocarlo.
+5. Espera que se termine la instalación y haz clic en "Abrir Aplicacion"
 
-6. La primera vez la App hará la descarga del modelo inicial, lo cual tomara cerca de 3 minutos. Disculpe la espera ;)
+6. Busca el ícono de la aplicación **MedOffline** y presiónalo.
 
-7. Una vez terminada la descarga, aparece la pantalla principal con una interfaz de usuario tipo Chatbot.<BR/><BR/>
+7. Haz clic en el ícono del engranaje para abrir la pantalla de Ajustes.
+
+8. Haz clic en "Model to Download".
+
+9. Haz clic en "Llama 3.2 1B" (liviano) o "Llama 3.2 3B" (más grande).
+
+10. Haz clic en el botón "DOWNLOAD MODEL".
+
+11. Haz clic en el botón "ACEPTAR".
+
+12. Espera a que se complete la descarga.
+
+Con una conexión rápida a Internet, la descarga tardará aproximadamente 2 minutos en completarse cuando se selecciona "Llama 3.2 1B", o 3 minutos o más cuando se selecciona "Llama 3.2 3B".
+
+13. Una vez que se complete la descarga, haz clic en el ícono del engranaje para abrir la pantalla de Ajustes nuevamente.
+
+14. Haga clic en "Model" y selecciona el modelo descargado.
+
+15. Haga clic en "Tokenizer" y seleccione el tokenizador del modelo descargado (debe tener el mismo nombre y terminar en .bin).
+
+16. Haga clic en el botón "LOAD MODEL".
+
+17. Haga clic en el botón "ACEPTAR".
+
+18. Una vez que se complete, la pantalla principal con la interfaz de usuario estilo chatbot estará lista para usar.
    ![App UI](./assets/screenshots/IMG_0732.jpeg)
 
 ## Tecnología utilizada
@@ -261,19 +285,41 @@ Its implementation could reduce preventable health complications.
 1. Visit the website: [https://medoffline.streamlit.app](https://medoffline.streamlit.app)<BR/><BR/>
    ![MedOffline english landing page](./assets/screenshots/Screenshot%202024-11-27%20at%206.13.33%E2%80%AFAM.png)
 
-2. Click the **English** button.
+2. Click the **Download APK** button.
 
-3. Click the **Download APK** button.
+3. A new page will be opened with the instructions. Click the **Download APK** button when ready.
 
 4. Wait for the download to complete.
 
 5. Go to **Downloads** in the browser menu and tap the **medoffline.apk** file.
 
-6. Look for the **MedOffline** App icon and tap it.
+6. Search for the **MedOffline** App icon and tap it.
 
-7. The first time, the App will download the initial model, which will take about 3 minutes. We apologize for the wait ;)
+7. Click on the gear icon to open Settings.
 
-8. Once the download is complete, the main screen with a chatbot-style user interface will appear.<BR/><BR/>
+8. Click on "Model to Download".
+
+9. Click on "Llama 3.2 1B" (lightweight) or "Llama 3.2 3B" (bigger).
+
+10. Click on "DOWNLOAD MODEL" button.
+
+11. Click on "ACCEPT" button.
+
+12. Wait for the download to complete.
+
+With a fast Internet connection, it will take about 2 minutes for the download to complete when "Llama 3.2 1B" is selected, or 3+ minutes when "Llama 3.2 3B" is selected.
+
+13. Once the download is complete, Click on the gear icon again to open Settings.
+
+14. Click on "Model" and select the downloaded model.
+
+15. Click on "Tokenizer" and select the downloaded model's tokenizer (it should have the same name as the Model, ending with ".bin").
+
+16. Click on "LOAD MODEL" button.
+
+17. Click on "ACCEPT" button.
+
+18. Once completed, the main screen with the chatbot-style user interface will be ready to use.<BR/><BR/>
    ![App UI](./assets/screenshots/IMG_0732.jpeg)
 
 ## Technology Used

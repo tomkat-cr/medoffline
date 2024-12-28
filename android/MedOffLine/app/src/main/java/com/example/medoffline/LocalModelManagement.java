@@ -49,7 +49,19 @@ public class LocalModelManagement {
     public static boolean checkInternetConnection(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        boolean result = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        Log.i(TAG, ">>> checkInternetConnection: " + result);
+        return result;
+    }
+    
+    public static boolean checkWifiConnection(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        // return activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+        NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean result = mWifi.isConnected();
+        Log.i(TAG, ">>> checkWifiConnection: " + result);
+        return result;
     }
 
     public static String readableFileSize(long size) {

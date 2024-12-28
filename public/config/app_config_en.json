@@ -44,5 +44,7 @@
         }
     ],
     "INVALID_PAGE_TITLE": "Invalid Page",
-    "INVALID_PAGE_TEXT": "Page not found"
+    "INVALID_PAGE_TEXT": "Page not found",
+    "INSTRUCTIONS_OPENING": "Instructions to download and install the Android App:",
+    "DOWNLOAD_INSTRUCTIONS": "1. Click the **Download APK** button at the end of these instructions.\n\n2. Wait for the download to complete.\n\n3. Go to **Downloads** in the browser menu and tap the **medoffline.apk** file.\n\n4. Search for the **MedOffline** App icon and tap it.\n\n5. Click on the gear icon to open Settings.\n\n6. Click on \"Model to Download\".\n\n7. Click on \"Llama 3.2 1B\" (lightweight) or \"Llama 3.2 3B\" (bigger).\n\n8. Click on \"DOWNLOAD MODEL\" button.\n\n9. Click on \"ACCEPT\" button.\n\n10. Wait for the download to complete.\n\nWith a fast Internet connection, it will take about 2 minutes for the download to complete when \"Llama 3.2 1B\" is selected, or 3+ minutes when \"Llama 3.2 3B\" is selected.\n\n11. Once the download is complete, Click on the gear icon again to open Settings.\n\n12. Click on \"Model\" and select the downloaded model.\n\n13. Click on \"Tokenizer\" and select the downloaded model's tokenizer (it should have the same name as the Model, ending with \".bin\").\n\n14. Click on \"LOAD MODEL\" button.\n\n15. Click on \"ACCEPT\" button.\n\n16. Once completed, the main screen with the chatbot-style user interface will be ready to use."
 }

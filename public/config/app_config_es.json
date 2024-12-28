@@ -44,5 +44,7 @@
         }
     ],
     "INVALID_PAGE_TITLE": "Página Inválida",
-    "INVALID_PAGE_TEXT": "Página no encontrada"
+    "INVALID_PAGE_TEXT": "Página no encontrada",
+    "INSTRUCTIONS_OPENING": "Instructiones para descargar e instalar la Aplicación Android:",
+    "DOWNLOAD_INSTRUCTIONS": "1. Haz clic en el botón **Descargar APK** al final de estas instrucciones.\n\n2. Espera a que se complete la descarga.\n\n3. Ve a **Descargas** en el menú del navegador y pulsa el archivo **medoffline.apk**.\n\n4. Espera que se termine la instalación y haz clic en \"Abrir Aplicacion\"\n\n5. Busca el ícono de la aplicación **MedOffline** y presiónalo.\n\n6. Haz clic en el ícono del engranaje para abrir la pantalla de Ajustes.\n\n7. Haz clic en \"Model to Download\".\n\n8. Haz clic en \"Llama 3.2 1B\" (liviano) o \"Llama 3.2 3B\" (más grande).\n\n9. Haz clic en el botón \"DOWNLOAD MODEL\".\n\n10. Haz clic en el botón \"ACEPTAR\".\n\n11. Espera a que se complete la descarga.\n\nCon una conexión rápida a Internet, la descarga tardará aproximadamente 2 minutos en completarse cuando se selecciona \"Llama 3.2 1B\", o 3 minutos o más cuando se selecciona \"Llama 3.2 3B\".\n\n12. Una vez que se complete la descarga, haz clic en el ícono del engranaje para abrir la pantalla de Ajustes nuevamente.\n\n13. Haga clic en \"Model\" y selecciona el modelo descargado.\n\n14. Haga clic en \"Tokenizer\" y seleccione el tokenizador del modelo descargado (debe tener el mismo nombre y terminar en .bin).\n\n15. Haga clic en el botón \"LOAD MODEL\".\n\n16. Haga clic en el botón \"ACEPTAR\".\n\n17. Una vez que se complete, la pantalla principal con la interfaz de usuario estilo chatbot estará lista para usar."
 }

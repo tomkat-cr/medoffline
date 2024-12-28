@@ -80,23 +80,8 @@ public class SettingsActivity extends AppCompatActivity {
           return insets;
         });
 
-    // if (mModelDownloadUrl.isEmpty()) {
-    //   ETLogging.getInstance().log("Settings Activity | onCreate | default values loading...");
-    //   mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
-    //   SettingsFields mDefaultSettingsFields = mLoadModelFromUrl.setDefaultParameters();
-    //   mModelDownloadUrl = mDefaultSettingsFields.getModelDownloadUrl();
-    //   mModelToDownload = mDefaultSettingsFields.getModelToDownload();
-    //   mModelFilePath = mDefaultSettingsFields.getModelFilePath();
-    //   mTokenizerFilePath = mDefaultSettingsFields.getTokenizerFilePath();
-    //   mSetTemperature = mDefaultSettingsFields.getTemperature();
-    //   mSystemPrompt = mDefaultSettingsFields.getSystemPrompt();
-    //   mUserPrompt = mDefaultSettingsFields.getUserPrompt();
-    //   mModelType = mDefaultSettingsFields.getModelType();
-    //   mBackendType = mDefaultSettingsFields.getBackendType();
-    //   saveSettings();  
-    // }
-
     mLoadModelFromUrl = new LoadModelFromUrl(getBaseContext(), getFilesDir());
+
     mDemoSharedPreferences = new DemoSharedPreferences(getBaseContext());
     mSettingsFields = new SettingsFields();
     setupSettings();
