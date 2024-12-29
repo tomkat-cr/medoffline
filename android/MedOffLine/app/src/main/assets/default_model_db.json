@@ -5,7 +5,7 @@
         "model_type": "LLAMA_3_2",
         "model_download_url": "https://www.kaggle.com/api/v1/models/tomkatcr/llama3.2_1b_pte/pyTorch/executorch/1/download",
         "model_file_name": "llama3_2_1b_kv_sdpa_xnn_qe_4_32.pte",
-        "model_file_size": 1929609376,
+        "model_file_size": 804849824,
         "tokenizer_file_name": "tokenizer.model",
         "tokenizer_file_size": 2183982,
         "system_prompt": ""
@@ -19,17 +19,6 @@
         "model_file_size": 1929609376,
         "tokenizer_file_name": "tokenizer.model",
         "tokenizer_file_size": 2183982,
-        "system_prompt": ""
-    },
-    {
-        "model_id": "local_download",
-        "model_name": "Local download",
-        "model_type": "{ask_user}",
-        "model_download_url": "{ask_user}",
-        "model_file_name": "{ask_user}",
-        "model_file_size": 0,
-        "tokenizer_file_name": "{ask_user}",
-        "tokenizer_file_size": 0,
         "system_prompt": ""
     }
 ]

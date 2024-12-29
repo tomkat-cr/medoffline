@@ -31,8 +31,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LocalModelManagement {
+    private static final boolean ACTIVITY_DEBUG = false;
+
     private static final String TAG = "LocalModelManagement";
-    private static final int DEFAULT_TIMEOUT_MINUTES = 10;
+    private static final int DEFAULT_TIMEOUT_MINUTES = 20;
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 2000; // 2 seconds base delay
     private static DownloadProgressListener progressListener;
@@ -50,7 +52,7 @@ public class LocalModelManagement {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean result = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        Log.i(TAG, ">>> checkInternetConnection: " + result);
+        if (ACTIVITY_DEBUG) Log.i(TAG, ">>> checkInternetConnection: " + result);
         return result;
     }
     
@@ -60,7 +62,7 @@ public class LocalModelManagement {
         // return activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
         NetworkInfo mWifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         boolean result = mWifi.isConnected();
-        Log.i(TAG, ">>> checkWifiConnection: " + result);
+        if (ACTIVITY_DEBUG) Log.i(TAG, ">>> checkWifiConnection: " + result);
         return result;
     }
 
@@ -95,7 +97,7 @@ public class LocalModelManagement {
         Exception lastException = null;
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
-                Log.i(TAG, "Download attempt " + attempt + " of " + MAX_RETRIES);
+                if (ACTIVITY_DEBUG) Log.i(TAG, "Download attempt " + attempt + " of " + MAX_RETRIES);
                 if (progressListener != null) {
                     progressListener.onProgressUpdate(0, 100, false);
                 }
@@ -348,7 +350,7 @@ public class LocalModelManagement {
     }
 
     public static void unzipGz(String gzFilePath, String destPath) throws IOException {
-        Log.i(TAG, "Starting extraction of " + gzFilePath + " to " + destPath);
+        if (ACTIVITY_DEBUG) Log.i(TAG, "Starting extraction of " + gzFilePath + " to " + destPath);
         File tarFile = null;
         
         try {
@@ -366,7 +368,7 @@ public class LocalModelManagement {
                     if (entry.isDirectory()) continue;
                     
                     File outputFile = new File(destPath, entry.getName());
-                    Log.d(TAG, "Extracting: " + outputFile.getName());
+                    if (ACTIVITY_DEBUG) Log.d(TAG, "Extracting: " + outputFile.getName());
                     
                     if (!outputFile.getParentFile().exists()) {
                         outputFile.getParentFile().mkdirs();
@@ -383,7 +385,7 @@ public class LocalModelManagement {
                 }
 
                 long duration = System.currentTimeMillis() - startTime;
-                Log.i(TAG, String.format("Extraction completed: %d files in %.2f seconds", 
+                if (ACTIVITY_DEBUG) Log.i(TAG, String.format("Extraction completed: %d files in %.2f seconds", 
                     filesExtracted, duration/1000.0));
             }
 
@@ -391,7 +393,7 @@ public class LocalModelManagement {
             if (!new File(gzFilePath).delete()) {
                 Log.w(TAG, "Failed to delete " + gzFilePath);
             } else {
-                Log.i(TAG, "Successfully deleted " + gzFilePath);
+                if (ACTIVITY_DEBUG) Log.i(TAG, "Successfully deleted " + gzFilePath);
             }
 
         } catch (IOException e) {
@@ -450,10 +452,10 @@ public class LocalModelManagement {
                         out.write(buffer, 0, read);
                     }
                 }
-                Log.i(TAG, "Successfully copied asset " + assetName + " to " + destPath);
+                if (ACTIVITY_DEBUG) Log.i(TAG, "Successfully copied asset " + assetName + " to " + destPath);
                 return true;
             } else {
-                Log.i(TAG, "Model file already exists at " + destPath);
+                Log.w(TAG, "Model file already exists at " + destPath);
                 return true;
             }
         } catch (IOException e) {

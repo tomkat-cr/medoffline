@@ -29,13 +29,14 @@ public class LoadModelFromUrl {
     private final File filesDir;
     private final Context context;
 
+    private static final boolean ACTIVITY_DEBUG = false;
     private static final Boolean USE_MODEL_DEFAULT_PATH = false;
     private static final String MODEL_DEFAULT_PATH = "/data/local/tmp/medoffline";
 
     private static final int DEFAULT_TIMEOUT_MINUTES = 10;
     private static final long MIN_STORAGE_SPACE = 2L * 1024 * 1024 * 1024; // 2GB
 
-    public static Float DEFAULT_TEMPERATURE = 0.1f;
+    public static double DEFAULT_TEMPERATURE = 0.1;
 
     // public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "http://192.168.1.100/get_model_config";
     // public static String DEFAULT_MODEL_CONFIG_DOWNLOAD_URL = "https://medoffline.aclics.com/get_model_config";
@@ -86,7 +87,7 @@ public class LoadModelFromUrl {
         String errorMessage = "";
         String resourcePath = new File(targetPath).getParent();
 
-        ETLogging.getInstance().log("genericDownloadFile | started..." + 
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("genericDownloadFile | started..." + 
             "\n | url: " + url +
             "\n | targetPath: " + targetPath + 
             "\n | minStorageSpace: " + minStorageSpace +
@@ -161,23 +162,9 @@ public class LoadModelFromUrl {
         return filesDir.getAbsolutePath() + "/llama";
     }
 
-    public String getFirstModelFilePath(String resourcePath, String fileExtension) {
+    public void printModelDirFiles(String resourcePath) {
         File modelDir = new File(resourcePath);
-
-        ETLogging.getInstance().log("Checking directory: " + modelDir);
-        if (!modelDir.exists()) {
-            ETLogging.getInstance().log("Not exist, creating it...");
-            boolean isCreated = modelDir.mkdirs();
-            if (!isCreated) {
-                // throw new RuntimeException("Failed to create directory: " + modelDir);
-                String errorMessage = "Failed to create directory: " + modelDir;
-                mErrorReporting.showErrorCancel(errorMessage);
-            } else {
-                ETLogging.getInstance().log("Directory created successfully: " + modelDir);
-            }
-        }
-
-        // Print the modelDir files
+        ETLogging.getInstance().log(">> printModelDirFiles | begin");
         ETLogging.getInstance().log("Files in " + resourcePath);
         File[] files = modelDir.listFiles();
         if (files != null) {
@@ -187,6 +174,27 @@ public class LoadModelFromUrl {
         } else {
             ETLogging.getInstance().log("No files found in " + resourcePath);
         }
+        ETLogging.getInstance().log(">> printModelDirFiles | end");
+    }
+
+    public String getFirstModelFilePath(String resourcePath, String fileExtension) {
+        File modelDir = new File(resourcePath);
+
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Checking directory: " + modelDir);
+        if (!modelDir.exists()) {
+            if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Not exist, creating it...");
+            boolean isCreated = modelDir.mkdirs();
+            if (!isCreated) {
+                // throw new RuntimeException("Failed to create directory: " + modelDir);
+                String errorMessage = "Failed to create directory: " + modelDir;
+                mErrorReporting.showErrorCancel(errorMessage);
+            } else {
+                if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Directory created successfully: " + modelDir);
+            }
+        }
+
+        // Print the modelDir files
+        printModelDirFiles(resourcePath);
 
         File model = Arrays.stream(modelDir.listFiles())
                 .filter(file -> file.getName().endsWith(fileExtension))
@@ -232,10 +240,15 @@ public class LoadModelFromUrl {
             throw new IOException("Model URL not found for model: " + modelToDownload);
         }
 
+        long minStorageSpace = 2L * (modelInfo.getModelFileSize() + modelInfo.getTokenizerFileSize());
+        if (minStorageSpace <= 0) {
+            minStorageSpace = MIN_STORAGE_SPACE;
+        }
+
         String tarGzPath = resourcePath + "/model.tar.gz";
 
         // Download the model .tar file
-        genericDownloadFile(mCurrentSettingsFields, ModelUrl, tarGzPath, MIN_STORAGE_SPACE);
+        genericDownloadFile(mCurrentSettingsFields, ModelUrl, tarGzPath, minStorageSpace);
 
         // Extract the .tar file
         LocalModelManagement.unzipGz(tarGzPath, resourcePath);
@@ -349,7 +362,7 @@ public class LoadModelFromUrl {
         mCurrentSettingsFields.saveTokenizerPath(defaultTokenizerPath);
         mCurrentSettingsFields.saveModelType(DEFAULT_MODEL_TYPE);
         mCurrentSettingsFields.saveBackendType(DEFAULT_BACKEND_TYPE);
-        mCurrentSettingsFields.saveParameters((double) DEFAULT_TEMPERATURE);
+        mCurrentSettingsFields.saveParameters(DEFAULT_TEMPERATURE);
         mCurrentSettingsFields.saveSystemPrompt(defaultSystemPrompt);
 
         // Print the parameters:

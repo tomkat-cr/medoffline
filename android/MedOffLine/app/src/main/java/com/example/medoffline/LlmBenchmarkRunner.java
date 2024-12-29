@@ -36,7 +36,10 @@ public class LlmBenchmarkRunner extends Activity implements ModelRunnerCallback 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTheme(R.style.AppTheme);
     setContentView(R.layout.activity_benchmarking);
+
     mTextView = findViewById(R.id.log_view);
 
     Intent intent = getIntent();

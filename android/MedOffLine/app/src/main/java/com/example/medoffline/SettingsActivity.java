@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -61,13 +62,17 @@ public class SettingsActivity extends AppCompatActivity {
 
   private DemoSharedPreferences mDemoSharedPreferences;
   public static double TEMPERATURE_MIN_VALUE = 0.0;
+  private static final boolean ACTIVITY_DEBUG = false;
 
   private LoadModelFromUrl mLoadModelFromUrl = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTheme(R.style.AppTheme);
     setContentView(R.layout.activity_settings);
+
     if (Build.VERSION.SDK_INT >= 21) {
       getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar));
       getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.nav_bar));
@@ -217,13 +222,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     mModelType = mSettingsFields.getModelType();
-    ETLogging.getInstance().log("mModelType from settings " + mModelType);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("mModelType from settings " + mModelType);
     if (mModelType != null) {
       mModelTypeTextView.setText(mModelType.toString());
     }
 
     mBackendType = mSettingsFields.getBackendType();
-    ETLogging.getInstance().log("mBackendType from settings " + mBackendType);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("mBackendType from settings " + mBackendType);
     if (mBackendType != null) {
       mBackendTextView.setText(mBackendType.toString());
       setBackendSettingMode();
@@ -236,12 +241,41 @@ public class SettingsActivity extends AppCompatActivity {
     setupDownloadModelButton();
     setupDownloadModelConfigButton();
     setupModelDownloadUrlSettings();
+    setupDeleteDownloadedModelsButton();
+    setupDeleteDownloadedModelConfigsButton();
+    setupAdvancedSettingsButtons();
+  }
+
+  private void toggleAdvancedSettingsVisibility(LinearLayout advancedSettingsLayout) {
+    if (advancedSettingsLayout.getVisibility() == View.GONE) {
+      advancedSettingsLayout.setVisibility(View.VISIBLE);
+    } else {
+      advancedSettingsLayout.setVisibility(View.GONE);
+    }
+  }
+
+  private void setupAdvancedSettingsButtons() {
+    LinearLayout advancedSettingsLayout = findViewById(R.id.advancedSettingsLayout);
+    TextView advancedSettingsTitle = findViewById(R.id.advancedSettingsTitle);
+    ImageButton advancedSettingsButton = findViewById(R.id.advancedSettingsImageButton);
+    if (advancedSettingsTitle != null) {
+      advancedSettingsTitle.setOnClickListener(
+          view -> {
+            toggleAdvancedSettingsVisibility(advancedSettingsLayout);
+          });
+    }
+    if (advancedSettingsButton != null) {
+      advancedSettingsButton.setOnClickListener(
+          view -> {
+            toggleAdvancedSettingsVisibility(advancedSettingsLayout);
+          });
+    }
   }
 
   private void setupDownloadModelButton() {
     Button mDownloadModelButton = findViewById(R.id.downloadModelButton);
-    mDownloadModelButton.setEnabled(true);
     if (mDownloadModelButton != null) {
+      mDownloadModelButton.setEnabled(true);
       mDownloadModelButton.setOnClickListener(
           view -> {
             new AlertDialog.Builder(this)
@@ -327,6 +361,59 @@ public class SettingsActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                       public void onClick(DialogInterface dialog, int whichButton) {
                         mSettingsFields.saveIsClearChatHistory(true);
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
+  }
+
+  private void setupDeleteDownloadedModelsButton() {
+    Button deleteDownloadedModelsButton = findViewById(R.id.deleteDownloadedModelsButton);
+    if (deleteDownloadedModelsButton != null) {
+      deleteDownloadedModelsButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Delete Downloaded Models")
+                .setMessage("WARNING: After deleting downloaded models, you will not be able to use the ChatBot until you download new models. Do you really want to delete ALL downloaded models?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        // Delete all downloaded models
+                        String modelsPath = mLoadModelFromUrl.getBaseModelsPath();
+                        LocalModelManagement.deleteDestFiles(modelsPath);
+                        // Restore settings related with models
+                        mSettingsFields.saveIsModelLoaded(false);
+                        mSettingsFields.saveModelPath("");
+                        mSettingsFields.saveTokenizerPath("");
+                        saveSettings();
+                      }
+                    })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+          });
+    }
+  }
+
+  private void setupDeleteDownloadedModelConfigsButton() {
+    Button deleteDownloadedModelConfigsButton = findViewById(R.id.deleteDownloadedModelConfigsButton);
+    if (deleteDownloadedModelConfigsButton != null) {
+      deleteDownloadedModelConfigsButton.setOnClickListener(
+          view -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Delete Downloaded Model Configs")
+                .setMessage("Do you really want to delete the downloaded model configs?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(
+                    android.R.string.yes,
+                    new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int whichButton) {
+                        // Delete all downloaded model configs
+                        String modelConfigsPath = mLoadModelFromUrl.getModelConfigPath();
+                        LocalModelManagement.deleteDestFiles(modelConfigsPath);
                       }
                     })
                 .setNegativeButton(android.R.string.no, null)
@@ -721,10 +808,10 @@ public class SettingsActivity extends AppCompatActivity {
     if (tokenizerLayout != null) {
       tokenizerLayout.setVisibility(View.VISIBLE);
     }
-    View parametersView = findViewById(R.id.parametersView);
-    if (parametersView != null) {
-      parametersView.setVisibility(View.VISIBLE);
-    }
+//    View parametersView = findViewById(R.id.parametersView);
+//    if (parametersView != null) {
+//      parametersView.setVisibility(View.VISIBLE);
+//    }
     View temperatureLayout = findViewById(R.id.temperatureLayout);
     if (temperatureLayout != null) {
       temperatureLayout.setVisibility(View.VISIBLE);
@@ -742,10 +829,10 @@ public class SettingsActivity extends AppCompatActivity {
     if (tokenizerLayout != null) {
       tokenizerLayout.setVisibility(View.GONE);
     }
-    View parametersView = findViewById(R.id.parametersView);
-    if (parametersView != null) {
-      parametersView.setVisibility(View.GONE);
-    }
+//    View parametersView = findViewById(R.id.parametersView);
+//    if (parametersView != null) {
+//      parametersView.setVisibility(View.GONE);
+//    }
     View temperatureLayout = findViewById(R.id.temperatureLayout);
     if (temperatureLayout != null) {
       temperatureLayout.setVisibility(View.GONE);

@@ -94,12 +94,14 @@ public class SettingsFields {
   private BackendType backendType;
   private boolean isModelLoaded;
 
+  private static final boolean ACTIVITY_DEBUG = false;
+
   public SettingsFields() {
-    ETLogging.getInstance().log("SettingsFields # 1 | No parameters");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("SettingsFields # 1 | No parameters");
   }
 
   public SettingsFields(SettingsFields settingsFields) {
-    ETLogging.getInstance().log("SettingsFields # 2 | With parameter settingsFields: " + settingsFields);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("SettingsFields # 2 | With parameter settingsFields: " + settingsFields);
     this.modelFilePath = settingsFields.modelFilePath;
     this.modelToDownload = settingsFields.modelToDownload;
     this.modelDownloadUrl = settingsFields.modelDownloadUrl;

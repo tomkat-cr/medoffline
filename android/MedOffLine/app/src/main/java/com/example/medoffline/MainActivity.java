@@ -53,6 +53,8 @@ import org.pytorch.executorch.LlamaCallback;
 import org.pytorch.executorch.LlamaModule;
 
 public class MainActivity extends AppCompatActivity implements Runnable, LlamaCallback {
+
+  private static final boolean ACTIVITY_DEBUG = false;
   private static final int MAX_NUM_OF_IMAGES = 5;
   private static final int REQUEST_IMAGE_CAPTURE = 1;
   private static final int CONVERSATION_HISTORY_MESSAGE_LOOKBACK = 2;
@@ -122,16 +124,20 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   private void setSendButtonState(boolean state) {
     mSendButton = findViewById(R.id.sendButton);
     if (mSendButton != null) {
-      ETLogging.getInstance().log(">> setSendButtonState: " + state);
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">> setSendButtonState: " + state);
       mSendButton.setEnabled(state);
     } else {
-      ETLogging.getInstance().log(">> mSendButton is null");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">> mSendButton is null");
     }
   }
 
   private void setLocalModel(String modelPath, String tokenizerPath, float temperature) {
-    Message modelLoadingMessage = new Message("Loading model...", false, MessageType.SYSTEM, 0);
-    ETLogging.getInstance().log(">> Loading model: " + modelPath +
+    // Get file name from modelPath
+    String modelName = modelPath.substring(modelPath.lastIndexOf("/") + 1);
+
+    Message modelLoadingMessage = new Message("Loading model '" + modelName + "'...", false, MessageType.SYSTEM, 0);
+    
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">> Loading model: " + modelPath +
                               "\n   with tokenizer " + tokenizerPath);
     runOnUiThread(
         () -> {
@@ -140,10 +146,10 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           mMessageAdapter.notifyDataSetChanged();
         });
     if (mModule != null) {
-      ETLogging.getInstance().log("Start deallocating existing module instance");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Start deallocating existing module instance");
       mModule.resetNative();
       mModule = null;
-      ETLogging.getInstance().log("Completed deallocating existing module instance");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Completed deallocating existing module instance");
     }
     long runStartTime = System.currentTimeMillis();
     int loadResult = -99;
@@ -162,14 +168,12 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       loadResult = mModule.load();
     } catch (Exception e) {
       modelLoadError = "Error: " + e.getMessage();
-      // ETLogging.getInstance().log(modelLoadError);
-      // e.printStackTrace();
       mErrorReporting.showErrorCancel(modelLoadError);
       return;
     }
     long loadDuration = System.currentTimeMillis() - runStartTime;
     if (loadResult != 0) {
-      modelInfo = "*Model could not load (Error Code: " + loadResult + ")*";
+      modelInfo = "*Model '" + modelName + "'' could not be loaded (Error Code: " + loadResult + ")*";
       if (!modelLoadError.isEmpty()) {
         modelInfo += "\n" + modelLoadError;
       }
@@ -195,9 +199,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       onModelRunStopped();
 
       if (mCurrentSettingsFields.getModelType() == ModelType.LLAVA_1_5) {
-        ETLogging.getInstance().log("Llava start prefill prompt");
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Llava start prefill prompt");
         startPos = mModule.prefillPrompt(PromptFormat.getLlavaPresetPrompt(), 0, 1, 0);
-        ETLogging.getInstance().log("Llava completes prefill prompt");
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Llava completes prefill prompt");
       }
     }
     // Show model load status and info in the log
@@ -217,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
             + "\nModel loaded time: "
             + loadDuration
             + " ms";
-    ETLogging.getInstance().log("Load complete. " + modelLoggingInfo);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Load complete. " + modelLoggingInfo);
     // Show model info in the conversation
     Message modelLoadedMessage = new Message(modelInfo, false, MessageType.SYSTEM, 0);
     runOnUiThread(
@@ -293,13 +297,13 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private void onModelRunStopped() {
-    ETLogging.getInstance().log("onModelRunStopped | Stating model run...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onModelRunStopped | Stating model run...");
 
     if (mSendButton != null) mSendButton.setClickable(true);
     if (mSendButton != null) mSendButton.setImageResource(R.drawable.baseline_send_24);
     if (mSendButton != null) mSendButton.setOnClickListener(
         view -> {
-          ETLogging.getInstance().log("onModelRunStopped | mSendButton clicked");
+          if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onModelRunStopped | mSendButton clicked");
           try {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -334,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
                 @Override
                 public void run() {
                   Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
-                  ETLogging.getInstance().log("starting runnable generate()");
+                  if (ACTIVITY_DEBUG) ETLogging.getInstance().log("starting runnable generate()");
                   runOnUiThread(
                       new Runnable() {
                         @Override
@@ -364,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
                         MainActivity.this,
                         false);
                   } else {
-                    ETLogging.getInstance().log("Running inference.. prompt=" + finalPrompt);
+                    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Running inference.. prompt=" + finalPrompt);
                     mModule.generate(
                         finalPrompt,
                         (int) (finalPrompt.length() * 0.75) + 64,
@@ -381,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
                           onModelRunStopped();
                         }
                       });
-                  ETLogging.getInstance().log("Inference completed");
+                  if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Inference completed");
                 }
               };
           executor.execute(runnable);
@@ -436,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    ETLogging.getInstance().log("onCreate | started...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | started...");
 
     super.onCreate(savedInstanceState);
 
@@ -449,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // Set theme
     setTheme(R.style.AppTheme);
 
-    // Set layout
+    // Set layout (blue banner at the top with the app name)
     setContentView(R.layout.activity_main);
 
     // Update app version
@@ -458,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // Request necessary permissions
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (!checkPermissions()) {
-        ETLogging.getInstance().log("onCreate | requestPermissions...");
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | requestPermissions...");
         requestPermissions(
           new String[] {
             Manifest.permission.ACCESS_NETWORK_STATE,
@@ -476,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       mDemoSharedPreferences = new DemoSharedPreferences(getBaseContext());
     }
 
-    ETLogging.getInstance().log("onCreate | initializing UI...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | initializing UI...");
 
     View mainContent = findViewById(R.id.main_content);
     if (mainContent != null) mainContent.setVisibility(View.VISIBLE);
@@ -532,15 +536,15 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     if (mCurrentSettingsFields.getIsModelLoaded()) {
       onModelRunStopped();
     } else {
-      ETLogging.getInstance().log("onCreate | onModelRunStopped not called");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | onModelRunStopped not called");
     }
 
-    ETLogging.getInstance().log("onCreate | Initialize executor for background tasks...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | Initialize executor for background tasks...");
 
     // Initialize executor for background tasks
     executor = Executors.newSingleThreadExecutor();
 
-    ETLogging.getInstance().log("onCreate | executor for background tasks was initialized");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onCreate | executor for background tasks was initialized");
   }
 
   @Override
@@ -558,25 +562,25 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     Gson gson = new Gson();
     String settingsFieldsJSON = mDemoSharedPreferences.getSettings();
 
-    ETLogging.getInstance().log("onResume | settingsFieldsJSON: " + settingsFieldsJSON);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | settingsFieldsJSON: " + settingsFieldsJSON);
 
     SettingsFields updatedSettingsFields;
     if (settingsFieldsJSON.isEmpty()) {
       // First time the app is run... so set default parameters
-      ETLogging.getInstance().log("onResume | call setDefaultParameters...");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | call setDefaultParameters...");
       updatedSettingsFields = mLoadModelFromUrl.setDefaultParameters();
     } else {
       // Load settings from shared preferences
-      ETLogging.getInstance().log("onResume | load settings from shared preferences...");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | load settings from shared preferences...");
       updatedSettingsFields =
           gson.fromJson(settingsFieldsJSON, SettingsFields.class);
     }
 
-    ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | updatedSettingsFields: " + updatedSettingsFields);
 
     if (updatedSettingsFields == null) {
       // First time the app is run... so ask the user to enter the settings screen to set parameters
-      ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | gson.fromJson returned null...");
       askUserToSelectModel();
       return;
     }
@@ -592,42 +596,42 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     // Set backend type according to the updated settings
     setBackendMode(updatedSettingsFields.getBackendType());
 
-    ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | isUpdated: " + isUpdated + ", isLoadModel: " + isLoadModel);
 
     if (isUpdated) {
       // Update current to point to the latest
-      ETLogging.getInstance().log("onResume | Update current to point to the latest");
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | Update current to point to the latest");
       mCurrentSettingsFields = new SettingsFields(updatedSettingsFields);
-
-      if (isDownloadModelConfig) {
-        // Download model config
-        ETLogging.getInstance().log("onResume | Calls checkForDownloadModelConfig()");
-        downloadModelConfig(mCurrentSettingsFields);
-      } else if (isLoadModel || isDownloadModel) {
-        // If users change the model file, but not pressing loadModelButton, we won't load the new model
-        ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
-        checkForUpdateAndReloadModel(mCurrentSettingsFields);
-      } else {
-        // Settings changed but nomodel load or download pressed
-        ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
-        askUserToSelectModel();
-      }
-
-      if (mCurrentSettingsFields.getIsModelLoaded()) {
-        // If the model was loaded, enable the model to run
-        onModelRunStopped();
-      } else {
-        ETLogging.getInstance().log("onResume | onModelRunStopped not called");
-      }
-
-      // Enable the send button if the model is loaded
-      ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
-      setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
-
-      // Check if the user wants to clear the chat history
-      ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
-      checkForClearChatHistory(mCurrentSettingsFields);
     }
+
+    if (isDownloadModelConfig) {
+      // Download model config
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | Calls checkForDownloadModelConfig()");
+      downloadModelConfig(mCurrentSettingsFields);
+    } else if (isLoadModel || isDownloadModel) {
+      // If users change the model file, but not pressing loadModelButton, we won't load the new model
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | Calls checkForUpdateAndReloadModel()");
+      checkForUpdateAndReloadModel(mCurrentSettingsFields);
+    } else {
+      // Settings changed but no model load or download pressed
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | askUserToSelectModel # 1");
+      askUserToSelectModel();
+    }
+
+    if (mCurrentSettingsFields.getIsModelLoaded()) {
+      // If the model was loaded, enable the model to run
+      onModelRunStopped();
+    } else {
+      if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | onModelRunStopped not called");
+    }
+
+    // Enable the send button if the model is loaded
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | setSendButtonState = " + mCurrentSettingsFields.getIsModelLoaded());
+    setSendButtonState(mCurrentSettingsFields.getIsModelLoaded());
+
+    // Check if the user wants to clear the chat history
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log("onResume | Calls checkForClearChatHistory()");
+    checkForClearChatHistory(mCurrentSettingsFields);
   }
 
   private void setBackendMode(BackendType backendType) {
@@ -665,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     double temperature = updatedSettingsFields.getTemperature();
 
     // Log the parameters
-    ETLogging.getInstance().log(
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(
       "checkForUpdateAndReloadModel | Model path: " + modelPath +
       "\n | Tokenizer path: " + tokenizerPath + 
       "\n | Temperature: " + temperature + 
@@ -674,26 +678,29 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
       "\n | Is model loaded: " + updatedSettingsFields.getIsModelLoaded()
     );
 
-    ETLogging.getInstance().log(">>--> checkForUpdateAndReloadModel | Are we in the main thread? " + (Looper.myLooper() == Looper.getMainLooper()));
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">>--> checkForUpdateAndReloadModel | Are we in the main thread? " + (Looper.myLooper() == Looper.getMainLooper()));
 
     if (!modelToDownload.isEmpty()) {
       if (updatedSettingsFields.getIsDownloadModel()) {
 
-        ETLogging.getInstance().log("|| checkForUpdateAndReloadModel | Check for internet connection...");
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("|| checkForUpdateAndReloadModel | Check for internet connection...");
         if (!LocalModelManagement.checkInternetConnection(getBaseContext())) {
-          ETLogging.getInstance().log("|| checkForUpdateAndReloadModel |> There's no internet connection, show dialog to stop");
+          if (ACTIVITY_DEBUG) ETLogging.getInstance().log("|| checkForUpdateAndReloadModel |> There's no internet connection, show dialog to stop");
           mErrorReporting.showErrorCancel("No internet connection available");
+          // Changing the Download Model Action to false since the download was cancalled
+          updatedSettingsFields.saveDownloadModelAction(false);
+          mDemoSharedPreferences.addSettings(updatedSettingsFields);
           return;
         }
 
-        ETLogging.getInstance().log("||| checkForUpdateAndReloadModel | Check for wifi connection...");
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("||| checkForUpdateAndReloadModel | Check for wifi connection...");
         if (!LocalModelManagement.checkWifiConnection(getBaseContext())) {
-          ETLogging.getInstance().log("|||| checkForUpdateAndReloadModel | Confirm to proceed with NO wifi connection...");
+          if (ACTIVITY_DEBUG) ETLogging.getInstance().log("|||| checkForUpdateAndReloadModel | Confirm to proceed with NO wifi connection...");
           mErrorReporting.showDialogYesNo(
               "Are you sure you want to download the model over a non-Wifi connection?",
               "No Wifi connection",
               downloadModelRunnable(),
-              null
+              cancelDownloadModelRunnable()
           );
           return;
         }
@@ -708,8 +715,6 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
           || temperature != mCurrentSettingsFields.getTemperature()) {
         loadModel(updatedSettingsFields);
       }
-    // } else {
-    //   askUserToSelectModel();
     }
   }
 
@@ -734,20 +739,34 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     };
   }
 
+  public Runnable cancelDownloadModelRunnable() {
+    return new Runnable() {
+      @Override
+      public void run() {
+        // Changing the Download Model Action to false since the download was cancalled
+        mCurrentSettingsFields.saveDownloadModelAction(false);
+        mDemoSharedPreferences.addSettings(mCurrentSettingsFields);
+      }
+    };
+  }
+
   private void downloadModel(SettingsFields updatedSettingsFields) {
-    ETLogging.getInstance().log(">> Download Model start...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">> Download Model start...");
     Thread thread = new Thread(new Runnable() {
       @Override
       public void run() {
+        // Disable the send button
+        setSendButtonState(false);
+        // Prepare the UI to show the progress percentage
         mLoadModelFromUrl.setUiElements(downloadingModelText, downloadProgressText, downloadProgressBar);
         try {
           // Download the model
           mLoadModelFromUrl.downloadModel(updatedSettingsFields, mDemoSharedPreferences);
         } catch (Exception e) {
-          String errorMessage = "Model download exception: " + e.getMessage();
-          ETLogging.getInstance().log(errorMessage);
-          // e.printStackTrace();
           mErrorReporting.showErrorCancel("Model download exception: " + e.getMessage());
+          // Changing the Download Model Action to false since there was an error
+          updatedSettingsFields.saveDownloadModelAction(false);
+          mDemoSharedPreferences.addSettings(updatedSettingsFields);
           return;
         }
 
@@ -777,7 +796,7 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
   }
 
   private void downloadModelConfig(SettingsFields updatedSettingsFields) {
-    ETLogging.getInstance().log(">> Download Model Config start...");
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(">> Download Model Config start...");
     Thread thread = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -785,9 +804,6 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         try {
           mLoadModelFromUrl.downloadModelConfig(updatedSettingsFields);
         } catch (Exception e) {
-          String errorMessage = "Model configuration download exception: " + e.getMessage();
-          ETLogging.getInstance().log(errorMessage);
-          // e.printStackTrace();
           mErrorReporting.showErrorCancel("Model configuration download exception: " + e.getMessage());
           return;
         }
@@ -803,9 +819,10 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
     String askLoadModel =
         "To get started, select the AI Model from the gear icon in the top right corner";
     Message askLoadModelMessage = new Message(askLoadModel, false, MessageType.SYSTEM, 0);
-    ETLogging.getInstance().log(askLoadModel);
+    if (ACTIVITY_DEBUG) ETLogging.getInstance().log(askLoadModel);
     runOnUiThread(
         () -> {
+          mMessageAdapter.remove(askLoadModelMessage);
           mMessageAdapter.add(askLoadModelMessage);
           mMessageAdapter.notifyDataSetChanged();
         });
@@ -1048,9 +1065,9 @@ public class MainActivity extends AppCompatActivity implements Runnable, LlamaCa
         Runnable runnable =
             () -> {
               Process.setThreadPriority(Process.THREAD_PRIORITY_MORE_FAVORABLE);
-              ETLogging.getInstance().log("Starting runnable prefill image");
+              if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Starting runnable prefill image");
               ETImage img = processedImageList.get(0);
-              ETLogging.getInstance().log("Llava start prefill image");
+              if (ACTIVITY_DEBUG) ETLogging.getInstance().log("Llava start prefill image");
               startPos =
                   mModule.prefillImages(
                       img.getInts(),

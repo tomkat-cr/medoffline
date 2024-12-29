@@ -27,7 +27,10 @@ public class LogsActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTheme(R.style.AppTheme);
     setContentView(R.layout.activity_logs);
+
     if (Build.VERSION.SDK_INT >= 21) {
       getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.status_bar));
       getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.nav_bar));

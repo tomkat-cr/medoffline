@@ -31,6 +31,7 @@ public class ModelsConfig {
     private final Context context;
     private String error = "";
 
+    private static final boolean ACTIVITY_DEBUG = false;
     private final String DEFAULT_JSON_FILENAME = "default_model_db.json";
 
     public ModelsConfig(Context context) {
@@ -138,26 +139,26 @@ public class ModelsConfig {
     }
 
     public String getModelUrl(String modelName) {
-        ETLogging.getInstance().log("ModelsConfig | getModelUrl | modelName parameter: " + modelName);
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("ModelsConfig | getModelUrl | modelName parameter: " + modelName);
         String ModelUrl = null;
         ModelInfo modelInfo = getModelData(modelName);
         if (modelInfo != null) {
             ModelUrl = modelInfo.getModelDownloadUrl();
-            ETLogging.getInstance().log("ModelsConfig | getModelUrl | Model URL found: " + ModelUrl);
+            if (ACTIVITY_DEBUG) ETLogging.getInstance().log("ModelsConfig | getModelUrl | Model URL found: " + ModelUrl);
         }
         return ModelUrl;
     }
 
     public ModelInfo getModelData(String modelName) {
-        ETLogging.getInstance().log("ModelsConfig | getModelData | modelName parameter: " + modelName);
+        if (ACTIVITY_DEBUG) ETLogging.getInstance().log("ModelsConfig | getModelData | modelName parameter: " + modelName);
         ModelInfo modelData = null;
         List<ModelInfo> modelToDownloadObjectList = getModelsList();
         for (ModelInfo modelInfo : modelToDownloadObjectList) {
           // Log model name
-          ETLogging.getInstance().log("ModelsConfig | getModelData | Comparing to model name: " + modelInfo.getModelName());
+          if (ACTIVITY_DEBUG) ETLogging.getInstance().log("ModelsConfig | getModelData | Comparing to model name: " + modelInfo.getModelName());
           if (modelName.equals(modelInfo.getModelName())) {
             modelData = modelInfo;
-            ETLogging.getInstance().log("ModelsConfig | getModelData | Model data found: " + modelData);
+            if (ACTIVITY_DEBUG) ETLogging.getInstance().log("ModelsConfig | getModelData | Model data found: " + modelData);
             break;
           }
         }

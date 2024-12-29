@@ -7,9 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity"
     android:scrollbars="vertical"
+    android:background="#16293D"
     android:scrollbarStyle="outsideOverlay">
 
     <ScrollView
+        android:background="#16293D"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,12 +23,14 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="1dp">
 
+            <!-- Settings title -->
+
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="MedOffLine✨ Settings"
+                android:text="Settings"
                 android:textAlignment="viewStart"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
@@ -34,57 +38,13 @@
                 android:translationX="5dp"
                 android:translationY="5dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/modelsConfigDownloadUrlLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:textSize="16sp"
-                        android:inputType="text"
-                        android:text="Models configuration download URL"
-                        android:textColor="#FFFFFF" />
-
-                    <ImageButton
-                        android:id="@+id/resetModelDownloadUrl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:backgroundTint="@android:color/transparent"
-                        android:src="@drawable/baseline_restart_alt_24" />
-
-                </LinearLayout>
-
-            <EditText
-                android:id="@+id/modelDownloadUrlText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:textColor="#FFFFFF" />
-
-            <Button
-                android:id="@+id/downloadModelConfigButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="10dp"
-                android:text="Download Models Config"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:theme="@style/DefaultButton" />
+            <!-- Model to download selection (title and button) -->
 
             <LinearLayout
                 android:id="@+id/modelToDownloadLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -138,6 +98,8 @@
                 android:layout_marginBottom="10dp"
                 android:background="#CCCCCC" />
 
+            <!-- Model selection (title and button) -->
+
             <LinearLayout
                 android:id="@+id/modelLayout"
                 android:layout_width="match_parent"
@@ -177,6 +139,8 @@
 
             </LinearLayout>
 
+            <!-- Tokenizer selection (title and button) -->
+
             <LinearLayout
                 android:id="@+id/tokenizerLayout"
                 android:layout_width="match_parent"
@@ -214,6 +178,8 @@
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>
+
+            <!-- Model Type selection (title and button) -->
 
             <LinearLayout
                 android:id="@+id/modelTypeLayout"
@@ -253,11 +219,13 @@
 
             </LinearLayout>
 
+            <!-- Backend type selection (title and button) -->
+
             <LinearLayout
                 android:id="@+id/backendLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -311,6 +279,8 @@
                 android:layout_marginBottom="10dp"
                 android:background="#CCCCCC" />
 
+            <!-- Clear Chat History button -->
+
             <Button
                 android:id="@+id/clearChatButton"
                 android:layout_width="wrap_content"
@@ -327,6 +297,8 @@
                 android:layout_marginBottom="10dp"
                 android:background="#CCCCCC" />
 
+            <!-- Advanced Settings (title and button) -->
+
             <LinearLayout
                 android:id="@+id/advancedLayout"
                 android:layout_width="match_parent"
@@ -336,7 +308,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/parametersView"
+                    android:id="@+id/advancedSettingsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
@@ -347,7 +319,7 @@
                     android:translationX="5dp" />
 
                 <ImageButton
-                    android:id="@+id/advancedImageButton"
+                    android:id="@+id/advancedSettingsImageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -359,11 +331,16 @@
 
             </LinearLayout>
 
+            <!-- Advanced Settings (collapsable) -->
+
             <LinearLayout
                 android:id="@+id/advancedSettingsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="vertical">
+
+                <!-- Temperature -->
 
                 <LinearLayout
                     android:id="@+id/temperatureLayout"
@@ -394,6 +371,15 @@
                         android:textColorHint="#FFFFFF"
                         android:textSize="16sp" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#CCCCCC" />
+
+                <!-- System Prompt and User Prompt -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -482,8 +468,95 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
-            </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#CCCCCC" />
 
+                <!-- Models Config Download URL -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/modelsConfigDownloadUrlLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:inputType="text"
+                        android:text=" Models configuration download URL"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/resetModelDownloadUrl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:src="@drawable/baseline_restart_alt_24" />
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/modelDownloadUrlText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:textColor="#FFFFFF" />
+
+                <Button
+                    android:id="@+id/downloadModelConfigButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Download Models Config"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:theme="@style/DefaultButton" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#CCCCCC" />
+
+                <!-- Delete models and configs -->
+
+                <Button
+                    android:id="@+id/deleteDownloadedModelsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Delete Downloaded Models"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:theme="@style/DefaultButton" />
+
+                <Button
+                    android:id="@+id/deleteDownloadedModelConfigsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="Delete Downloaded Model Configs"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:theme="@style/DefaultButton" />
+
+            </LinearLayout>
+        
         </LinearLayout>
 
     </ScrollView>
