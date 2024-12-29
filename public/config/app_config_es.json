@@ -1,6 +1,6 @@
 {
     "APP_NAME": "MedOffline",
-    "APP_VERSION": "0.0.1",
+    "APP_VERSION": "0.0.3",
     "MAKER_MAME": "The FynBots",
     "APP_ICON": ":sparkles:",
     "APP_DESCRIPTION": "MedOffline es un asistente de IA sin conexión que proporciona orientación básica de primeros auxilios en comunidades con acceso limitado (o nulo) a Internet, ofreciendo:",
@@ -15,7 +15,7 @@
     "APP_RESOURCES_SECTION_TITLE": "Recursos de la aplicación:",
     "TEAM_BUTTON_TEXT": "El Equipo",
     "SOURCE_CODE_URL_TEXT": "Código Fuente en Github",
-    "KAGGLE_MODELS_URL_TEXT": "Modelos en Kaggle",
+    "KAGGLE_MODELS_URL_TEXT": "Modelo en Kaggle",
     "PRESENTATION_VIDEO_URL_TEXT": "Vídeo Presentación (Youtube)",
     "PRESENTATION_VIDEO_YOUTUBE_URL": "https://youtu.be/R-rAKMbKVus",
     "PRESENTATION_DOCUMENT_URL_TEXT": "Documento (PDF)",
@@ -44,5 +44,10 @@
         }
     ],
     "INVALID_PAGE_TITLE": "Página Inválida",
-    "INVALID_PAGE_TEXT": "Página no encontrada"
+    "INVALID_PAGE_TEXT": "Página no encontrada",
+    "INSTRUCTIONS_OPENING": "Instructiones para descargar e instalar la Aplicación Android:",
+    "DOWNLOAD_INSTRUCTIONS": "1. Toque el botón **Descargar APK** al final de estas instrucciones.\n\nAparecerá un mensaje de advertencia: \"Es posible que el archivo sea dañino\". Esto es normal cuando se instalan Apps fuera de la Play Store. Toque el botón **Descargar de todos modos**.\n\n2. Espere que se complete la descarga.\n\n3. Vaya a **Descargas** en el menú del navegador y toque el archivo **medoffline.apk**.\n\n4. Espere que se termine la instalación.\n\n5. Toque el botón \"Abrir Aplicacion\" o busque el ícono de la aplicación **MedOffline** y toquelo.\n\n6. Toque el ícono del engranaje en la parte superiorpara abrir la pantalla de Ajustes.\n\n7. Toque \"Model to Download\".\n\n8. Toque \"Llama 3.2 1B\" (modelo liviano) o \"Llama 3.2 3B\" (modelo más grande).\n\n9. Toque el botón \"DOWNLOAD MODEL\".\n\n10. Toque el botón \"ACEPTAR\".\n\n11. Espera a que se complete la descarga.\n\nCon una conexión rápida a Internet, la descarga tardará aproximadamente 2 minutos en completarse cuando se selecciona \"Llama 3.2 1B\", o 3 minutos o más cuando se selecciona \"Llama 3.2 3B\".\n\n12. Una vez que se complete la descarga, aparecerá un mensaje indicando que el modelo fue cargado. entonces la pantalla principal con la interfaz estilo ChatBot estará lista para usar.\n\n13. En caso que desee cambiar el modelo en uso, toque el ícono del engranaje para abrir la pantalla de Ajustes nuevamente.\n\n14. Toque \"Model\" y seleccione el modelo descargado.\n\n15. Toque \"Tokenizer\" y seleccione el tokenizador del modelo descargado (debe tener el mismo nombre y terminar en `.bin`).\n\n16. Toque el botón \"LOAD MODEL\".\n\n17. Toque el botón \"ACEPTAR\".\n\n18. Una vez que se complete la carga del modelo, la pantalla principal con la interfaz estilo ChatBot estará lista para usar.",
+    "DOWNLOAD_WARNING": "**ADVERTENCIA**:\n\nEsta es una versión beta de la aplicación y **ES SÓLO UN PROTOTIPO PARA PRUEBAS**, por lo que se recomienda tener cuidado al usarla.\n\nLas respuestas de los modelos no siempre son correctas.",
+    "KAGGLE_DATASET_01_BUTTON_TEXT": "Dataset en Kaggle: Primeros Auxilios en Español",
+    "KAGGLE_DATASET_01_BUTTON_URL": "https://www.kaggle.com/datasets/tomkatcr/dataset-de-primeros-auxilios-en-espanol"
 }

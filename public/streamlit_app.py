@@ -53,7 +53,10 @@ def add_title(page_name: str = None):
 
     cols = st.columns(3, vertical_alignment="center")
     with cols[0]:
-        st.title(cgsl.get_title())
+        # st.title(cgsl.get_title())
+        st.title(f"{st.session_state.app_name} "
+                 f"{st.session_state.app_icon}")
+        st.write(f"v{st.session_state.app_version}")
     with cols[1]:
         add_language_button()
     if page_name:
@@ -109,7 +112,10 @@ def add_main_content():
             app_features = cgsl.get_par_value("APP_FEATURES")
             title_cols = st.columns(2, vertical_alignment="bottom")
             with title_cols[0]:
-                st.header(cgsl.get_title())
+                # st.header(cgsl.get_title())
+                st.header(f"{st.session_state.app_name} "
+                          f"{st.session_state.app_icon}")
+                st.write(f"v{st.session_state.app_version}")
             with title_cols[1]:
                 add_language_button()
             st.write(app_desc)
@@ -120,9 +126,13 @@ def add_main_content():
             button_cols = st.columns(3)
             with button_cols[0]:
                 # Button to download a file from "./apk/app.apk"
-                st.link_button(
+                # st.link_button(
+                #     cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
+                #     APK_DONWLOAD_URL)
+                st.button(
                     cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
-                    APK_DONWLOAD_URL)
+                    on_click=cgsl.set_query_param,
+                    args=("page", "download_apk"))
             st.write(cgsl.get_par_value("APP_RESOURCES_SECTION_TITLE"))
             button_cols = st.columns(3)
             with button_cols[0]:
@@ -144,9 +154,6 @@ def add_main_content():
                     on_click=cgsl.set_query_param,
                     args=("page", "source_code"))
 
-            # Logo
-            st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
-
 
 def add_check_buttons_pushed():
     """
@@ -161,6 +168,13 @@ def add_footer():
     """
     Add the footer to the page
     """
+    # Logo
+    st.write("")
+    button_cols = st.columns(7)
+    with button_cols[3]:
+        # st.image("./assets/MedOffLine.circled.logo.500.png", width=250)
+        st.image("./assets/MedOffLine.circled.logo.500.png")
+    # Copyright
     st.caption(f"© 2024 {st.session_state.maker_name}. All rights reserved.")
 
 
@@ -203,8 +217,50 @@ def source_code_page():
 
     # Models on Kaggle:
     st.link_button(
-        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT"),
+        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT") +
+        ": Meta Llama 3.2 1B (.pte)",
+        "https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte")
+
+    st.link_button(
+        cgsl.get_par_value("KAGGLE_MODELS_URL_TEXT") +
+        ": Meta Llama 3.2 3B (.pte)",
         "https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte")
+
+    # Datasets
+    st.link_button(
+        cgsl.get_par_value("KAGGLE_DATASET_01_BUTTON_TEXT"),
+        cgsl.get_par_value("KAGGLE_DATASET_01_BUTTON_URL"))
+
+    # Back to homepage
+    add_homepage_button()
+
+    # Check buttons pushed
+    add_check_buttons_pushed()
+
+    # Footer
+    with st.container():
+        add_footer()
+
+
+def download_apk_page():
+    # Main content
+
+    # Title
+    add_title(cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"))
+
+    # Content
+    st.write(cgsl.get_par_value("INSTRUCTIONS_OPENING"))
+    st.write(cgsl.get_par_value("DOWNLOAD_INSTRUCTIONS"))
+
+    # Button to download a file from "./apk/app.apk"
+    st.divider()
+
+    cols = st.columns(3)
+    with cols[1]:
+        st.write(f"{cgsl.get_par_value('DOWNLOAD_WARNING')}")
+    with cols[2]:
+        st.link_button(cgsl.get_par_value("DOWNLOAD_BUTTON_TEXT"),
+                       APK_DONWLOAD_URL)
 
     # Back to homepage
     add_homepage_button()
@@ -225,17 +281,14 @@ def presentations_page():
 
     # Content
 
-    # Video Presentation (español): https://youtu.be/R-rAKMbKVus
     st.link_button(
         cgsl.get_par_value("PRESENTATION_VIDEO_URL_TEXT"),
         cgsl.get_par_value("PRESENTATION_VIDEO_YOUTUBE_URL"))
 
-    # Presentation Document (PDF): https://storage.googleapis.com/lablab-static-eu/presentations/submissions/cm3xdpe8l00113b713e90gmb5/cm3xdpe8l00113b713e90gmb5-1732561102890_zq1alr0cwl.pdf
     st.link_button(
         cgsl.get_par_value("PRESENTATION_DOCUMENT_URL_TEXT"),
         cgsl.get_par_value("PRESENTATION_DOCUMENT_STORAGE_URL_TEXT"))
 
-    # Project description: https://www.linkedin.com/pulse/medoffline-empoderando-comunidades-con-orientaci%C3%B3n-m%C3%A9dica-ramirez-spd4e
     st.link_button(
         cgsl.get_par_value("PROJECT_DESCRIPTION_URL_TEXT"),
         cgsl.get_par_value("PROJECT_DESCRIPTION_STORAGE_URL_TEXT"))
@@ -366,6 +419,8 @@ def main():
         homepage()
     elif page == "source_code":
         source_code_page()
+    elif page == "download_apk":
+        download_apk_page()
     elif page == "presentations":
         presentations_page()
     elif page == "team":
