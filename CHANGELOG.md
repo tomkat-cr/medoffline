@@ -17,6 +17,18 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [Keep a Ch
 ### Breaks
 
 
+## 0.0.4 (2024-12-30)
+---
+
+### New
+Implement API keys to GS BE Core [GS-159].
+Implement backoffice [GS-147].
+
+### Changes
+README: fix the english video presentation URL, and links to Kaggle updated to use the 1B model [GS-147].
+
+
+
 ## 0.0.3 (2024-12-29)
 ---
 
@@ -69,7 +81,7 @@ Android app: fix model size of 1B in model configuration.
 Android app: set the model download/load flags to false when the operation is cancelled.
 Android app: the download/upload buttons for models and/or configurations are processed even there's no changes to other settings.
 Android app: disable the chat message sending button when a model is loading/unloading.
-
+[GS-147]
 
 ## 0.0.2 (2024-11-30)
 ---
@@ -79,10 +91,11 @@ Landing page: add source code, presentations, team and invalid URL pages.
 
 ### Changes
 All README.md sections translated to spanish and english.
+[GS-147]
 
 
 ## 0.0.1 (2024-11-22)
 ---
 
 ### New
-Project started for the [Hackathon Llama Impact Pan-LATAM](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es) organized by [Lablab.ai](https://lablab.ai) [GS-155].
+Project started for the [Hackathon Llama Impact Pan-LATAM](https://lablab.ai/event/hackathon-llama-impact-pan-latam-es) organized by [Lablab.ai](https://lablab.ai) [GS-156].

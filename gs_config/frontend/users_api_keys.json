@@ -38,11 +38,15 @@
         {
             "name": "active",
             "required": true,
-            "label": "Actuve",
+            "label": "Active",
             "type": "select",
             "select_elements": "TRUE_FALSE",
+            "default_value": "1",
             "readonly": false,
             "listing": true
         }
+    ],
+    "dbPreRead": [
+        "UsersApiKeyDbPreRead"
     ]
 }

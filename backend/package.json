@@ -1,6 +1,6 @@
 {
-  "name": "MedOffline_backend",
-  "version": "0.0.3",
+  "name": "medoffline_backend",
+  "version": "0.0.4",
   "description": "MedOffline (Offline Medical Assistant for Remote Communities) backend",
   "main": "index.js",
   "scripts": {

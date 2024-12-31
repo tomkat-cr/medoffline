@@ -142,7 +142,7 @@ Con una conexión rápida a Internet, la descarga tardará aproximadamente 2 min
 * [Java](https://developer.android.com/build/jdks)
 * [Python](https://www.python.org)
 * [Streamlit](https://streamlit.io)
-* [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+* [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte)
 * [HuggingFace](https://huggingface.co/)
 * [Github](https://github.com)
 
@@ -172,10 +172,11 @@ Recursos:
   [https://github.com/tomkat-cr/medoffline](https://github.com/tomkat-cr/medoffline)
 
 * Modelos en Kaggle:<BR/>
-  [https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+  - [https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte)
+  - [https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
 
 * Video-presentación:<BR/>
-  [https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX](https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX)
+  [https://www.youtube.com/watch?v=R-rAKMbKVus](https://www.youtube.com/watch?v=R-rAKMbKVus)
 
 * Documento de la presentación: [PDF](./assets/medoffline_presentacion_es.pdf)
 
@@ -337,7 +338,7 @@ With a fast Internet connection, it can take about 2 minutes for the download to
 * [Java](https://developer.android.com/build/jdks)
 * [Python](https://www.python.org)
 * [Streamlit](https://streamlit.io)
-* [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+* [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte)
 * [HuggingFace](https://huggingface.co/)
 * [Github](https://github.com)
 
@@ -366,10 +367,11 @@ Resources:
   [https://github.com/tomkat-cr/medoffline](https://github.com/tomkat-cr/medoffline)
 
 * Models on Kaggle:<BR/>
-  [https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
+  - [https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte)
+  - [https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte)
 
 * Video Presentation:<BR/>
-  [https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX](https://youtu.be/R-rAKMbKVus?si=KbJgHZFg4J4f8BXX)
+  [https://www.youtube.com/watch?v=W68YE0YCbtA](https://www.youtube.com/watch?v=W68YE0YCbtA)
 
 * Presentation document: [PDF](./assets/medoffline_presentation_en.pdf)
 
@@ -429,7 +431,7 @@ cd medoffline
 
 - The Android applicacion can be opened in Android Studio from the directory [android/MedOffLine](./android/MedOffLine)
 
-- The AI Model used in the Android app can be found in [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_3b_pte).
+- The AI Model used in the Android app can be found in [Kaggle](https://www.kaggle.com/models/tomkatcr/llama3.2_1b_pte).
 
 - The Model was generated following these instructions:
 

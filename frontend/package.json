@@ -1,6 +1,6 @@
 {
-  "name": "MedOffline_frontend",
-  "version": "0.0.3",
+  "name": "medoffline_frontend",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "start": "node server.js",

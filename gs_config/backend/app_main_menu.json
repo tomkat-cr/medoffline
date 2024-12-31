@@ -29,26 +29,6 @@
         ]
     },
     {
-        "title": "Properties",
-        "location": "top_menu",
-        "type": "nav_dropdown",
-        "sec_group": "users",
-        "sub_menu_options": [
-            {
-                "type": "editor",
-                "sec_group": "users",
-                "title": "Properties",
-                "element": "Properties_EditorData"
-            },
-            {
-                "type": "editor",
-                "sec_group": "users",
-                "title": "Transactions",
-                "element": "Transactions_EditorData"
-            }
-        ]
-    },
-    {
         "title": "AI Assistant",
         "location": "top_menu",
         "type": "nav_link",

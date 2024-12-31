@@ -64,14 +64,6 @@
             "listing": false
         }, 
         {
-            "name": "user_type",
-            "type": "select",
-            "select_elements": "USER_TYPES",
-            "default_value": "buyer",
-            "readonly": true,
-            "listing": true
-        },
-        {
             "name": "plan",
             "required": true,
             "label": "Billing Plan",
@@ -135,9 +127,6 @@
             "type": "password",
             "force_value": ""
         }
-    ],
-    "childComponents": [
-        "UsersPreferences"
     ],
     "dbListPreRead": [
         "UsersDbListPreRead"

@@ -11,7 +11,7 @@ android {
         minSdk 24
         targetSdk 33
         versionCode 1
-        versionName "0.0.3"
+        versionName "0.0.4"
     }
 
     buildFeatures {
@@ -21,12 +21,16 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "VERSION_NAME", "\"0.0.3.debug\""
+            buildConfigField "String", "VERSION_NAME", "\"0.0.4.debug\""
+            buildConfigField "String", "GS_PROJECT_ID", "\"GS_PROJECT_ID_DEBUG\""
+            buildConfigField "String", "GS_ACCESS_TOKEN", "\"GS_ACCESS_TOKEN_DEBUG\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
-            buildConfigField "String", "VERSION_NAME", "\"0.0.3\""
+            buildConfigField "String", "VERSION_NAME", "\"0.0.4\""
+            buildConfigField "String", "GS_PROJECT_ID", "\"GS_PROJECT_ID_RELEASE\""
+            buildConfigField "String", "GS_ACCESS_TOKEN", "\"GS_ACCESS_TOKEN_RELEASE\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

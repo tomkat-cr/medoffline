@@ -7,7 +7,6 @@ import {
     BILLING_PLANS,
     USER_TYPES,
 } from '../../constants/app_constants';
-import { UsersPreferences } from '../UsersMenu/UsersPreferences';
 
 import users from "../../configs/frontend/users.json";
 
@@ -41,7 +40,6 @@ export function Users_EditorData(calleeName='Users_EditorData') {
         "TRUE_FALSE": TRUE_FALSE,
         "BILLING_PLANS": BILLING_PLANS,
         "USER_TYPES": USER_TYPES,
-        "UsersPreferences": UsersPreferences,
         // "UsersDbPostWrite": UsersDbPostWrite,
         "UsersConfig": UsersConfig,
         "Users": Users,

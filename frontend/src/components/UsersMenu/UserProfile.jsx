@@ -6,7 +6,6 @@ import {
     GENDERS,
     USER_TYPES,
 } from '../../constants/app_constants';
-import { UsersPreferences } from '../UsersMenu/UsersPreferences';
 // import { UsersDbPostWrite } from '../SuperAdminOptions/Users';
 
 // const authenticationService = gs.authenticationService.authenticationService;
@@ -33,7 +32,6 @@ export function UsersProfile_EditorData() {
         "TRUE_FALSE": TRUE_FALSE,
         "BILLING_PLANS": BILLING_PLANS,
         "USER_TYPES": USER_TYPES,
-        "UsersPreferences": UsersPreferences,
         "UsersDbPostWrite": UsersDbPostWrite,
         "UsersConfig": UsersConfig,
         "UserProfileEditor": UserProfileEditor,
