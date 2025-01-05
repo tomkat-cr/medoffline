@@ -5,7 +5,6 @@ import * as gs from "genericsuite";
 import {
     GENDERS,
     BILLING_PLANS,
-    USER_TYPES,
 } from '../../constants/app_constants';
 
 import users from "../../configs/frontend/users.json";
@@ -39,7 +38,6 @@ export function Users_EditorData(calleeName='Users_EditorData') {
         "LANGUAGES": LANGUAGES, 
         "TRUE_FALSE": TRUE_FALSE,
         "BILLING_PLANS": BILLING_PLANS,
-        "USER_TYPES": USER_TYPES,
         // "UsersDbPostWrite": UsersDbPostWrite,
         "UsersConfig": UsersConfig,
         "Users": Users,

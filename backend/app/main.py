@@ -1,28 +1,14 @@
 """
-MedOffline main
+MedOffline main (FastAPI + Mangum)
 """
-# import os
-from mangum import Mangum
-
-from genericsuite.fastapilib.util.create_app import create_app
+from genericsuite.fastapilib.util.create_app import (
+    create_app,
+    create_handler,
+)
 # from genericsuite.util.app_logger import log_debug
 
 from app.config.config import Config
-
 from app.routers import ai_assistant as ai_chatbot_endpoint
-
-# ############################
-
-# from genericsuite.fastapilib.util.create_app import create_handler
-
-
-def create_handler(app_object):
-    """
-    Returns the FastAPI App as a valid AWS Lambda Function handler
-    """
-    return Mangum(app_object, lifespan="off")
-
-# ############################
 
 
 settings = Config()

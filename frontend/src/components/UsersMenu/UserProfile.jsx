@@ -4,7 +4,6 @@ import * as gs from "genericsuite";
 import users_profile from "../../configs/frontend/users_profile.json";
 import {
     GENDERS,
-    USER_TYPES,
 } from '../../constants/app_constants';
 // import { UsersDbPostWrite } from '../SuperAdminOptions/Users';
 
@@ -31,7 +30,6 @@ export function UsersProfile_EditorData() {
         "LANGUAGES": LANGUAGES, 
         "TRUE_FALSE": TRUE_FALSE,
         "BILLING_PLANS": BILLING_PLANS,
-        "USER_TYPES": USER_TYPES,
         "UsersDbPostWrite": UsersDbPostWrite,
         "UsersConfig": UsersConfig,
         "UserProfileEditor": UserProfileEditor,
