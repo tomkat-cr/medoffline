@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/tomkat-cr/MedOffline#readme",
   "dependencies": {
-    "genericsuite-be-scripts": "^1.0.12"
+    "genericsuite-be-scripts": "^1.0.13"
   }
 }
